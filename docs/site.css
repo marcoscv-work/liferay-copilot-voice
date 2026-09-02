@@ -305,11 +305,17 @@ pre .copy-btn:hover { background: rgba(255, 255, 255, 0.18); }
 	background: var(--cv-brand);
 }
 .vd-caption {
+	/* Fixed height — rotating captions (1 line, 2 lines, or the pill) must
+	   never change the card's size and shift the whole page. */
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
-	margin-top: 18px;
-	min-height: 24px;
+	margin-top: 10px;
 	font-size: 14px;
 	color: var(--cv-text-faint);
+	overflow: hidden;
 	transition: color 0.3s ease;
 }
 .vd-caption strong { color: var(--cv-text-muted); }
