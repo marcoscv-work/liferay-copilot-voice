@@ -266,6 +266,7 @@
   function toIdle() {
     const fromListening = appState === 'listening' || appState === 'speaking';
     appState = 'idle';
+    keycap?.setAttribute('aria-pressed', 'false');
     newFlowSession();
     clearTimeout(morphTimer);
     clearTimeout(barsTimer);
@@ -430,6 +431,7 @@
 
   function toListening() {
     appState = 'listening';
+    keycap?.setAttribute('aria-pressed', 'true');
     barEls.forEach(b => b.style.transition = 'background 0.35s ease');
     initMic();
     startSpeech();
@@ -597,6 +599,31 @@
     return v;
   }
 
+  /* Escape untrusted text for the few remaining template-literal renders.
+     Anything sourced from Liferay (space/image names, Object labels,
+     picklist values) or dictated by the user MUST pass through here — or be
+     written via textContent. innerHTML is reserved for static, audited
+     templates from the packaged bundles. */
+  function escapeHTML(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* Validate an image URL coming from Liferay data before it reaches a CSS
+     url() or an <img>. Only http(s); relative paths resolve same-origin.
+     Returns a CSS-safe absolute URL or null. */
+  function safeImageURL(raw) {
+    if (!raw) return null;
+    let u;
+    try { u = new URL(String(raw), window.location.origin); } catch (_) { return null; }
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+    return u.href.replace(/"/g, '%22').replace(/\\/g, '%5C').replace(/\)/g, '%29');
+  }
+
   function normalize(text) {
     return (text || '').toLowerCase().trim()
       .normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -635,6 +662,8 @@
     const keyName = appConfig.activationKey?.label ?? 'SPACE';
     const tpl     = appConfig.strings?.cancelConfirm ?? '';
     const text    = String(tpl).replace(/\{key\}/g, keyName);
+    /* Audited template: packaged string + activation label from config.json.
+       No Liferay/user data reaches this sink. */
     if (textEl) textEl.innerHTML = text;
     if (el) el.hidden = false;
     clearTimeout(cancelConfirmTimer);

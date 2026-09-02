@@ -14,15 +14,15 @@
   <div id="liveAlert"  role="alert"  aria-live="assertive" aria-atomic="true" class="sr-only"></div>
 
   <div class="language-toggle" role="group" aria-label="Language">
-    <button type="button" data-lang="es" onclick="window.__voiceSetLocale('es')">ES</button>
-    <button type="button" data-lang="en" onclick="window.__voiceSetLocale('en')">EN</button>
-    <button type="button" data-lang="it" onclick="window.__voiceSetLocale('it')">IT</button>
+    <button type="button" data-lang="es">ES</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="it">IT</button>
   </div>
 
   <!-- Developer toggles. Hidden by default (hover the bottom-right corner
        to reveal). The bottom-right is reserved for dev / debug switches. -->
   <div class="dev-toggle" role="group" aria-label="Developer tools">
-    <button type="button" data-debug="live-regions" onclick="window.__voiceToggleLiveDebug()">Live regions</button>
+    <button type="button" data-debug="live-regions">Live regions</button>
     <a href="/config" class="dev-toggle-link">Liferay config</a>
   </div>
 
@@ -128,8 +128,8 @@
   </div>
 
   <div class="ai-overlay" id="aiConfirm">
-    <div class="ai-card">
-      <p class="ai-card-title" data-language="aiConfirmTitle"></p>
+    <div class="ai-card" role="dialog" aria-modal="true" aria-labelledby="aiConfirmTitleText" tabindex="-1">
+      <p class="ai-card-title" id="aiConfirmTitleText" data-language="aiConfirmTitle"></p>
       <div class="ai-card-actions">
         <button class="ai-btn ai-btn-secondary" id="aiConfirmNo"  data-language="aiConfirmNo"></button>
         <button class="ai-btn ai-btn-primary"   id="aiConfirmYes" data-language="aiConfirmYes"></button>
@@ -138,7 +138,7 @@
   </div>
 
   <div class="ai-overlay" id="aiModal">
-    <div class="ai-card">
+    <div class="ai-card" id="aiModalCard" role="dialog" aria-modal="true" tabindex="-1">
       <div id="aiModalLoading">
         <div class="ai-spinner"></div>
         <p class="ai-loading-text" data-language="aiLoadingTitle"></p>
@@ -176,8 +176,8 @@
     <ul id="cmdListUl"></ul>
   </div>
 
-  <div class="format-list" id="formatList">
-    <div class="format-list-title" data-language="formatListTitle"></div>
+  <div class="format-list" id="formatList" role="dialog" aria-modal="true" aria-labelledby="formatListTitleText" tabindex="-1">
+    <div class="format-list-title" id="formatListTitleText" data-language="formatListTitle"></div>
     <div class="format-list-content" id="formatListContent"></div>
     <div class="format-list-back" data-language="formatBackHint" data-language-html></div>
   </div>
@@ -243,17 +243,17 @@
   <div class="keycap-wrap">
     <div class="keycap-shadow" id="keycapShadow"></div>
 
-    <div class="keycap" id="keycap">
+    <button type="button" class="keycap" id="keycap" aria-pressed="false" data-language-aria-label="keycapToggleLabel">
       <span class="space-label" id="spaceLabel">SPACE</span>
-      <div class="mic-wrap" id="micWrap">
+      <span class="mic-wrap" id="micWrap">
         <!-- Only micOuter (arc + stand). micBody is replaced by bar3. -->
         <svg class="mic-svg" viewBox="0 0 82 127" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path id="micOuter"
             d="M81.222 51.041v10.3c.005 10.87-4.272 21.305-11.904 29.045-3.688 3.758-8.07 6.765-12.903 8.853-3.643 1.574-7.502 2.592-11.448 3.019v14.931h18.178c1.156 0 2.264.459 3.08 1.276.817.817 1.276 1.925 1.276 3.08 0 1.156-.459 2.264-1.276 3.081-.816.817-1.924 1.276-3.08 1.276H18.077c-1.156 0-2.264-.459-3.08-1.276C14.18 124.809 13.72 123.7 13.72 122.545c0-1.155.46-2.263 1.276-3.08.817-.817 1.925-1.276 3.081-1.276h18.178v-14.931c-3.946-.428-7.804-1.446-11.448-3.019-4.833-2.088-9.215-5.095-12.903-8.853C4.27 83.628-.007 73.19 0 62.317V52.017c0-.573.113-1.14.332-1.668.219-.529.54-1.01.945-1.415.405-.405.886-.726 1.415-.945.529-.219 1.096-.332 1.668-.332.573 0 1.14.113 1.669.332.529.219 1.009.54 1.414.945.405.405.726.886.945 1.415.219.528.332 1.095.332 1.668v10.3c-.023 8.587 3.355 16.833 9.396 22.935 2.923 3.009 6.42 5.401 10.284 7.034 3.864 1.633 8.016 2.475 12.211 2.475 4.195 0 8.347-.842 12.211-2.475 3.864-1.633 7.361-4.025 10.284-7.034 6.039-6.103 9.417-14.349 9.396-22.935v-10.3c0-1.156.459-2.265 1.277-3.083.818-.818 1.927-1.277 3.083-1.277 1.156 0 2.265.459 3.083 1.277.817.818 1.277 1.935 1.277 3.091z"
             fill="#80ACFF" style="transition:opacity 0.2s ease"/>
         </svg>
-      </div>
-    </div>
+      </span>
+    </button>
 
     <!-- bar3 starts as the mic oval (blue pill). bar1,2,4,5 are invisible at first. -->
     <div class="bars" id="bars">

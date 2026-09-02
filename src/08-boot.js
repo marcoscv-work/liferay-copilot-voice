@@ -59,9 +59,11 @@
   function buildCmdList() {
     const ul = document.getElementById('cmdListUl');
     if (!ul || !flowsConfig) return;
+    /* Dynamic flows register commands whose phrases/ids derive from Liferay
+       Object names — escape everything. */
     ul.innerHTML = flowsConfig.globalCommands
       .filter(c => !c.hidden)
-      .map(c => `<li><button type="button" class="cmd-pill" data-cmd-id="${c.id}">${capitalize(c.phrases[0])}</button></li>`)
+      .map(c => `<li><button type="button" class="cmd-pill" data-cmd-id="${escapeHTML(c.id)}">${escapeHTML(capitalize(c.phrases[0]))}</button></li>`)
       .join('');
 
     ul.querySelectorAll('button[data-cmd-id]').forEach(btn => {
@@ -115,23 +117,25 @@
     const ul = document.getElementById('sidePanelList');
     if (!ul || !flowsConfig) return;
     const commands = getActiveCommands();
+    /* Labels/ids may derive from Liferay Object names in dynamic flows —
+       escape all data; only PILL_ICONS (static, ours) goes in raw. */
     let html = commands
       .filter(c => !c.hidden)
       .map(c => {
-        const cls  = c.style ? `cmd-pill cmd-pill-${c.style}` : 'cmd-pill';
+        const cls  = c.style ? `cmd-pill cmd-pill-${escapeHTML(c.style)}` : 'cmd-pill';
         const icon = (c.style && PILL_ICONS[c.style]) || '';
-        return `<li><button type="button" class="${cls}" data-cmd-id="${c.id}">${icon}${c.label}</button></li>`;
+        return `<li><button type="button" class="${cls}" data-cmd-id="${escapeHTML(c.id)}">${icon}${escapeHTML(c.label)}</button></li>`;
       })
       .join('');
 
     if (voicePhase === 'image') {
       const help = getStep('coverImage')?.voiceHelp ?? [];
       if (help.length) {
-        html += `<li class="voice-help-divider">${s('voiceHelpDivider')}</li>`;
+        html += `<li class="voice-help-divider">${escapeHTML(s('voiceHelpDivider'))}</li>`;
         html += help.map(h =>
           `<li class="voice-help-item">
-             <span class="voice-help-label">${h.label}</span>
-             <span class="voice-help-example">${h.example}</span>
+             <span class="voice-help-label">${escapeHTML(h.label)}</span>
+             <span class="voice-help-example">${escapeHTML(h.example)}</span>
            </li>`
         ).join('');
       }
@@ -217,8 +221,10 @@
     url.searchParams.delete('lang');
     location.replace(url.toString());
   }
-  /* Exposed for the toggle button click handler. */
-  window.__voiceSetLocale = setLocaleAndReload;
+  /* Corner-toggle listeners — no inline handlers (CSP-friendly, audit P2-7). */
+  document.querySelectorAll('.language-toggle [data-lang]').forEach(btn => {
+    btn.addEventListener('click', () => setLocaleAndReload(btn.dataset.lang));
+  });
 
   /* ─── DEV TOGGLE: live region viewer ───
      Toggles a `debug-live-regions` class on <body>. CSS rules in styles.css
@@ -239,7 +245,8 @@
     try { localStorage.setItem('debugLiveRegions', next ? '1' : '0'); } catch (_) {}
     applyLiveDebug(next);
   }
-  window.__voiceToggleLiveDebug = toggleLiveDebug;
+  document.querySelector('.dev-toggle [data-debug="live-regions"]')
+    ?.addEventListener('click', toggleLiveDebug);
 
   /* Assets resolve against the URL element.js was served from — inside the
      portal the document URL is the page, not the client extension's static
@@ -274,6 +281,10 @@
     buildCmdList();
     renderSidePanel();
     paintLocaleToggle(lang);
+    /* Establish the idle mode explicitly so every overlay starts inert —
+       before the first mode change the DOM would otherwise be visually
+       hidden (CSS) but still exposed to screen readers and Tab. */
+    setUiMode('idle');
     /* Restore the live-region debug toggle's persisted state. */
     let liveDebug = false;
     try { liveDebug = localStorage.getItem('debugLiveRegions') === '1'; } catch (_) {}
@@ -374,6 +385,21 @@
     toIdle();
   }
 
+  /* The keycap is a real button: click / Enter / Space-on-focus all toggle.
+     preventDefault in the global Space handler below stops the double fire
+     (keydown prevents the button's native activation). */
+  document.getElementById('keycap')
+    ?.addEventListener('click', () => activationToggle());
+
+  /* Escape dismisses whichever modal is open — same as answering "no" /
+     "cancel" / "volver" by voice. */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (voicePhase === 'submitConfirm')      { e.preventDefault(); dismissAiConfirm(); }
+    else if (voicePhase === 'aiReview')      { e.preventDefault(); answerAiReview(false); }
+    else if (voicePhase === 'formatList')    { e.preventDefault(); hideFormatList(); }
+  });
+
   document.addEventListener('keydown', e => {
     if (e.code !== (appConfig.activationKey?.code ?? 'Space')) return;
     if (e.repeat) return;
@@ -448,7 +474,7 @@
     });
   }
 
-  const TOUCH_INTERACTIVE = '.field-box, .carousel-card, .space-card, .cmd-pill, .img-carousel, .side-panel, .content-panel, .space-picker, .file-picker, .number-input-panel, .date-input-panel, .cmd-list, .ai-overlay';
+  const TOUCH_INTERACTIVE = '.keycap, .field-box, .carousel-card, .space-card, .cmd-pill, .img-carousel, .side-panel, .content-panel, .space-picker, .file-picker, .number-input-panel, .date-input-panel, .cmd-list, .ai-overlay';
   document.addEventListener('click', e => {
     const btn = e.target.closest?.('[data-field-mic]');
     if (!btn) return;

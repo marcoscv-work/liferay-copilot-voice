@@ -4,10 +4,11 @@
   "private": true,
   "description": "Voice-driven Liferay Copilot UI prototype (HTML + CSS + JS, no build step).",
   "scripts": {
-    "start":   "node dev-server.js",
-    "static":  "serve -p 8765 -L .",
-    "package":  "node scripts/package-client-extension.js",
-    "build:cx": "node scripts/build-client-extension.js"
+    "start": "node dev-server.js",
+    "static": "serve -p 8765 -L .",
+    "package": "node scripts/package-client-extension.js",
+    "build:cx": "node scripts/build-client-extension.js",
+    "test": "node --test test/format.test.js test/parsing.test.js test/security.test.js"
   },
   "devDependencies": {
     "serve": "^14.2.4"

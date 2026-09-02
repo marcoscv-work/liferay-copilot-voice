@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy — Liferay Copilot Voice</title>
+<meta name="description" content="What Liferay Copilot Voice captures, where speech recognition happens, and what leaves your portal.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='40' y='10' width='20' height='80' rx='10' fill='%235791ff'/><rect x='12' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/><rect x='74' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/></svg>">
+<link rel="stylesheet" href="./site.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="nav-logo" href="./index.html">
+      <span class="logo-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+      <span class="logo-text">Liferay Copilot Voice</span>
+    </a>
+    <div class="nav-links">
+      <a href="./index.html">← Back to the site</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+<section>
+  <div class="wrap" style="max-width:760px;">
+    <div class="sec-kicker">Privacy</div>
+    <h2>What the copilot hears, and where it goes</h2>
+    <p class="sec-lede">Short version: your microphone is only live while you activate it, speech recognition is handled by your browser, everything you author goes only to your own Liferay portal, and nothing else is collected.</p>
+
+    <h3 style="margin-top:40px;">Microphone</h3>
+    <p style="color:var(--cv-text-muted); margin-top:8px;">The microphone is used only after you press the activation key and your browser has granted permission. Audio powers two things: the animated bars (analysed locally, never recorded or stored) and speech recognition. Pressing the key again stops listening.</p>
+
+    <h3 style="margin-top:32px;">Speech recognition</h3>
+    <p style="color:var(--cv-text-muted); margin-top:8px;">Dictation uses your browser's Web Speech API. Depending on the browser and platform, the audio may be processed <strong>on-device or on the browser vendor's speech servers</strong> (this is a browser behaviour, controlled by your browser vendor's privacy policy — e.g. Google for Chrome, Apple for Safari). The copilot itself never sends audio anywhere.</p>
+
+    <h3 style="margin-top:32px;">Your content</h3>
+    <p style="color:var(--cv-text-muted); margin-top:8px;">Titles, bodies, files and field values you author are sent exclusively to <strong>your own Liferay portal</strong>, over the same authenticated session your browser already has, using Liferay's standard APIs. The copilot adds no third-party destination and no analytics, tracking, or cookies of its own.</p>
+
+    <h3 style="margin-top:32px;">Optional writing assistance</h3>
+    <p style="color:var(--cv-text-muted); margin-top:8px;">The "review formatting" step is a local, deterministic pass by default — no network involved. An administrator may optionally configure an external LLM endpoint (e.g. a Gemini-backed service); only then, and only when you run a review, are the current <strong>title, subtitle and body</strong> sent to that configured endpoint. If it is not configured, nothing ever leaves the portal. Ask your administrator whether assistance is enabled and which provider backs it.</p>
+
+    <h3 style="margin-top:32px;">Local storage</h3>
+    <p style="color:var(--cv-text-muted); margin-top:8px;">In the standalone development mode the app remembers your language choice and a developer toggle in your browser's localStorage. Inside a portal the language follows your Liferay profile instead. No identifiers are created.</p>
+
+    <h3 style="margin-top:32px;">Questions</h3>
+    <p style="color:var(--cv-text-muted); margin-top:8px;">Open an issue at <a href="https://github.com/marcoscv-work/liferay-copilot-voice/issues">github.com/marcoscv-work/liferay-copilot-voice</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Liferay Copilot Voice — a personal project by <a href="https://github.com/marcoscv-work">marcoscv-work</a>. Not an official Liferay product.</span>
+    <span><a href="./index.html">Home</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

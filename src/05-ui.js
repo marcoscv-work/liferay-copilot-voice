@@ -17,7 +17,9 @@
 
     if (label) {
       const el = document.getElementById('barsLabel');
-      el.innerHTML = CHECK_ICON_SVG + '<span>' + label + '</span>';
+      /* label may carry Liferay data (space/image names) — textContent it. */
+      el.innerHTML = CHECK_ICON_SVG + '<span></span>';
+      el.querySelector('span').textContent = label;
       el.classList.toggle('long', label.length > 8);
       el.classList.add('visible');
     }
@@ -51,6 +53,7 @@
     hintTimer = null;
     cmdHint.classList.remove('visible');
     cmdList.classList.remove('visible');
+    cmdList.inert = true;
   }
 
   function showCommandList() {
@@ -58,11 +61,13 @@
     if (appState === 'idle') return;
     cmdHint.classList.remove('visible');
     cmdList.classList.add('visible');
+    cmdList.inert = false; /* shown outside setUiMode — undo the idle inert */
     /* Read the available commands aloud — the visual list is useless to a
        SR user and "ayuda" is the most explicit moment they ask for it. */
     announce(ANNOUNCE_BUILDERS.helpCommandList());
     flowTimeout(() => {
       cmdList.classList.remove('visible');
+      cmdList.inert = true;
       if (voicePhase === 'command' && isListeningPhase()) startHintTimer();
     }, 7000);
   }
@@ -72,6 +77,8 @@
     const root = document.getElementById('formatListContent');
     const fc   = flowsConfig?.formatCommands;
     if (!root || !fc) return;
+    /* Audited template: formatCommands come only from the packaged
+       flows.{lang}.json — dynamic flow discovery never adds to them. */
     root.innerHTML = (fc.groups || []).map(g => `
       <div class="format-group">
         <div class="format-group-title">${g.title}</div>
@@ -181,19 +188,25 @@
     'space-create':      { voicePhase: 'spaceCreate',   corner: true,  hint: false, visible: ['spaceCreatePanel'],                                                                            announce: { fn: 'spaceCreatePrompt' } },
     'flow:image':        { voicePhase: 'image',         corner: true,  hint: false, visible: ['sidePanel', 'imgCarousel'],   keepFields: true,                                              announce: { fn: 'flowImagePrompt' } },
     'flow:options':      { voicePhase: 'options',       corner: true,  hint: false, visible: ['sidePanel', 'optionsPicker'],                                                                 announce: { fn: 'flowOptionsPrompt' } },
-    'flow:ai-confirm':   { voicePhase: 'submitConfirm', corner: true,  hint: false, visible: ['sidePanel', 'aiConfirm'],     keepFields: true,                                              announce: { stringKey: 'announceAiConfirm' } },
+    'flow:ai-confirm':   { voicePhase: 'submitConfirm', corner: true,  hint: false, visible: ['sidePanel', 'aiConfirm'],     keepFields: true, modal: true, focusTarget: 'aiConfirmYes',   announce: { stringKey: 'announceAiConfirm' } },
     /* Silent — would step on the ai-review announcement that lands ~500 ms
        later. The user already gets visual feedback (spinner) for this short
        interstitial. */
-    'flow:ai-loading':   { voicePhase: 'aiLoading',     corner: true,  hint: false, visible: ['sidePanel', 'aiModal'],       keepFields: true,                                              announce: null },
-    'flow:ai-review':    { voicePhase: 'aiReview',      corner: true,  hint: false, visible: ['sidePanel', 'aiModal'],       keepFields: true,                                              announce: { fn: 'aiReviewSummary' } },
-    'flow:format-list':  { voicePhase: 'formatList',    corner: true,  hint: false, visible: ['sidePanel', 'formatList'],    keepFields: true,                                              announce: { stringKey: 'announceFormatList' } },
+    'flow:ai-loading':   { voicePhase: 'aiLoading',     corner: true,  hint: false, visible: ['sidePanel', 'aiModal'],       keepFields: true, modal: true, focusTarget: 'aiModalCard',    announce: null },
+    'flow:ai-review':    { voicePhase: 'aiReview',      corner: true,  hint: false, visible: ['sidePanel', 'aiModal'],       keepFields: true, modal: true, focusTarget: 'aiResultAccept', announce: { fn: 'aiReviewSummary' } },
+    'flow:format-list':  { voicePhase: 'formatList',    corner: true,  hint: false, visible: ['sidePanel', 'formatList'],    keepFields: true, modal: true, focusTarget: 'formatList',     announce: { stringKey: 'announceFormatList' } },
     'submitted':         { voicePhase: 'command',       corner: false, hint: false, visible: ['sentMsg'],                                                                                   announce: { stringKey: 'announceSubmitted' } },
   };
 
   const FIELD_IDS = ['contentPanel', 'titleField', 'subtitleField', 'bodyField', 'dynamicTextFields'];
 
+  /* The overlays that ARE the dialog in modal modes — everything else goes
+     inert while one of them is open. */
+  const MODAL_SURFACE_IDS = new Set(['aiConfirm', 'aiModal', 'formatList']);
+
   let uiMode = 'idle';
+  /* Element that held focus before a modal opened — restored on close. */
+  let modalReturnFocus = null;
 
   /* ─── ACCESSIBILITY ANNOUNCEMENTS ───
      Single primitive: announce(text, level). Two SR-only live regions in the
@@ -337,12 +350,51 @@
     /* 1. Overlays — declarative add/remove. keepFields modes don't touch
        the dictation field overlays so existing field state survives the
        transition (e.g. opening the carousel from flow:body keeps title/body
-       visible underneath). */
+       visible underneath).
+       Visibility is CSS (opacity/transitions) but `inert` is the source of
+       truth for the accessibility tree and Tab order: hidden overlays must
+       not be focusable or readable, and during a modal everything except
+       the dialog goes inert — that IS the focus trap. */
     const visible = new Set(def.visible || []);
     if (def.includeSubtitleIfHas && hasSubtitleStep()) visible.add('subtitleField');
+    const isModal = !!def.modal;
     for (const id of TRACKED_OVERLAYS) {
-      if (def.keepFields && FIELD_IDS.includes(id)) continue;
-      document.getElementById(id)?.classList.toggle('visible', visible.has(id));
+      const el = document.getElementById(id);
+      if (!el) continue;
+      if (def.keepFields && FIELD_IDS.includes(id)) {
+        /* Kept visible in the background; non-interactive under a modal. */
+        el.inert = isModal;
+        continue;
+      }
+      const show = visible.has(id);
+      el.classList.toggle('visible', show);
+      el.inert = !show || (isModal && !MODAL_SURFACE_IDS.has(id));
+    }
+    /* Untracked chrome (corner toggles, banner, keycap) joins the trap. */
+    for (const el of [
+      document.querySelector('.language-toggle'),
+      document.querySelector('.dev-toggle'),
+      document.getElementById('liferayError'),
+      document.getElementById('keycap'),
+    ]) {
+      if (el) el.inert = isModal;
+    }
+
+    /* 1b. Modal focus management: remember where focus was, move it into
+       the dialog on open, give it back on close. */
+    const wasModal = !!MODES[prevMode]?.modal;
+    if (isModal && !wasModal) modalReturnFocus = document.activeElement;
+    if (isModal && prevMode !== mode) {
+      const target = def.focusTarget && document.getElementById(def.focusTarget);
+      /* setTimeout, not rAF — rAF starves in hidden/backgrounded tabs. */
+      if (target) setTimeout(() => target.focus(), 0);
+    }
+    if (!isModal && wasModal) {
+      const back = modalReturnFocus;
+      modalReturnFocus = null;
+      if (back && document.contains(back) && !back.closest('[inert]')) {
+        setTimeout(() => back.focus(), 0);
+      }
     }
 
     /* 2. Corner — instant transform/class. */
@@ -395,9 +447,14 @@
   }
 
   function toCorner() {
-    const s  = 0.34;
-    const tx = window.innerWidth  / 2 - 80;
-    const ty = -(window.innerHeight / 2 - 60);
+    /* Offsets derive from the keycap's real size so the corner position fits
+       any viewport (fixed 80/60px margins pushed it offscreen on phones). */
+    const s      = window.innerWidth < 720 ? 0.28 : 0.34;
+    const kw     = (keycap?.offsetWidth  || 350) * s;
+    const kh     = (keycap?.offsetHeight || 230) * s;
+    const margin = window.innerWidth < 720 ? 10 : 24;
+    const tx =  (window.innerWidth  - kw) / 2 - margin;
+    const ty = -((window.innerHeight - kh) / 2 - margin);
     keycapWrap.style.transform       = `translate(${tx}px, ${ty}px) scale(${s})`;
     keycapWrap.style.transformOrigin = 'center center';
     keycapWrap.classList.add('in-corner');
@@ -470,11 +527,13 @@
     ul.innerHTML = '';
     api.getSpaces().forEach((sp, i) => {
       const li    = document.createElement('li');
-      const card  = document.createElement('div');
+      const card  = document.createElement('button');
+      card.type = 'button';
       const color = sp.color || SPACE_COLORS[i % SPACE_COLORS.length];
       card.className = 'space-card sticker-' + color;
       card.textContent = sp.name;
       card.dataset.spaceId = sp.id;
+      card.setAttribute('aria-pressed', 'false');
       card.addEventListener('click', () => selectSpace(sp));
       li.appendChild(card);
       ul.appendChild(li);
@@ -485,8 +544,11 @@
     if (!space || selectedSpace?.id === space.id) return;
     selectedSpace = space;
     spaceMatchOnInterim = false;
-    document.querySelectorAll('.space-card').forEach(c =>
-      c.classList.toggle('selected', c.dataset.spaceId === space.id));
+    document.querySelectorAll('.space-card').forEach(c => {
+      const sel = c.dataset.spaceId === space.id;
+      c.classList.toggle('selected', sel);
+      c.setAttribute('aria-pressed', sel ? 'true' : 'false');
+    });
     flashCommandDetected(s('spaceFlash', { name: space.name }));
     announce(s('announceSpaceSelected', { name: space.name }));
     /* Pre-warm the cover-image cache as soon as the space is picked, so the

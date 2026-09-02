@@ -71,10 +71,29 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	display: none;
 }
 
+/* Pickers are real <button>s for keyboard/AT users. This early reset
+   flattens the UA button chrome; the component rules further down (borders,
+   backgrounds, padding per card type) override it as before. */
+liferay-copilot-voice .space-card,
+liferay-copilot-voice .option-card,
+liferay-copilot-voice .carousel-card {
+	appearance: none;
+	-webkit-appearance: none;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	text-align: inherit;
+	cursor: pointer;
+	display: block;
+}
+
 /* Visually hidden, still in the accessibility tree. Standard pattern for
    live regions consumed by screen readers (#liveStatus, #liveAlert) and
    any other text we want spoken but not painted. */
-.sr-only {
+liferay-copilot-voice .sr-only {
 	position: absolute;
 	width: 1px;
 	height: 1px;
@@ -86,7 +105,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	border: 0;
 }
 
-.stage {
+liferay-copilot-voice .stage {
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -96,7 +115,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 }
 /* Space-creation panel opened from the banner while idle — the full-size
    keycap would overlap the panel, so it fades out for the duration. */
-.stage.hide-keycap .keycap-wrap {
+liferay-copilot-voice .stage.hide-keycap .keycap-wrap {
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.2s ease;
@@ -105,16 +124,16 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 /* Copilot unusable (guest, unreachable Liferay, no spaces): don't invite
    interaction — dim and desaturate the keycap and drop the "press SPACE"
    hint. The banner explains the reason and carries the fix. */
-.stage.copilot-blocked .keycap-wrap {
+liferay-copilot-voice .stage.copilot-blocked .keycap-wrap {
 	opacity: 0.45;
 	filter: grayscale(1);
 	transition: opacity 0.3s ease, filter 0.3s ease;
 }
-.stage.copilot-blocked .hint {
+liferay-copilot-voice .stage.copilot-blocked .hint {
 	visibility: hidden;
 }
 
-.hint {
+liferay-copilot-voice .hint {
 	position: absolute;
 	bottom: 80px;
 	left: 50%;
@@ -125,7 +144,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	transition: opacity 0.4s ease;
 	white-space: nowrap;
 }
-.hint.hidden {
+liferay-copilot-voice .hint.hidden {
 	opacity: 0;
 	pointer-events: none;
 }
@@ -133,7 +152,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 /* Language toggle — hidden by default in the bottom-left corner.
    A `::before` pseudo-element creates an enlarged invisible hover zone so
    the toggle fades in as soon as the cursor approaches the corner. */
-.language-toggle {
+liferay-copilot-voice .language-toggle {
 	position: absolute;
 	bottom: 16px;
 	left: 16px;
@@ -157,20 +176,20 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 /* Enlarged invisible hover zone. Sits *behind* the buttons (z-index: -1)
    so it picks up hover near the corner without intercepting clicks on
    the toggle itself. */
-.language-toggle::before {
+liferay-copilot-voice .language-toggle::before {
 	content: '';
 	position: absolute;
 	inset: -28px -40px -16px -16px;
 	pointer-events: auto;
 	z-index: -1;
 }
-.language-toggle:hover,
-.language-toggle:focus-within {
+liferay-copilot-voice .language-toggle:hover,
+liferay-copilot-voice .language-toggle:focus-within {
 	opacity: 1;
 	transform: translateY(0);
 	pointer-events: auto;
 }
-.language-toggle button {
+liferay-copilot-voice .language-toggle button {
 	appearance: none;
 	border: none;
 	background: transparent;
@@ -185,10 +204,10 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		background 0.15s ease,
 		color 0.15s ease;
 }
-.language-toggle button:hover {
+liferay-copilot-voice .language-toggle button:hover {
 	color: var(--cv-brand, #5791ff);
 }
-.language-toggle button.active {
+liferay-copilot-voice .language-toggle button.active {
 	background: var(--cv-brand, #5791ff);
 	color: #fff;
 }
@@ -197,7 +216,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    for debug / dev switches (live region viewer, future inspectors, etc.).
    Same hover-reveal pattern: invisible by default, fades in when the cursor
    approaches the corner. */
-.dev-toggle {
+liferay-copilot-voice .dev-toggle {
 	position: absolute;
 	bottom: 16px;
 	right: 16px;
@@ -216,20 +235,20 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.25s ease;
 	pointer-events: none;
 }
-.dev-toggle::before {
+liferay-copilot-voice .dev-toggle::before {
 	content: '';
 	position: absolute;
 	inset: -28px -16px -16px -40px;
 	pointer-events: auto;
 	z-index: -1;
 }
-.dev-toggle:hover,
-.dev-toggle:focus-within {
+liferay-copilot-voice .dev-toggle:hover,
+liferay-copilot-voice .dev-toggle:focus-within {
 	opacity: 1;
 	transform: translateY(0);
 	pointer-events: auto;
 }
-.dev-toggle button {
+liferay-copilot-voice .dev-toggle button {
 	appearance: none;
 	border: none;
 	background: transparent;
@@ -244,14 +263,14 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		background 0.15s ease,
 		color 0.15s ease;
 }
-.dev-toggle button:hover {
+liferay-copilot-voice .dev-toggle button:hover {
 	color: var(--cv-brand, #5791ff);
 }
-.dev-toggle button.active {
+liferay-copilot-voice .dev-toggle button.active {
 	background: var(--cv-brand, #5791ff);
 	color: #fff;
 }
-.dev-toggle-link {
+liferay-copilot-voice .dev-toggle-link {
 	display: inline-flex;
 	align-items: center;
 	padding: 4px 10px;
@@ -265,7 +284,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		background 0.15s ease,
 		color 0.15s ease;
 }
-.dev-toggle-link:hover {
+liferay-copilot-voice .dev-toggle-link:hover {
 	color: var(--cv-brand, #5791ff);
 }
 
@@ -274,8 +293,8 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    left, alert on the right. Color-coded by role. Empty regions are
    collapsed so old text doesn't linger after it's been read.
    The selector overrides `.sr-only` via specificity (body class + id). */
-.debug-live-regions #liveStatus,
-.debug-live-regions #liveAlert {
+.debug-live-regions liferay-copilot-voice #liveStatus,
+.debug-live-regions liferay-copilot-voice #liveAlert {
 	position: fixed;
 	top: 16px;
 	width: auto;
@@ -295,24 +314,24 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	pointer-events: none;
 	box-shadow: 0 6px 20px rgba(39, 40, 51, 0.14);
 }
-.debug-live-regions #liveStatus {
+.debug-live-regions liferay-copilot-voice #liveStatus {
 	left: 16px;
 	background: #e6f0ff;
 	border-color: var(--cv-brand, #5791ff);
 	color: #1e3a8a;
 }
-.debug-live-regions #liveAlert {
+.debug-live-regions liferay-copilot-voice #liveAlert {
 	right: 16px;
 	background: #fee2e2;
 	border-color: var(--cv-danger, #ef4444);
 	color: #991b1b;
 }
-.debug-live-regions #liveStatus:empty,
-.debug-live-regions #liveAlert:empty {
+.debug-live-regions liferay-copilot-voice #liveStatus:empty,
+.debug-live-regions liferay-copilot-voice #liveAlert:empty {
 	display: none;
 }
-.debug-live-regions #liveStatus::before,
-.debug-live-regions #liveAlert::before {
+.debug-live-regions liferay-copilot-voice #liveStatus::before,
+.debug-live-regions liferay-copilot-voice #liveAlert::before {
 	display: block;
 	font-size: 9px;
 	font-weight: 700;
@@ -320,16 +339,16 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	opacity: 0.6;
 	margin-bottom: 3px;
 }
-.debug-live-regions #liveStatus::before {
+.debug-live-regions liferay-copilot-voice #liveStatus::before {
 	content: 'STATUS · polite';
 }
-.debug-live-regions #liveAlert::before {
+.debug-live-regions liferay-copilot-voice #liveAlert::before {
 	content: 'ALERT · assertive';
 }
 
 /* Persistent connectivity error banner. Shown when a Liferay request fails
    (preload of spaces, image fetch, submit). Manually dismissable. */
-.liferay-error {
+liferay-copilot-voice .liferay-error {
 	position: absolute;
 	top: 16px;
 	left: 50%;
@@ -348,15 +367,15 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	z-index: 70;
 	box-shadow: 0 6px 20px rgba(239, 68, 68, 0.18);
 }
-.liferay-error[hidden] {
+liferay-copilot-voice .liferay-error[hidden] {
 	display: none;
 }
-.liferay-error-icon {
+liferay-copilot-voice .liferay-error-icon {
 	width: 16px;
 	height: 16px;
 	flex-shrink: 0;
 }
-.liferay-error-text {
+liferay-copilot-voice .liferay-error-text {
 	/* basis auto (not 0) so the banner's shrink-to-fit width accounts for
 	   the text — with basis 0 the text got squeezed into the leftover space
 	   and wrapped word-by-word into a tall narrow column. */
@@ -364,7 +383,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	min-width: 0;
 	line-height: 1.4;
 }
-.liferay-error-config {
+liferay-copilot-voice .liferay-error-config {
 	color: inherit;
 	font-size: 12px;
 	font-weight: 600;
@@ -375,8 +394,8 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	flex-shrink: 0;
 	padding: 0 2px;
 }
-.liferay-error-config:hover { opacity: 1; }
-.liferay-error-retry {
+liferay-copilot-voice .liferay-error-config:hover { opacity: 1; }
+liferay-copilot-voice .liferay-error-retry {
 	appearance: none;
 	border: none;
 	background: var(--cv-danger, #ef4444);
@@ -390,14 +409,14 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	flex-shrink: 0;
 	transition: background 0.15s ease;
 }
-.liferay-error-retry:hover {
+liferay-copilot-voice .liferay-error-retry:hover {
 	background: #dc2626;
 }
-.liferay-error-retry:disabled {
+liferay-copilot-voice .liferay-error-retry:disabled {
 	opacity: 0.65;
 	cursor: wait;
 }
-.liferay-error-dismiss {
+liferay-copilot-voice .liferay-error-dismiss {
 	appearance: none;
 	border: none;
 	background: transparent;
@@ -409,12 +428,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	line-height: 1;
 	border-radius: 4px;
 }
-.liferay-error-dismiss:hover {
+liferay-copilot-voice .liferay-error-dismiss:hover {
 	background: rgba(239, 68, 68, 0.12);
 }
 
 /* ── Content creation panel — centered in viewport ── */
-.content-panel {
+liferay-copilot-voice .content-panel {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -428,28 +447,28 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.4s ease;
 	pointer-events: none;
 }
-.content-panel.visible {
+liferay-copilot-voice .content-panel.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.content-field {
+liferay-copilot-voice .content-field {
 	margin-bottom: 12px;
 	opacity: 0;
 	transition: opacity 0.3s ease;
 }
-.content-field.visible {
+liferay-copilot-voice .content-field.visible {
 	opacity: 1;
 }
 /* Subtitle field belongs to the blog flow only. Until it's marked visible
    it should not occupy any vertical space (otherwise content flows show a
    ghost gap between title and body). */
-#subtitleField:not(.visible) {
+liferay-copilot-voice #subtitleField:not(.visible) {
 	display: none;
 }
 
 /* Input-style boxes matching the screenshot */
-.field-box {
+liferay-copilot-voice .field-box {
 	background: #fff;
 	border: 1px solid var(--cv-neutral, #e7e7ed);
 	border-radius: 12px;
@@ -458,7 +477,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	display: flex;
 	align-items: center;
 }
-.field-box.body-box {
+liferay-copilot-voice .field-box.body-box {
 	min-height: 120px;
 	max-height: 60vh;
 	overflow-y: auto;
@@ -469,8 +488,8 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    are native — we don't reimplement them. While the STT is delivering an
    interim transcript the whole text turns light blue via `.field-interim`
    on the input itself; on `final` the class drops back to default. */
-.field-input,
-.field-textarea {
+liferay-copilot-voice .field-input,
+liferay-copilot-voice .field-textarea {
 	flex: 1;
 	width: 100%;
 	min-width: 0;
@@ -487,24 +506,24 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	resize: none;
 	font-family: inherit;
 }
-.field-textarea {
+liferay-copilot-voice .field-textarea {
 	max-height: 36vh;
 	overflow-y: auto;
 }
-.field-input::placeholder,
-.field-textarea::placeholder {
+liferay-copilot-voice .field-input::placeholder,
+liferay-copilot-voice .field-textarea::placeholder {
 	/* Placeholder text counts as text for WCAG contrast — the old border
 	   gray sat at 1.5:1. */
 	color: var(--cv-text-faint, #6d6f85);
 	opacity: 1; /* Firefox lowers it by default */
 }
-.field-input.field-interim,
-.field-textarea.field-interim {
+liferay-copilot-voice .field-input.field-interim,
+liferay-copilot-voice .field-textarea.field-interim {
 	color: var(--cv-brand-soft, #80acff);
 }
 
 /* ── Active dictation field — pulse + mic ── */
-.field-mic {
+liferay-copilot-voice .field-mic {
 	flex-shrink: 0;
 	margin-left: 12px;
 	color: var(--cv-brand, #5791ff);
@@ -522,46 +541,46 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	transition: opacity 0.3s ease;
 	-webkit-tap-highlight-color: transparent;
 }
-.field-mic:focus-visible {
+liferay-copilot-voice .field-mic:focus-visible {
 	outline: 2px solid var(--cv-brand-soft, #80acff);
 	outline-offset: 3px;
 }
-.field-mic-icon {
+liferay-copilot-voice .field-mic-icon {
 	width: 18px;
 	height: 18px;
 	display: block;
 }
-.field-mic-muted-icon {
+liferay-copilot-voice .field-mic-muted-icon {
 	display: none;
 }
-.field-box.dictating {
+liferay-copilot-voice .field-box.dictating {
 	border-color: var(--cv-brand-soft, #80acff);
 	animation: field-glow 1.6s ease-in-out infinite;
 }
-.field-box.dictating .field-mic {
+liferay-copilot-voice .field-box.dictating .field-mic {
 	opacity: 1;
 	animation: mic-pulse 1.4s ease-in-out infinite;
 	transform-origin: center;
 }
-.field-box.dictating.mic-muted {
+liferay-copilot-voice .field-box.dictating.mic-muted {
 	border-color: var(--cv-border, #cdced9);
 	animation: none;
 }
-.field-box.dictating .field-mic.muted {
+liferay-copilot-voice .field-box.dictating .field-mic.muted {
 	color: var(--cv-text-muted, #6b6c7e);
 	background: #f1f2f5;
 	animation: none;
 }
-.field-mic.muted .field-mic-on-icon {
+liferay-copilot-voice .field-mic.muted .field-mic-on-icon {
 	display: none;
 }
-.field-mic.muted .field-mic-muted-icon {
+liferay-copilot-voice .field-mic.muted .field-mic-muted-icon {
 	display: block;
 }
-.field-box.mic-hidden {
+liferay-copilot-voice .field-box.mic-hidden {
 	padding-right: 12px;
 }
-.field-box.mic-hidden .field-mic {
+liferay-copilot-voice .field-box.mic-hidden .field-mic {
 	display: none;
 }
 @keyframes field-glow {
@@ -587,7 +606,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 
 /* ── Image carousel ──
      Spans from below the corner keycap area down to near the viewport bottom. */
-.img-carousel {
+liferay-copilot-voice .img-carousel {
 	position: absolute;
 	right: 32px;
 	top: 130px;
@@ -616,11 +635,11 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transparent 100%
 	);
 }
-.img-carousel.visible {
+liferay-copilot-voice .img-carousel.visible {
 	opacity: 1;
 	pointer-events: auto;
 }
-.carousel-track {
+liferay-copilot-voice .carousel-track {
 	display: flex;
 	flex-direction: column;
 	gap: var(--carousel-gap);
@@ -632,7 +651,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
      produces the pop-in effect when the loop wraps around. */
 	will-change: transform;
 }
-.carousel-empty {
+liferay-copilot-voice .carousel-empty {
 	position: absolute;
 	inset: 0;
 	display: flex;
@@ -646,7 +665,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	background: #fff;
 	border-radius: 16px;
 }
-.carousel-empty[hidden] {
+liferay-copilot-voice .carousel-empty[hidden] {
 	display: none;
 }
 /* Seamless loop math:
@@ -667,7 +686,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform: translateY(calc(-1 * var(--carousel-period, 100%)));
 	}
 }
-.carousel-card {
+liferay-copilot-voice .carousel-card {
 	position: relative;
 	width: 192px;
 	flex-shrink: 0;
@@ -681,10 +700,10 @@ liferay-copilot-voice.in-portal .liferay-error-config {
      full size up-front (avoids late-paint pop-in when scrolling). */
 	transform: translateZ(0);
 }
-.carousel-card:hover {
+liferay-copilot-voice .carousel-card:hover {
 	box-shadow: 0 4px 20px rgba(87, 145, 255, 0.25);
 }
-.carousel-card::after {
+liferay-copilot-voice .carousel-card::after {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -694,17 +713,17 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	opacity: 0;
 	transition: opacity 0.2s ease;
 }
-.carousel-card.selected::after {
+liferay-copilot-voice .carousel-card.selected::after {
 	opacity: 1;
 }
-.carousel-card-img {
+liferay-copilot-voice .carousel-card-img {
 	width: 192px;
 	height: 120px;
 	display: block;
 	object-fit: cover;
 	position: relative;
 }
-.carousel-card-number {
+liferay-copilot-voice .carousel-card-number {
 	position: absolute;
 	top: 8px;
 	left: 8px;
@@ -720,7 +739,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-weight: 700;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
-.carousel-card-name {
+liferay-copilot-voice .carousel-card-name {
 	padding: 8px 12px;
 	font-size: 12px;
 	font-weight: 500;
@@ -731,7 +750,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 }
 
 /* ── Cancel confirmation pill (shown after first SPACE press during a flow) ── */
-.cancel-confirm {
+liferay-copilot-voice .cancel-confirm {
 	position: fixed;
 	bottom: 80px;
 	left: 50%;
@@ -750,15 +769,15 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	white-space: nowrap;
 	animation: cancel-confirm-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.cancel-confirm[hidden] {
+liferay-copilot-voice .cancel-confirm[hidden] {
 	display: none;
 }
-.cancel-confirm-icon {
+liferay-copilot-voice .cancel-confirm-icon {
 	width: 16px;
 	height: 16px;
 	flex-shrink: 0;
 }
-.cancel-confirm-text strong {
+liferay-copilot-voice .cancel-confirm-text strong {
 	font-weight: 700;
 }
 @keyframes cancel-confirm-in {
@@ -773,7 +792,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 }
 
 /* ── Form validation error (above content fields) ── */
-.form-error {
+liferay-copilot-voice .form-error {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -787,10 +806,10 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	margin-bottom: 12px;
 	animation: form-error-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.form-error[hidden] {
+liferay-copilot-voice .form-error[hidden] {
 	display: none;
 }
-.form-error-icon {
+liferay-copilot-voice .form-error-icon {
 	width: 18px;
 	height: 18px;
 	flex-shrink: 0;
@@ -807,7 +826,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 }
 
 /* ── Cover thumbnail above title field ── */
-.cover-thumb {
+liferay-copilot-voice .cover-thumb {
 	width: 100%;
 	height: 0;
 	margin-bottom: 0;
@@ -821,7 +840,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		margin-bottom 0.45s ease,
 		opacity 0.35s ease;
 }
-.cover-thumb.visible {
+liferay-copilot-voice .cover-thumb.visible {
 	height: 120px;
 	margin-bottom: 12px;
 	opacity: 1;
@@ -832,16 +851,16 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    the user has picked, so they remain visible while dictating other
    fields. Mirrors the cover-thumb pattern: invisible by default, slides
    in when at least one non-text field has a value. */
-.field-summary {
+liferay-copilot-voice .field-summary {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 	margin-bottom: 12px;
 }
-.field-summary[hidden] {
+liferay-copilot-voice .field-summary[hidden] {
 	display: none;
 }
-.field-summary-pill {
+liferay-copilot-voice .field-summary-pill {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -857,20 +876,20 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-family: inherit;
 	transition: filter 0.15s ease;
 }
-.field-summary-pill:hover {
+liferay-copilot-voice .field-summary-pill:hover {
 	filter: brightness(0.93);
 }
-.field-summary-pill .field-summary-label {
+liferay-copilot-voice .field-summary-pill .field-summary-label {
 	color: var(--cv-text-muted, #6b6c7e);
 	font-weight: 500;
 }
-.field-summary-pill .field-summary-value {
+liferay-copilot-voice .field-summary-pill .field-summary-value {
 	color: var(--cv-brand-strong, #005fcc);
 	font-weight: 600;
 }
 
 /* ── Space picker (first step of createWebContent flow) ── */
-.space-picker {
+liferay-copilot-voice .space-picker {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -883,12 +902,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.4s ease;
 	text-align: center;
 }
-.space-picker.visible {
+liferay-copilot-voice .space-picker.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.space-picker-prompt {
+liferay-copilot-voice .space-picker-prompt {
 	font-size: 24px;
 	color: var(--cv-text, #272829);
 	margin-bottom: 24px;
@@ -896,14 +915,14 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	letter-spacing: -0.005em;
 	line-height: 1.3;
 }
-.space-list {
+liferay-copilot-voice .space-list {
 	list-style: none;
 	display: flex;
 	gap: 10px;
 	flex-wrap: wrap;
 	justify-content: center;
 }
-.space-card {
+liferay-copilot-voice .space-card {
 	background: #fff;
 	border: 1px solid var(--cv-neutral, #e7e7ed);
 	border-radius: 12px;
@@ -917,67 +936,67 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		box-shadow 0.2s ease,
 		transform 0.15s ease;
 }
-.space-card:hover {
+liferay-copilot-voice .space-card:hover {
 	box-shadow: 0 4px 16px rgba(87, 145, 255, 0.18);
 	transform: translateY(-1px);
 }
-.space-card.selected {
+liferay-copilot-voice .space-card.selected {
 	box-shadow:
 		0 0 0 2px currentColor inset,
 		0 4px 16px rgba(87, 145, 255, 0.2);
 }
 /* Liferay CMS sticker palette (exact hex from `.sticker-outline-N` classes). */
-.space-card.sticker-outline {
+liferay-copilot-voice .space-card.sticker-outline {
 	background: #e5f1ff;
 	border-color: var(--cv-brand-strong, #005fcc);
 	color: var(--cv-brand-strong, #005fcc);
 }
-.space-card.sticker-outline-0 {
+liferay-copilot-voice .space-card.sticker-outline-0 {
 	background: #f1f2f5;
 	border-color: #272833;
 	color: #272833;
 }
-.space-card.sticker-outline-1 {
+liferay-copilot-voice .space-card.sticker-outline-1 {
 	background: #f2e5ff;
 	border-color: #aa33ff;
 	color: #aa33ff;
 }
-.space-card.sticker-outline-2 {
+liferay-copilot-voice .space-card.sticker-outline-2 {
 	background: #fff8e5;
 	border-color: #b38900;
 	color: #b38900;
 }
-.space-card.sticker-outline-3 {
+liferay-copilot-voice .space-card.sticker-outline-3 {
 	background: #f1fce9;
 	border-color: #458613;
 	color: #458613;
 }
-.space-card.sticker-outline-4 {
+liferay-copilot-voice .space-card.sticker-outline-4 {
 	background: #ffe5e5;
 	border-color: #e60000;
 	color: #e60000;
 }
-.space-card.sticker-outline-5 {
+liferay-copilot-voice .space-card.sticker-outline-5 {
 	background: #fff0e5;
 	border-color: #cc4e00;
 	color: #cc4e00;
 }
-.space-card.sticker-outline-6 {
+liferay-copilot-voice .space-card.sticker-outline-6 {
 	background: #eafbf8;
 	border-color: #1b7e6e;
 	color: #1b7e6e;
 }
-.space-card.sticker-outline-7 {
+liferay-copilot-voice .space-card.sticker-outline-7 {
 	background: #e5f6ff;
 	border-color: #0077b3;
 	color: #0077b3;
 }
-.space-card.sticker-outline-8 {
+liferay-copilot-voice .space-card.sticker-outline-8 {
 	background: #ffe5f4;
 	border-color: #e50082;
 	color: #800048;
 }
-.space-card.sticker-outline-9 {
+liferay-copilot-voice .space-card.sticker-outline-9 {
 	background: #fff;
 	border-color: #393a4a;
 	color: #393a4a;
@@ -987,7 +1006,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    Visually mirrors space-picker: prompt + horizontal list of cards. Each
    card shows the position number and the option name; voice can match
    either ("uno" / "opción 1" / the literal name). */
-.options-picker {
+liferay-copilot-voice .options-picker {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -1000,12 +1019,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.4s ease;
 	text-align: center;
 }
-.options-picker.visible {
+liferay-copilot-voice .options-picker.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.options-picker-prompt {
+liferay-copilot-voice .options-picker-prompt {
 	font-size: 24px;
 	color: var(--cv-text, #272829);
 	margin-bottom: 24px;
@@ -1013,14 +1032,14 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	letter-spacing: -0.005em;
 	line-height: 1.3;
 }
-.options-list {
+liferay-copilot-voice .options-list {
 	list-style: none;
 	display: flex;
 	gap: 10px;
 	flex-wrap: wrap;
 	justify-content: center;
 }
-.option-card {
+liferay-copilot-voice .option-card {
 	background: #fff;
 	border: 1px solid var(--cv-border, #cdced9);
 	border-radius: 12px;
@@ -1037,18 +1056,18 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		box-shadow 0.2s ease,
 		transform 0.15s ease;
 }
-.option-card:hover {
+liferay-copilot-voice .option-card:hover {
 	box-shadow: 0 4px 16px rgba(87, 145, 255, 0.18);
 	transform: translateY(-1px);
 	border-color: var(--cv-brand, #5791ff);
 }
-.option-card.selected {
+liferay-copilot-voice .option-card.selected {
 	box-shadow:
 		0 0 0 2px var(--cv-brand, #5791ff) inset,
 		0 4px 16px rgba(87, 145, 255, 0.2);
 	border-color: var(--cv-brand, #5791ff);
 }
-.option-card-number {
+liferay-copilot-voice .option-card-number {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -1062,26 +1081,26 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
 }
-.option-card.selected .option-card-number {
+liferay-copilot-voice .option-card.selected .option-card-number {
 	background: #e5f1ff;
 	color: var(--cv-brand-strong, #005fcc);
 }
 
 /* ── Dynamic extra Text fields (3rd+ in Object-driven flows) ── */
-.dynamic-text-field {
+liferay-copilot-voice .dynamic-text-field {
 	margin-bottom: 12px;
 }
-.dynamic-text-field .field-box.dictating {
+liferay-copilot-voice .dynamic-text-field .field-box.dictating {
 	border-color: var(--cv-brand-soft, #80acff);
 	animation: field-glow 1.6s ease-in-out infinite;
 }
-.dynamic-text-field .field-box.dictating .field-mic {
+liferay-copilot-voice .dynamic-text-field .field-box.dictating .field-mic {
 	opacity: 1;
 	animation: mic-pulse 1.4s ease-in-out infinite;
 }
 
 /* ── Number input panel (Integer / Long / Double / BigDecimal fields) ── */
-.number-input-panel {
+liferay-copilot-voice .number-input-panel {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -1094,12 +1113,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.4s ease;
 	text-align: center;
 }
-.number-input-panel.visible {
+liferay-copilot-voice .number-input-panel.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.number-input-prompt {
+liferay-copilot-voice .number-input-prompt {
 	font-size: 24px;
 	color: var(--cv-text, #272829);
 	margin-bottom: 24px;
@@ -1107,7 +1126,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	letter-spacing: -0.005em;
 	line-height: 1.3;
 }
-.number-input-card {
+liferay-copilot-voice .number-input-card {
 	background: #fff;
 	border: 1px solid var(--cv-border, #cdced9);
 	border-radius: 16px;
@@ -1117,7 +1136,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	justify-content: center;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.number-input-field {
+liferay-copilot-voice .number-input-field {
 	font-size: 32px;
 	font-weight: 300;
 	color: var(--cv-text, #272829);
@@ -1129,31 +1148,31 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	caret-color: var(--cv-brand, #5791ff);
 	font-family: inherit;
 }
-.number-input-field::placeholder { color: var(--cv-text-faint, #6d6f85); }
+liferay-copilot-voice .number-input-field::placeholder { color: var(--cv-text-faint, #6d6f85); }
 /* The space-name field holds words, not digits — wider, and once the text
    overflows it left-aligns (centered text clips both edges) with the tail
    kept in view by syncSpaceCreateOverflow(). */
-#spaceCreateField {
+liferay-copilot-voice #spaceCreateField {
 	width: min(420px, calc(100vw - 120px));
 	font-size: 26px;
 }
-#spaceCreateField.overflowing { text-align: left; }
-.number-input-field::-webkit-outer-spin-button,
-.number-input-field::-webkit-inner-spin-button { -webkit-appearance: none; }
-.number-input-hint {
+liferay-copilot-voice #spaceCreateField.overflowing { text-align: left; }
+liferay-copilot-voice .number-input-field::-webkit-outer-spin-button,
+liferay-copilot-voice .number-input-field::-webkit-inner-spin-button { -webkit-appearance: none; }
+liferay-copilot-voice .number-input-hint {
 	margin-top: 16px;
 	font-size: 14px;
 	color: var(--cv-text-muted, #6b6c7e);
 }
-.number-input-panel.dictating .number-input-card {
+liferay-copilot-voice .number-input-panel.dictating .number-input-card {
 	border-color: var(--cv-brand-soft, #80acff);
 	animation: field-glow 1.6s ease-in-out infinite;
 }
 
-.input-hint-error { color: #f87171; }
+liferay-copilot-voice .input-hint-error { color: #f87171; }
 
 /* ── Date input panel (Date / DateTime fields) ── */
-.date-input-panel {
+liferay-copilot-voice .date-input-panel {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -1166,12 +1185,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.4s ease;
 	text-align: center;
 }
-.date-input-panel.visible {
+liferay-copilot-voice .date-input-panel.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.date-input-prompt {
+liferay-copilot-voice .date-input-prompt {
 	font-size: 24px;
 	color: var(--cv-text, #272829);
 	margin-bottom: 24px;
@@ -1179,7 +1198,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	letter-spacing: -0.005em;
 	line-height: 1.3;
 }
-.date-input-card {
+liferay-copilot-voice .date-input-card {
 	background: #fff;
 	border: 1px solid var(--cv-border, #cdced9);
 	border-radius: 16px;
@@ -1189,7 +1208,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	justify-content: center;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.date-input-field {
+liferay-copilot-voice .date-input-field {
 	font-size: 22px;
 	font-weight: 300;
 	color: var(--cv-text, #272829);
@@ -1200,18 +1219,18 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-family: inherit;
 	caret-color: var(--cv-brand, #5791ff);
 }
-.date-input-hint {
+liferay-copilot-voice .date-input-hint {
 	margin-top: 16px;
 	font-size: 14px;
 	color: var(--cv-text-muted, #6b6c7e);
 }
-.date-input-panel.dictating .date-input-card {
+liferay-copilot-voice .date-input-panel.dictating .date-input-card {
 	border-color: var(--cv-brand-soft, #80acff);
 	animation: field-glow 1.6s ease-in-out infinite;
 }
 
 /* ── File picker (createFile flow) ── */
-.file-picker {
+liferay-copilot-voice .file-picker {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -1224,19 +1243,19 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.4s ease;
 	text-align: center;
 }
-.file-picker.visible {
+liferay-copilot-voice .file-picker.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.file-picker-prompt {
+liferay-copilot-voice .file-picker-prompt {
 	font-size: 15px;
 	color: var(--cv-text-muted, #6b6c7e);
 	margin-bottom: 18px;
 	font-weight: 500;
 	letter-spacing: 0.01em;
 }
-.file-picker-card {
+liferay-copilot-voice .file-picker-card {
 	background: #fff;
 	border: 2px dashed var(--cv-border, #cdced9);
 	border-radius: 16px;
@@ -1249,12 +1268,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		border-color 0.25s ease,
 		background 0.25s ease;
 }
-.file-picker-card.has-file {
+liferay-copilot-voice .file-picker-card.has-file {
 	border-style: solid;
 	border-color: var(--cv-brand, #5791ff);
 	background: #eef4ff;
 }
-.file-picker-btn {
+liferay-copilot-voice .file-picker-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -1272,12 +1291,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform 0.12s ease,
 		box-shadow 0.18s ease;
 }
-.file-picker-btn:hover {
+liferay-copilot-voice .file-picker-btn:hover {
 	background: #4880ee;
 	transform: translateY(-1px);
 	box-shadow: 0 4px 14px rgba(87, 145, 255, 0.3);
 }
-.file-picker-btn.flash {
+liferay-copilot-voice .file-picker-btn.flash {
 	animation: file-btn-flash 1.5s ease;
 }
 @keyframes file-btn-flash {
@@ -1298,28 +1317,28 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform: translateY(0);
 	}
 }
-.file-picker-info {
+liferay-copilot-voice .file-picker-info {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 	font-size: 13px;
 	min-height: 18px;
 }
-.file-picker-info-name {
+liferay-copilot-voice .file-picker-info-name {
 	color: var(--cv-text, #272829);
 	font-weight: 500;
 }
-.file-picker-card:not(.has-file) .file-picker-info-name {
+liferay-copilot-voice .file-picker-card:not(.has-file) .file-picker-info-name {
 	color: var(--cv-text-faint, #6d6f85);
 	font-weight: 400;
 }
-.file-picker-info-size {
+liferay-copilot-voice .file-picker-info-size {
 	color: var(--cv-text-faint, #6d6f85);
 	font-size: 11px;
 }
 
 /* ── Side command panel ── */
-.side-panel {
+liferay-copilot-voice .side-panel {
 	position: absolute;
 	left: 48px;
 	top: 50%;
@@ -1331,12 +1350,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		opacity 0.4s ease,
 		transform 0.4s ease;
 }
-.side-panel.visible {
+liferay-copilot-voice .side-panel.visible {
 	opacity: 1;
 	transform: translateY(-50%);
 	pointer-events: auto;
 }
-.side-panel-title {
+liferay-copilot-voice .side-panel-title {
 	font-size: 10px;
 	font-weight: 600;
 	color: var(--cv-text-faint, #6d6f85);
@@ -1344,13 +1363,13 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	text-transform: uppercase;
 	margin-bottom: 12px;
 }
-.side-panel ul {
+liferay-copilot-voice .side-panel ul {
 	list-style: none;
 }
-.side-panel li {
+liferay-copilot-voice .side-panel li {
 	margin-bottom: 8px;
 }
-.side-panel .cmd-pill {
+liferay-copilot-voice .side-panel .cmd-pill {
 	padding: 4px 12px;
 	display: inline-block;
 }
@@ -1359,48 +1378,48 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    (`.cmd-pill.cmd-pill-X`) so they outrank the descendant base rule
    `.side-panel .cmd-pill` on specificity. Add new variants here as needed
    — flows.json picks them by name. */
-.cmd-pill.cmd-pill-danger {
+liferay-copilot-voice .cmd-pill.cmd-pill-danger {
 	background: #fee2e2;
 	color: var(--cv-danger, #ef4444);
 }
-.cmd-pill.cmd-pill-info {
+liferay-copilot-voice .cmd-pill.cmd-pill-info {
 	background: #e6f0ff;
 	color: var(--cv-brand, #5791ff);
 }
-.cmd-pill.cmd-pill-success {
+liferay-copilot-voice .cmd-pill.cmd-pill-success {
 	background: #dcfce7;
 	color: #16a34a;
 }
-.cmd-pill.cmd-pill-format {
+liferay-copilot-voice .cmd-pill.cmd-pill-format {
 	background: #f3e8ff;
 	color: #9333ea;
 }
-.cmd-pill.cmd-pill-image {
+liferay-copilot-voice .cmd-pill.cmd-pill-image {
 	background: #fce7f3;
 	color: #db2777;
 }
 /* Icon variants need flex layout so the SVG sits inline with the label. */
-.cmd-pill.cmd-pill-format,
-.cmd-pill.cmd-pill-image {
+liferay-copilot-voice .cmd-pill.cmd-pill-format,
+liferay-copilot-voice .cmd-pill.cmd-pill-image {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
 }
-.cmd-pill-icon {
+liferay-copilot-voice .cmd-pill-icon {
 	width: 11px;
 	height: 11px;
 	flex-shrink: 0;
 }
-.cmd-pill.cmd-pill-accent {
+liferay-copilot-voice .cmd-pill.cmd-pill-accent {
 	background: var(--cv-brand, #5791ff);
 	color: #fff;
 }
-.cmd-pill.cmd-pill-ghost {
+liferay-copilot-voice .cmd-pill.cmd-pill-ghost {
 	background: transparent;
 	color: var(--cv-text-muted, #6b6c7e);
 	box-shadow: inset 0 0 0 1px var(--cv-border, #cdced9);
 }
-.side-panel .voice-help-divider {
+liferay-copilot-voice .side-panel .voice-help-divider {
 	font-size: 9px;
 	font-weight: 600;
 	color: var(--cv-text-faint, #6d6f85);
@@ -1412,10 +1431,10 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	border-top: 1px solid var(--cv-neutral, #e7e7ed);
 	list-style: none;
 }
-.side-panel .voice-help-item {
+liferay-copilot-voice .side-panel .voice-help-item {
 	margin-bottom: 8px;
 }
-.side-panel .voice-help-label {
+liferay-copilot-voice .side-panel .voice-help-label {
 	display: block;
 	font-size: 10px;
 	color: var(--cv-text-muted, #6b6c7e);
@@ -1424,7 +1443,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	text-transform: uppercase;
 	margin-bottom: 2px;
 }
-.side-panel .voice-help-example {
+liferay-copilot-voice .side-panel .voice-help-example {
 	display: block;
 	font-size: 12px;
 	color: var(--cv-text, #272829);
@@ -1437,7 +1456,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    with a small scale-up so it feels like a confirmation, not just a
    status line. Sized to be clearly readable but not overpower the
    surrounding interface. */
-.sent-msg {
+liferay-copilot-voice .sent-msg {
 	position: absolute;
 	top: calc(50% + 140px);
 	left: 50%;
@@ -1456,18 +1475,18 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		opacity 0.3s ease,
 		transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.sent-msg.visible {
+liferay-copilot-voice .sent-msg.visible {
 	opacity: 1;
 	transform: translateX(-50%) translateY(0) scale(1);
 }
-.sent-msg-icon {
+liferay-copilot-voice .sent-msg-icon {
 	width: 22px;
 	height: 22px;
 	flex-shrink: 0;
 }
 
 /* ── "Ayuda" hint text ── */
-.cmd-hint {
+liferay-copilot-voice .cmd-hint {
 	position: absolute;
 	bottom: 52px;
 	left: 50%;
@@ -1480,12 +1499,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	transition: opacity 0.6s ease;
 	pointer-events: none;
 }
-.cmd-hint.visible {
+liferay-copilot-voice .cmd-hint.visible {
 	opacity: 1;
 }
 
 /* ── Command list panel ── */
-.cmd-list {
+liferay-copilot-voice .cmd-list {
 	position: absolute;
 	top: 0;
 	left: 50%;
@@ -1504,12 +1523,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	pointer-events: none;
 	z-index: 40;
 }
-.cmd-list.visible {
+liferay-copilot-voice .cmd-list.visible {
 	opacity: 1;
 	transform: translate(-50%, 24px);
 	pointer-events: auto;
 }
-.cmd-list-title {
+liferay-copilot-voice .cmd-list-title {
 	font-size: 11px;
 	font-weight: 600;
 	color: var(--cv-text-faint, #6d6f85);
@@ -1517,10 +1536,10 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	text-transform: uppercase;
 	margin-bottom: 14px;
 }
-.cmd-list ul {
+liferay-copilot-voice .cmd-list ul {
 	list-style: none;
 }
-.cmd-list li {
+liferay-copilot-voice .cmd-list li {
 	padding: 10px 0;
 	border-bottom: 1px solid var(--cv-bg, #f7f8f9);
 	display: flex;
@@ -1529,10 +1548,10 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-size: 14px;
 	color: var(--cv-text, #272829);
 }
-.cmd-list li:last-child {
+liferay-copilot-voice .cmd-list li:last-child {
 	border-bottom: none;
 }
-.cmd-pill {
+liferay-copilot-voice .cmd-pill {
 	background: #f0eeff;
 	color: #7b6fee;
 	border-radius: 20px;
@@ -1546,13 +1565,13 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-family: inherit;
 	transition: filter 0.15s ease;
 }
-.cmd-pill:hover {
+liferay-copilot-voice .cmd-pill:hover {
 	filter: brightness(0.93);
 }
 
 /* ── Format commands panel ──
    Two-column "say → result" layout, visually distinct from the cmd-list. */
-.format-list {
+liferay-copilot-voice .format-list {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -1573,12 +1592,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	z-index: 40;
 	cursor: pointer;
 }
-.format-list.visible {
+liferay-copilot-voice .format-list.visible {
 	opacity: 1;
 	transform: translate(-50%, -50%);
 	pointer-events: auto;
 }
-.format-list-title {
+liferay-copilot-voice .format-list-title {
 	font-size: 11px;
 	font-weight: 700;
 	color: var(--cv-brand, #5791ff);
@@ -1587,13 +1606,13 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	margin-bottom: 18px;
 	text-align: center;
 }
-.format-group {
+liferay-copilot-voice .format-group {
 	margin-bottom: 18px;
 }
-.format-group:last-child {
+liferay-copilot-voice .format-group:last-child {
 	margin-bottom: 0;
 }
-.format-group-title {
+liferay-copilot-voice .format-group-title {
 	font-size: 10px;
 	font-weight: 600;
 	color: var(--cv-text-faint, #6d6f85);
@@ -1603,12 +1622,12 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	padding-bottom: 6px;
 	border-bottom: 1px solid #eef0f4;
 }
-.format-group ul {
+liferay-copilot-voice .format-group ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
-.format-group li {
+liferay-copilot-voice .format-group li {
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
 	align-items: center;
@@ -1616,37 +1635,37 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	padding: 8px 0;
 	font-size: 14px;
 }
-.format-say {
+liferay-copilot-voice .format-say {
 	color: var(--cv-text, #272829);
 	font-weight: 500;
 	font-style: italic;
 }
-.format-say::before {
+liferay-copilot-voice .format-say::before {
 	content: '"';
 	color: var(--cv-text-faint, #6d6f85);
 }
-.format-say::after {
+liferay-copilot-voice .format-say::after {
 	content: '"';
 	color: var(--cv-text-faint, #6d6f85);
 }
-.format-arrow {
+liferay-copilot-voice .format-arrow {
 	color: var(--cv-border, #cdced9);
 	font-size: 14px;
 }
-.format-result {
+liferay-copilot-voice .format-result {
 	color: var(--cv-brand, #5791ff);
 	font-weight: 700;
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 	font-size: 15px;
 }
 /* When the result is a long description (not a single glyph), drop the mono. */
-.format-result.is-text {
+liferay-copilot-voice .format-result.is-text {
 	font-family: inherit;
 	font-weight: 500;
 	font-size: 13px;
 	color: var(--cv-text-muted, #6b6c7e);
 }
-.format-list-back {
+liferay-copilot-voice .format-list-back {
 	margin-top: 18px;
 	padding-top: 14px;
 	border-top: 1px solid #eef0f4;
@@ -1654,20 +1673,20 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	color: var(--cv-text-faint, #6d6f85);
 	text-align: center;
 }
-.format-list-back strong {
+liferay-copilot-voice .format-list-back strong {
 	color: var(--cv-brand, #5791ff);
 	font-weight: 600;
 }
 
 /* keycap-wrap: transition to corner */
-.keycap-wrap {
+liferay-copilot-voice .keycap-wrap {
 	position: relative;
 	width: 656px;
 	height: 280px;
 	transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.keycap-shadow {
+liferay-copilot-voice .keycap-shadow {
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -1679,7 +1698,19 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	pointer-events: none;
 }
 
-.keycap {
+/* The keycap is a real <button> for keyboard/AT users — flatten the UA
+   button chrome; all visuals come from the rules below. */
+liferay-copilot-voice button.keycap {
+	appearance: none;
+	-webkit-appearance: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+liferay-copilot-voice .keycap {
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -1695,7 +1726,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	overflow: hidden;
 }
 
-.space-label {
+liferay-copilot-voice .space-label {
 	position: absolute;
 	top: 12px;
 	left: 50%;
@@ -1708,14 +1739,15 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	transition: opacity 0.2s ease;
 }
 
-.mic-wrap {
+liferay-copilot-voice .mic-wrap {
 	position: relative;
+	display: block; /* it's a <span> inside the keycap button */
 	width: 82px;
 	height: 127px;
 	flex-shrink: 0;
 	z-index: 1;
 }
-.mic-svg {
+liferay-copilot-voice .mic-svg {
 	width: 100%;
 	height: 100%;
 	overflow: visible;
@@ -1726,7 +1758,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
    * bar3 IS the oval. bar1,2,4,5 start at width:0 and expand when bars appear.
    * JS moves .bars top to 140px (wrap center) when entering listening state.
    */
-.bars {
+liferay-copilot-voice .bars {
 	position: absolute;
 	left: 50%;
 	top: 119px;
@@ -1737,14 +1769,14 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	z-index: 3;
 }
 
-.bar {
+liferay-copilot-voice .bar {
 	border-radius: 10px;
 	will-change: height;
 	flex-shrink: 0;
 }
 
 /* ── AI Review modals (submit confirm + loading/result) ── */
-.ai-overlay {
+liferay-copilot-voice .ai-overlay {
 	position: fixed;
 	inset: 0;
 	background: rgba(39, 40, 51, 0.45);
@@ -1759,11 +1791,11 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	z-index: 100;
 	padding: 24px;
 }
-.ai-overlay.visible {
+liferay-copilot-voice .ai-overlay.visible {
 	opacity: 1;
 	pointer-events: auto;
 }
-.ai-card {
+liferay-copilot-voice .ai-card {
 	background: #fff;
 	border-radius: 18px;
 	padding: 32px 36px;
@@ -1775,23 +1807,23 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	transform: translateY(8px) scale(0.98);
 	transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.ai-overlay.visible .ai-card {
+liferay-copilot-voice .ai-overlay.visible .ai-card {
 	transform: translateY(0) scale(1);
 }
-.ai-card-title {
+liferay-copilot-voice .ai-card-title {
 	font-size: 24px;
 	font-weight: 300;
 	color: var(--cv-text, #272829);
 	margin-bottom: 22px;
 	line-height: 1.35;
 }
-.ai-card-actions {
+liferay-copilot-voice .ai-card-actions {
 	display: flex;
 	justify-content: center;
 	gap: 12px;
 	flex-wrap: wrap;
 }
-.ai-btn {
+liferay-copilot-voice .ai-btn {
 	padding: 11px 22px;
 	border-radius: 10px;
 	font-size: 14px;
@@ -1804,32 +1836,32 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		box-shadow 0.18s ease;
 	font-family: inherit;
 }
-.ai-btn-primary {
+liferay-copilot-voice .ai-btn-primary {
 	background: var(--cv-brand, #5791ff);
 	color: #fff;
 }
-.ai-btn-primary:hover {
+liferay-copilot-voice .ai-btn-primary:hover {
 	background: #4880ee;
 	box-shadow: 0 4px 14px rgba(87, 145, 255, 0.35);
 }
-.ai-btn-secondary {
+liferay-copilot-voice .ai-btn-secondary {
 	background: #fff;
 	color: var(--cv-text, #272829);
 	border-color: var(--cv-neutral, #e7e7ed);
 }
-.ai-btn-secondary:hover {
+liferay-copilot-voice .ai-btn-secondary:hover {
 	background: var(--cv-bg, #f7f8f9);
 }
-.ai-btn-danger {
+liferay-copilot-voice .ai-btn-danger {
 	background: #fff;
 	color: var(--cv-danger, #ef4444);
 	border-color: #fecaca;
 }
-.ai-btn-danger:hover {
+liferay-copilot-voice .ai-btn-danger:hover {
 	background: #fee2e2;
 }
 
-.ai-spinner {
+liferay-copilot-voice .ai-spinner {
 	width: 56px;
 	height: 56px;
 	border: 4px solid #eef4ff;
@@ -1844,7 +1876,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	   inspects the DOM. */
 	animation-play-state: paused;
 }
-.ai-overlay.visible .ai-spinner {
+liferay-copilot-voice .ai-overlay.visible .ai-spinner {
 	animation-play-state: running;
 }
 @keyframes ai-spin {
@@ -1852,17 +1884,17 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		transform: rotate(360deg);
 	}
 }
-.ai-loading-text {
+liferay-copilot-voice .ai-loading-text {
 	color: var(--cv-text-muted, #6b6c7e);
 	font-size: 15px;
 	font-weight: 500;
 }
-.ai-loading-sub {
+liferay-copilot-voice .ai-loading-sub {
 	color: var(--cv-text-faint, #6d6f85);
 	font-size: 12px;
 	margin-top: 6px;
 }
-.ai-loading-model {
+liferay-copilot-voice .ai-loading-model {
 	display: inline-block;
 	margin-top: 14px;
 	padding: 3px 10px;
@@ -1873,11 +1905,11 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	font-weight: 500;
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.ai-loading-model:empty {
+liferay-copilot-voice .ai-loading-model:empty {
 	display: none;
 }
 
-.ai-result-tag {
+liferay-copilot-voice .ai-result-tag {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -1891,7 +1923,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	text-transform: uppercase;
 	margin-bottom: 16px;
 }
-.ai-result-content {
+liferay-copilot-voice .ai-result-content {
 	text-align: left;
 	background: var(--cv-bg, #f7f8f9);
 	border: 1px solid var(--cv-neutral, #e7e7ed);
@@ -1901,7 +1933,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	max-height: 42vh;
 	overflow-y: auto;
 }
-.ai-result-content h4 {
+liferay-copilot-voice .ai-result-content h4 {
 	font-size: 10px;
 	font-weight: 600;
 	color: var(--cv-text-faint, #6d6f85);
@@ -1909,13 +1941,13 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 	text-transform: uppercase;
 	margin: 0 0 6px;
 }
-.ai-result-content h4 + p {
+liferay-copilot-voice .ai-result-content h4 + p {
 	margin: 0 0 14px;
 }
-.ai-result-content h4:nth-of-type(2) {
+liferay-copilot-voice .ai-result-content h4:nth-of-type(2) {
 	margin-top: 4px;
 }
-.ai-result-content p {
+liferay-copilot-voice .ai-result-content p {
 	font-size: 15px;
 	color: var(--cv-text, #272829);
 	line-height: 1.5;
@@ -1926,7 +1958,7 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 /* Label that appears below bars when a command is recognized.
      Lives inside .keycap-wrap so it tracks the bars. When the wrap goes to the
      corner (scale 0.34), the label counter-scales to keep its visual size. */
-.bars-label {
+liferay-copilot-voice .bars-label {
 	position: absolute;
 	top: 220px;
 	left: 50%;
@@ -1949,21 +1981,97 @@ liferay-copilot-voice.in-portal .liferay-error-config {
 		opacity 0.2s ease,
 		transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.bars-label.visible {
+liferay-copilot-voice .bars-label.visible {
 	opacity: 1;
 }
-.bars-label-icon {
+liferay-copilot-voice .bars-label-icon {
 	width: 14px;
 	height: 14px;
 	flex-shrink: 0;
 }
-.keycap-wrap.in-corner .bars-label {
+liferay-copilot-voice .keycap-wrap.in-corner .bars-label {
 	transform: translateX(-50%) scale(2.941);
 	transform-origin: top center;
 }
-.keycap-wrap.in-corner .bars-label.long {
+liferay-copilot-voice .keycap-wrap.in-corner .bars-label.long {
 	left: auto;
 	right: 170px;
 	transform: scale(2.941);
 	transform-origin: top right;
+}
+
+/* ── Responsive — small viewports (audit P1-5) ──
+   The app is designed as a full-viewport surface; below ~720px the fixed
+   520/480px center panels and the side/right rails don't fit. Center panels
+   clamp to the viewport, the command side-panel becomes a bottom strip of
+   horizontally scrollable pills, and the image carousel narrows. */
+@media (max-width: 720px) {
+	liferay-copilot-voice .space-picker,
+	liferay-copilot-voice .options-picker,
+	liferay-copilot-voice .file-picker,
+	liferay-copilot-voice .number-input-panel,
+	liferay-copilot-voice .date-input-panel,
+	liferay-copilot-voice .space-create-panel {
+		width: calc(100vw - 32px);
+		max-width: 520px;
+	}
+	liferay-copilot-voice .cmd-list,
+	liferay-copilot-voice .format-list {
+		width: calc(100vw - 32px);
+		max-height: 68vh;
+		overflow-y: auto;
+	}
+	liferay-copilot-voice .ai-card {
+		width: calc(100vw - 32px);
+		max-width: 560px;
+	}
+	liferay-copilot-voice #spaceCreateField {
+		width: calc(100vw - 120px);
+	}
+
+	/* Side panel → bottom pill strip. */
+	liferay-copilot-voice .side-panel {
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: auto;
+		transform: none;
+		width: 100%;
+		max-height: 96px;
+		padding: 10px 12px 14px;
+		background: rgba(255, 255, 255, 0.94);
+		border-top: 1px solid var(--cv-neutral, #e7e7ed);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+	}
+	liferay-copilot-voice .side-panel-title { display: none; }
+	liferay-copilot-voice .side-panel ul {
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+		overflow-x: auto;
+		padding-bottom: 4px;
+	}
+	liferay-copilot-voice .side-panel ul li { flex-shrink: 0; }
+	liferay-copilot-voice .side-panel .voice-help-divider,
+	liferay-copilot-voice .side-panel .voice-help-item { display: none; }
+
+	/* Content panel above the bottom strip, never under it. */
+	liferay-copilot-voice .content-panel {
+		max-width: calc(100vw - 24px);
+		max-height: calc(100vh - 220px);
+		overflow-y: auto;
+	}
+
+	/* Image carousel: narrower cards on the right. */
+	liferay-copilot-voice .img-carousel { width: 136px; right: 12px; top: 110px; bottom: 110px; }
+	liferay-copilot-voice .carousel-card-img { width: 136px; height: 85px; }
+	liferay-copilot-voice .carousel-card-name { max-width: 136px; }
+
+	/* The hint and keycap sit higher so the bottom strip has room. */
+	liferay-copilot-voice .hint { bottom: 110px; }
+	liferay-copilot-voice .liferay-error {
+		max-width: calc(100vw - 16px);
+		flex-wrap: wrap;
+	}
 }

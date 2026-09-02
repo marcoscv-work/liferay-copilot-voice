@@ -166,15 +166,31 @@
       </div>`;
     }).join('');
   }
+  function activateTab(btn) {
+    tabsEl.querySelectorAll('button').forEach(b => {
+      const on = b === btn;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+    });
+    groupsEl?.setAttribute('aria-labelledby', btn.id);
+    renderCommands(btn.dataset.lang);
+  }
   if (tabsEl) {
     tabsEl.addEventListener('click', e => {
       const btn = e.target.closest('button[data-lang]');
-      if (!btn) return;
-      tabsEl.querySelectorAll('button').forEach(b => {
-        b.classList.toggle('active', b === btn);
-        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
-      });
-      renderCommands(btn.dataset.lang);
+      if (btn) activateTab(btn);
+    });
+    /* Arrow-key navigation with roving tabindex (WAI-ARIA tabs pattern). */
+    tabsEl.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const tabs = [...tabsEl.querySelectorAll('button[data-lang]')];
+      const idx = tabs.indexOf(document.activeElement);
+      if (idx === -1) return;
+      e.preventDefault();
+      const next = tabs[(idx + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      next.focus();
+      activateTab(next);
     });
     renderCommands('es');
   }

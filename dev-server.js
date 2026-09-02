@@ -156,7 +156,59 @@ let devTargetURL = new URL(devTarget);
 /* Default to the stock local-bundle admin account so a fresh clone works
    against a vanilla Liferay on localhost:8080 with zero setup. Override
    via the /config page (persisted to dev-config.local.json). */
-let devCreds = readLiferayDevCreds() || buildCreds('test@liferay.com', 'test');
+function isLoopbackTarget() {
+	return ['localhost', '127.0.0.1', '::1', '[::1]'].includes(devTargetURL.hostname);
+}
+
+/* Stock local-bundle admin creds are a zero-setup convenience for LOCAL
+   targets only — never assumed for remote instances. */
+let devCreds =
+	readLiferayDevCreds() ||
+	(isLoopbackTarget() ? buildCreds('test@liferay.com', 'test') : null);
+
+/* Pick http/https to match the target protocol — plain http.request against
+   an https target hangs/fails. */
+function targetRequest(opts, cb) {
+	const mod = devTargetURL.protocol === 'https:' ? https : http;
+	return mod.request(opts, cb);
+}
+
+/* Local-only guard for the dev API endpoints (config, assist): the server
+   binds to loopback by default, but defence in depth — reject requests whose
+   Host/Origin isn't local so a hostile page can't drive the dev API. */
+function isLocalRequest(req) {
+	const host = String(req.headers.host || '').replace(/:\d+$/, '');
+	const okHost = ['localhost', '127.0.0.1', '[::1]', '::1'].includes(host);
+	const origin = req.headers.origin;
+	const okOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
+	return okHost && okOrigin;
+}
+function rejectNonLocal(req, res) {
+	if (isLocalRequest(req)) return false;
+	res.writeHead(403, {'Content-Type': 'application/json'});
+	res.end(JSON.stringify({ok: false, error: 'Local requests only'}));
+	return true;
+}
+
+/* Shared body collector with a hard cap. */
+const MAX_BODY_BYTES = 1024 * 1024;
+function collectBody(req, res, onDone) {
+	let body = '';
+	let overflow = false;
+	req.on('data', (chunk) => {
+		if (overflow) return;
+		body += chunk;
+		if (body.length > MAX_BODY_BYTES) {
+			overflow = true;
+			res.writeHead(413, {'Content-Type': 'application/json'});
+			res.end(JSON.stringify({ok: false, error: 'Body too large'}));
+			req.destroy();
+		}
+	});
+	req.on('end', () => {
+		if (!overflow) onDone(body);
+	});
+}
 
 /* Cached authenticated session cookies from /c/portal/login. */
 let liferayDevCookie = '';
@@ -184,7 +236,7 @@ function liferayDevLogin() {
 				'Content-Length': Buffer.byteLength(body),
 			},
 		};
-		const req = http.request(opts, (res) => {
+		const req = targetRequest(opts, (res) => {
 			const setCookies = res.headers['set-cookie'] || [];
 			const pairs = [];
 			for (const c of setCookies) {
@@ -365,7 +417,7 @@ function testLiferayApi() {
 			path: '/o/headless-asset-library/v1.0/asset-libraries?pageSize=1',
 			headers,
 		};
-		const req = http.request(opts, (res) => {
+		const req = targetRequest(opts, (res) => {
 			let raw = '';
 			res.on('data', (c) => {
 				if (raw.length < 200) raw += c;
@@ -387,11 +439,8 @@ function testLiferayApi() {
    saves to disk, re-logs into Liferay, and reports the result including
    a real API smoke-test so the user knows end-to-end connectivity works. */
 function handleDevConfigPost(req, res) {
-	let body = '';
-	req.on('data', (chunk) => {
-		body += chunk;
-	});
-	req.on('end', async () => {
+	if (rejectNonLocal(req, res)) return;
+	collectBody(req, res, async (body) => {
 		let payload;
 		try {
 			payload = JSON.parse(body);
@@ -528,9 +577,8 @@ function testGeminiKey() {
 /* Handle POST /api/dev-assist — set or clear the Gemini key + model at
    runtime (no server restart). Empty key clears it → deterministic pass. */
 function handleDevAssistPost(req, res) {
-	let body = '';
-	req.on('data', (c) => (body += c));
-	req.on('end', async () => {
+	if (rejectNonLocal(req, res)) return;
+	collectBody(req, res, async (body) => {
 		let payload;
 		try {
 			payload = JSON.parse(body || '{}');
@@ -596,9 +644,8 @@ function handleAssistReview(req, res) {
 		res.end(JSON.stringify({ok: false, reason: 'GEMINI_API_KEY not set'}));
 		return;
 	}
-	let body = '';
-	req.on('data', (c) => (body += c));
-	req.on('end', async () => {
+	if (rejectNonLocal(req, res)) return;
+	collectBody(req, res, async (body) => {
 		let payload;
 		try {
 			payload = JSON.parse(body || '{}');
@@ -683,7 +730,7 @@ function proxy(req, res) {
 		path: req.url,
 		headers,
 	};
-	const upstream = http.request(opts, (ures) => {
+	const upstream = targetRequest(opts, (ures) => {
 		if (isLiferayDevSessionExpiry(ures)) {
 			console.warn('[liferay-dev-auth] session expired — re-logging in');
 			liferayDevLogin().catch((e) =>
@@ -749,7 +796,11 @@ if (!hasCerts) {
 
 loadDevConfigOverride();
 
-server.listen(PORT, async () => {
+const HOST = process.env.DEV_HOST || '127.0.0.1';
+if (HOST !== '127.0.0.1') {
+	console.warn(`[security] dev server exposed on ${HOST} — it proxies an authenticated Liferay session; loopback (default) is strongly recommended.`);
+}
+server.listen(PORT, HOST, async () => {
 	console.log(`Voice prototype:  ${protocol}://localhost:${PORT}`);
 	console.log(`Proxying ${PROXY_PREFIXES.join(', ')} → ${devTarget}`);
 	if (devCreds) {

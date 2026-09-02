@@ -137,29 +137,46 @@
     const items = [];
     for (let s = 0; s < setsNeeded; s++) items.push(...list);
 
-    track.innerHTML = items.map(({ name, gradient, url, thumbnailUrl }, i) => {
-      const num      = (i % list.length) + 1;
+    /* DOM construction, not innerHTML: names and URLs come from Liferay and
+       are untrusted. URLs are validated (http/https only, CSS-safe) before
+       touching background-image. */
+    track.textContent = '';
+    items.forEach(({ name, gradient, url, thumbnailUrl }, i) => {
+      const idx = i % list.length;
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'carousel-card';
+      card.dataset.imageIdx = String(idx);
+      card.setAttribute('aria-pressed', 'false');
+
+      const imgEl = document.createElement('div');
+      imgEl.className = 'carousel-card-img';
+      /* Solid fill while the image bytes are in flight. `gradient` only ever
+         comes from packaged config (legacy mock shape), never from Liferay. */
+      imgEl.style.background = gradient || '#E7E7ED';
       /* Carousel cards get the cheaper thumbnail variant — CSS scales them
          to 192×120 anyway. The full-size URL is reserved for the cover-thumb
          above the title and for inline embed in web-content bodies. */
-      const cardSrc  = thumbnailUrl || url;
-      /* Layer the gradient behind the URL so we have a solid fill while the
-         image bytes are still in flight. */
-      const fallback = gradient || '#E7E7ED';
-      const bg       = cardSrc ? `url(${cardSrc}) center/cover, ${fallback}` : fallback;
-      return `
-        <div class="carousel-card" data-image-idx="${i % list.length}">
-          <div class="carousel-card-img" style="background:${bg}">
-            <span class="carousel-card-number">${num}</span>
-          </div>
-          <div class="carousel-card-name">${name}</div>
-        </div>`;
-    }).join('');
-    track.querySelectorAll('.carousel-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const idx = parseInt(card.dataset.imageIdx, 10);
-        selectCoverImage(list[idx], card);
-      });
+      const cardSrc = safeImageURL(thumbnailUrl || url);
+      if (cardSrc) {
+        imgEl.style.backgroundImage    = `url("${cardSrc}")`;
+        imgEl.style.backgroundSize     = 'cover';
+        imgEl.style.backgroundPosition = 'center';
+      }
+
+      const numEl = document.createElement('span');
+      numEl.className = 'carousel-card-number';
+      numEl.textContent = String(idx + 1);
+      imgEl.appendChild(numEl);
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'carousel-card-name';
+      nameEl.textContent = name || '';
+
+      card.appendChild(imgEl);
+      card.appendChild(nameEl);
+      card.addEventListener('click', () => selectCoverImage(list[idx], card));
+      track.appendChild(card);
     });
 
     /* Now that the cards are laid out, measure the real card height and
@@ -238,8 +255,12 @@
     if (!img) return;
     selectedCoverImage = img;
     if (cardEl) {
-      document.querySelectorAll('.carousel-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.carousel-card').forEach(c => {
+        c.classList.remove('selected');
+        c.setAttribute('aria-pressed', 'false');
+      });
       cardEl.classList.add('selected');
+      cardEl.setAttribute('aria-pressed', 'true');
       scrollCarouselToCard(cardEl);
     }
     flashCommandDetected(s('imageFlash', { name: img.name }), 'command');
@@ -303,8 +324,14 @@
 
   function showCoverThumb(img) {
     const el = document.getElementById('coverThumb');
-    const bg = img.url ? `url(${img.url}) center/cover` : (img.gradient || '#E7E7ED');
-    el.style.background = bg;
+    /* img.url comes from Liferay — validate before it reaches a CSS url(). */
+    const src = safeImageURL(img.url);
+    el.style.background = img.gradient || '#E7E7ED';
+    if (src) {
+      el.style.backgroundImage    = `url("${src}")`;
+      el.style.backgroundSize     = 'cover';
+      el.style.backgroundPosition = 'center';
+    }
     el.classList.add('visible');
   }
 
@@ -324,13 +351,21 @@
     const opts = step.__options || [];
     opts.forEach((o, i) => {
       const li   = document.createElement('li');
-      const card = document.createElement('div');
+      const card = document.createElement('button');
+      card.type = 'button';
       card.className = 'option-card';
       card.dataset.optionKey   = o.key;
       card.dataset.optionIdx   = String(i + 1);
-      card.innerHTML =
-        `<span class="option-card-number">${i + 1}</span>` +
-        `<span class="option-card-name">${o.name}</span>`;
+      card.setAttribute('aria-pressed', dynamicFieldValues[step.id] === o.key ? 'true' : 'false');
+      /* o.name is a Liferay picklist value — untrusted, so textContent. */
+      const numEl = document.createElement('span');
+      numEl.className = 'option-card-number';
+      numEl.textContent = String(i + 1);
+      const nameEl = document.createElement('span');
+      nameEl.className = 'option-card-name';
+      nameEl.textContent = o.name ?? '';
+      card.appendChild(numEl);
+      card.appendChild(nameEl);
       if (dynamicFieldValues[step.id] === o.key) card.classList.add('selected');
       card.addEventListener('click', () => selectOption(step, o, card));
       li.appendChild(card);
@@ -356,8 +391,10 @@
     if (!step || !option) return;
     dynamicFieldValues[step.id] = option.key;
     if (cardEl) {
-      document.querySelectorAll('#optionsList .option-card')
-        .forEach(c => c.classList.toggle('selected', c === cardEl));
+      document.querySelectorAll('#optionsList .option-card').forEach(c => {
+        c.classList.toggle('selected', c === cardEl);
+        c.setAttribute('aria-pressed', c === cardEl ? 'true' : 'false');
+      });
     }
     /* Render the summary chip immediately so the visual confirmation is up
        even before the 950 ms transition out fires. */
@@ -664,7 +701,7 @@
       january:1, february:2, march:3, april:4, may:5, june:6,
       july:7, august:8, september:9, october:10, november:11, december:12,
       gennaio:1, febbraio:2, aprile:4, maggio:5, giugno:6,
-      luglio:7, settembre:9, ottobre:10, novembre:11,
+      luglio:7, settembre:9, ottobre:10, novembre:11, dicembre:12,
     };
     const spoken = t.match(/(\d+|[a-z]+)\s+(?:del?\s+|of\s+)?(\d+|[a-z]+)(?:\s+(?:del?\s+|of\s+|,\s*)?(\d{4}))?/);
     if (spoken) {

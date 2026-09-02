@@ -35,10 +35,12 @@
       } else {
         displayVal = raw;
       }
+      /* st.label and displayVal carry Liferay Object labels / picklist
+         values / user dictation — escape everything. */
       pills.push({ stepId: st.id, html:
-        `<button type="button" class="field-summary-pill" data-step-id="${st.id}">` +
-          `<span class="field-summary-label">${st.label}:</span>` +
-          `<span class="field-summary-value">${displayVal}</span>` +
+        `<button type="button" class="field-summary-pill" data-step-id="${escapeHTML(st.id)}">` +
+          `<span class="field-summary-label">${escapeHTML(st.label)}:</span>` +
+          `<span class="field-summary-value">${escapeHTML(displayVal)}</span>` +
         `</button>`
       });
     }
@@ -95,6 +97,24 @@
     twenty: 20, twentyone: 21, twentytwo: 22, twentythree: 23, twentyfour: 24,
     twentyfive: 25, twentysix: 26, twentyseven: 27, twentyeight: 28, twentynine: 29,
     thirty: 30, thirtyone: 31,
+    /* Italian 1–31 (words shared with Spanish — uno, sei, quarto… — already
+       map to the same value above) */
+    primo: 1, prima: 1,
+    due: 2, secondo: 2, seconda: 2,
+    tre: 3, terzo: 3, terza: 3,
+    quattro: 4, quarto: 4, quarta: 4,
+    cinque: 5,
+    sei: 6,
+    sesto: 6, sesta: 6,
+    sette: 7, settimo: 7, settima: 7,
+    otto: 8,
+    nove: 9, nono: 9, nona: 9,
+    dieci: 10, decimo: 10, decima: 10,
+    undici: 11, dodici: 12, tredici: 13, quattordici: 14, quindici: 15,
+    sedici: 16, diciassette: 17, diciotto: 18, diciannove: 19,
+    venti: 20, ventuno: 21, ventidue: 22, ventitre: 23, ventiquattro: 24,
+    venticinque: 25, ventisei: 26, ventisette: 27, ventotto: 28, ventinove: 29,
+    trenta: 30, trentuno: 31,
   };
 
   function matchImageFromVoice(text) {
@@ -129,7 +149,9 @@
   function showFormError(message) {
     const el = document.getElementById('formError');
     if (!el) return;
-    el.innerHTML = FORM_ERROR_ICON_SVG + '<span>' + message + '</span>';
+    /* message can be server-provided text (liferayErrorMessage) — textContent. */
+    el.innerHTML = FORM_ERROR_ICON_SVG + '<span></span>';
+    el.querySelector('span').textContent = message;
     el.hidden = false;
     announce(message, 'alert');
   }
@@ -186,7 +208,20 @@
     else                                   finalizeSubmit();
   }
 
+  /* Mode to return to when the submit-confirm dialog is DISMISSED (Escape)
+     rather than answered — answering "no" submits, so dismissal must be a
+     third path that just goes back to editing. */
+  let aiConfirmReturnTo = null;
+
+  function dismissAiConfirm() {
+    if (voicePhase !== 'submitConfirm') return;
+    playSound('fieldChange');
+    setUiMode(aiConfirmReturnTo || 'flow:body');
+    aiConfirmReturnTo = null;
+  }
+
   function showAiConfirm() {
+    aiConfirmReturnTo = uiMode;
     setUiMode('flow:ai-confirm');
   }
 
@@ -217,18 +252,20 @@
     { re: /\babrir interrogaci[oó]n\b/gi,                                                ch: '¿' },
     { re: /\babrir exclamaci[oó]n\b/gi,                                                  ch: '¡' },
     { re: /\bpunto y coma\b/gi,                                                          ch: ';' },
+    { re: /\bpunto e virgola\b/gi,                                                       ch: ';' },
     { re: /\bsemicolon\b/gi,                                                             ch: ';' },
     { re: /\bdos puntos\b/gi,                                                            ch: ':' },
+    { re: /\bdue punti\b/gi,                                                             ch: ':' },
     { re: /\bcolon\b/gi,                                                                 ch: ':' },
-    { re: /\b(?:signo de interrogaci[oó]n|interrogaci[oó]n|question mark)\b/gi,         ch: '?' },
-    { re: /\b(?:signo de exclamaci[oó]n|exclamaci[oó]n|exclamation (?:mark|point))\b/gi, ch: '!' },
-    { re: /\b(?:coma|comma)\b/gi,                                                        ch: ',' },
+    { re: /\b(?:signo de interrogaci[oó]n|interrogaci[oó]n|question mark|punto (?:interrogativo|di domanda))\b/gi, ch: '?' },
+    { re: /\b(?:signo de exclamaci[oó]n|exclamaci[oó]n|exclamation (?:mark|point)|punto esclamativo)\b/gi, ch: '!' },
+    { re: /\b(?:coma|comma|virgola)\b/gi,                                                ch: ',' },
     { re: /\b(?:punto final|punto|period|full stop)\b/gi,                                ch: '.' },
   ];
 
   /* Question starters in Spanish + English. Catches both question words and
      English auxiliary-fronted yes/no questions. */
-  const QUESTION_STARTERS = /^[\s¿¡"'`]*(qué|que|cómo|como|dónde|donde|cuándo|cuando|por\s+qu[eé]|cuál(?:es)?|cual(?:es)?|quién(?:es)?|quien(?:es)?|cuánt[oa]s?|cuant[oa]s?|acaso|what|how|where|when|why|which|who(?:m|se)?|do|does|did|can|could|would|should|will|won['’]?t|is|are|am|was|were|has|have|had|may|might|must)\b/i;
+  const QUESTION_STARTERS = /^[\s¿¡"'`]*(qué|que|cómo|como|dónde|donde|cuándo|cuando|por\s+qu[eé]|cuál(?:es)?|cual(?:es)?|quién(?:es)?|quien(?:es)?|cuánt[oa]s?|cuant[oa]s?|acaso|what|how|where|when|why|which|who(?:m|se)?|do|does|did|can|could|would|should|will|won['’]?t|is|are|am|was|were|has|have|had|may|might|must|cosa|che(?:\s+cosa)?|dove|perch[eé]|quale|quali|chi|quant[oaie])(?=[\s.,;:!?]|$)/i;
 
   function applyInlinePunctuation(text) {
     let t = String(text);
@@ -288,7 +325,7 @@
     t = t.replace(/([.!?]\s+)([a-záéíóúñü])/g, (_, p, c) => p + c.toUpperCase());
     /* Comma before common transitional connectors (ES + EN) when missing. */
     t = t.replace(
-      /(\S) (pero|aunque|sin embargo|por (?:lo )?tanto|porque|but|although|however|therefore|because)\b/gi,
+      /(\S) (pero|aunque|sin embargo|por (?:lo )?tanto|porque|but|although|however|therefore|because|per[oò]|tuttavia|quindi|perch[eé])\b/gi,
       (_, prev, conn) => prev + ', ' + conn
     );
     /* Question wrap if starts with a question word, else final period. */
@@ -308,6 +345,9 @@
   function startAiReview(submitOnAccept) {
     aiReviewAcceptSubmits = !!submitOnAccept;
     ensureAssist();
+    /* The dialog's accessible name follows the state it shows. */
+    document.getElementById('aiModalCard')
+      ?.setAttribute('aria-label', s('aiLoadingTitle') || 'Reviewing');
     const loading = document.getElementById('aiModalLoading');
     const result  = document.getElementById('aiModalResult');
     const btn     = document.getElementById('aiResultAccept');
@@ -390,6 +430,8 @@
     document.getElementById('aiResultSubtitleRow').hidden = !(hasSubtitleStep() && reviewedSubtitle);
     document.getElementById('aiModalLoading').hidden = true;
     document.getElementById('aiModalResult').hidden  = false;
+    document.getElementById('aiModalCard')
+      ?.setAttribute('aria-label', s('aiReviewTag') || 'Review');
     setUiMode('flow:ai-review');
   }
 
@@ -1098,9 +1140,32 @@
     });
   }
 
+  /* Browsers without SpeechRecognition (e.g. Firefox today) get an explicit
+     degraded mode instead of a silent dead mic: an informative banner, an
+     assertive announcement, and the command list opened right away so every
+     flow can be started by click — the rest of the app (typing, pickers,
+     pills, Enter) is already mouse/keyboard operable. */
+  let speechUnavailableNotified = false;
+  function notifySpeechUnavailable() {
+    showLiferayError(s('errorNoSpeech') || 'Speech recognition is not available in this browser.');
+    if (!speechUnavailableNotified) {
+      speechUnavailableNotified = true;
+      announce(s('errorNoSpeech'), 'alert');
+    }
+    /* Deferred: startSpeech runs before setUiMode('listening:command'),
+       which would immediately re-hide the list. */
+    setTimeout(() => {
+      if (isListeningPhase() && voicePhase === 'command') showCommandList();
+    }, 150);
+  }
+
   function startSpeech() {
     if (fieldMicMuted) return;
     ensureSpeech();
+    if (speech && speech.available === false) {
+      notifySpeechUnavailable();
+      return;
+    }
     speech?.start();
   }
 
