@@ -13,6 +13,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
       - name: Install dev dependencies
         run: npm ci
       - name: Syntax check every runtime module
@@ -24,8 +28,23 @@ jobs:
         run: npm test
       - name: Dependency audit (fail on high severity)
         run: npm audit --audit-level=high
-      - name: Package the source client extension
-        run: npm run package
+      - name: Build the DEPLOYABLE client extension (workspace gradlew)
+        run: npm run build:cx
+      - name: Verify deployable zip structure
+        run: |
+          unzip -l dist/liferay-copilot-voice-deployable.zip | tee /tmp/zip.txt
+          grep -q "liferay-copilot-voice.client-extension-config.json" /tmp/zip.txt
+          grep -q "static/element.js" /tmp/zip.txt
+          grep -q "static/src/01-core.js" /tmp/zip.txt
+          grep -q "WEB-INF/" /tmp/zip.txt
+          # cache-busting stamp must have been injected
+          unzip -p dist/liferay-copilot-voice-deployable.zip static/element.js | grep -q "const BUILD = '1" \
+            || (echo "build stamp missing" && exit 1)
+      - name: Upload deployable client extension zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: liferay-copilot-voice-deployable
+          path: dist/liferay-copilot-voice-deployable.zip
       - name: Upload source client extension zip
         uses: actions/upload-artifact@v4
         with:

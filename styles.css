@@ -2075,3 +2075,15 @@ liferay-copilot-voice .keycap-wrap.in-corner .bars-label.long {
 		flex-wrap: wrap;
 	}
 }
+
+/* ── Keyboard focus visibility (audit 2, P1.2) ──
+   Inputs remove the native outline for the dictation aesthetic; the halo
+   (.dictating) marks the VOICE-active field, not keyboard focus. These rules
+   restore a reliable, high-contrast focus indicator on the containers of
+   every text-entry surface, independent of the voice state. */
+liferay-copilot-voice .field-box:focus-within,
+liferay-copilot-voice .number-input-card:focus-within,
+liferay-copilot-voice .date-input-card:focus-within {
+	outline: 2px solid var(--cv-brand-strong, #005fcc);
+	outline-offset: 2px;
+}

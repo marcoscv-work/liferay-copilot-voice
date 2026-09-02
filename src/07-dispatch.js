@@ -169,7 +169,7 @@
      banner is `aria-live=polite` so it updates without yelling at the SR;
      `announce(msg, 'alert')` separately fires the assertive read so the
      user knows immediately something blocked. */
-  function showLiferayError(message, { showCreateSpace = false } = {}) {
+  function showLiferayError(message, { showCreateSpace = false, capabilityNotice = false } = {}) {
     const el   = document.getElementById('liferayError');
     const text = document.getElementById('liferayErrorText');
     if (!el || !text) return;
@@ -179,6 +179,13 @@
     if (!message) message = s('errorLiferayConnection') || 'Could not reach Liferay.';
     const createBtn = document.getElementById('liferayErrorCreateSpace');
     if (createBtn) createBtn.hidden = !showCreateSpace;
+    /* A browser-capability notice (e.g. no SpeechRecognition) must not offer
+       connection actions — Retry and the dev config link only make sense for
+       connectivity states. */
+    const retryBtn  = document.getElementById('liferayErrorRetry');
+    const configLnk = document.querySelector('.liferay-error-config');
+    if (retryBtn)  retryBtn.hidden = capabilityNotice;
+    if (configLnk) configLnk.hidden = capabilityNotice;
     if (text.textContent === message && !el.hidden) return; /* dedupe noise */
     text.textContent = message;
     el.hidden = false;
@@ -1147,15 +1154,17 @@
      pills, Enter) is already mouse/keyboard operable. */
   let speechUnavailableNotified = false;
   function notifySpeechUnavailable() {
-    showLiferayError(s('errorNoSpeech') || 'Speech recognition is not available in this browser.');
+    showLiferayError(s('errorNoSpeech') || 'Speech recognition is not available in this browser.',
+      { capabilityNotice: true });
     if (!speechUnavailableNotified) {
       speechUnavailableNotified = true;
       announce(s('errorNoSpeech'), 'alert');
     }
     /* Deferred: startSpeech runs before setUiMode('listening:command'),
-       which would immediately re-hide the list. */
+       which would immediately re-hide the list. The list stays open
+       (persist) — with no recognition it IS the way to start flows. */
     setTimeout(() => {
-      if (isListeningPhase() && voicePhase === 'command') showCommandList();
+      if (isListeningPhase() && voicePhase === 'command') showCommandList({ persist: true });
     }, 150);
   }
 

@@ -18,7 +18,7 @@ the stricter legacy guideline.
 | Category / areas / tags | Decisions below | ◐ proposed |
 | Support URLs ×7 | All ready except email/phone | ◐ see below |
 | LICENSE file in repo | MIT | ✅ LICENSE added (review before pushing) |
-| Version compatibility | Smoke-test on the quarterlies we declare | ☐ pending |
+| Version compatibility | scripts/smoke-liferay.js per release | ◐ master ✅ 8/8; quarterlies pending |
 
 ## Step 2 — Profile
 
@@ -71,6 +71,17 @@ Management**.
 - Supported versions: declare only what we smoke-test, **starting at
   2026.Q1** — earlier releases (7.4 GA / 2025.Qx) lack the `/o/cms` space
   APIs the runtime depends on, even though the zip deploys there.
+
+### Compatibility matrix (run `node scripts/smoke-liferay.js` per release)
+
+| Portal | Date | User | Result |
+|---|---|---|---|
+| DXP master (local dev build) | 2026-09-02 | admin | ✅ 8/8 — spaces (typed), web content, blog, document (json+base64), listing, Objects, cleanup |
+| 2026.Q1 / Q2 / Q3 quarterlies | ☐ pending | non-admin too | run before submission |
+
+Note: the smoke run against master caught a real bug — `/o/cms/basic-documents`
+no longer accepts multipart (415); the app now posts JSON with an embedded
+base64 FileEntry and keeps multipart as legacy fallback.
 
 ## Step 4 — Storefront (5 screenshots @1920×1080)
 

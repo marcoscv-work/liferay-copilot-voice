@@ -309,10 +309,36 @@
      binary in the `file` part and other Object fields as plain form parts. */
   async function postFile({ spaceId, file }) {
     if (!file) throw new Error('No file selected');
+    /* The 2026 CMS shape is JSON with an embedded base64 FileEntry — the
+       old multipart POST answers 415 there (caught by scripts/smoke-liferay.js
+       against master). Try JSON first; fall back to the legacy multipart
+       shape for earlier releases. Base64 buffers the whole file in memory —
+       fine for the picker's typical documents. */
+    const fileBase64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload  = () => resolve(String(reader.result).split(',')[1] || '');
+      reader.onerror = () => reject(reader.error || new Error('file read failed'));
+      reader.readAsDataURL(file);
+    });
+    try {
+      return await lrFetch(`/o/cms/basic-documents/scopes/${spaceId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          title: file.name || 'Untitled',
+          file: {
+            fileBase64,
+            name:     file.name || 'file',
+            mimeType: file.type || 'application/octet-stream',
+          },
+        }),
+      });
+    } catch (err) {
+      if (err.kind !== 'server' || (err.status !== 415 && err.status !== 400)) throw err;
+    }
+    /* Legacy multipart (boundary set by the browser — no Content-Type). */
     const fd = new FormData();
     fd.append('file', file);
     fd.append('title', file.name || 'Untitled');
-    /* FormData boundary is set by the browser — must NOT pass Content-Type. */
     const headers = {};
     let base;
     if (inLiferayPortal()) {

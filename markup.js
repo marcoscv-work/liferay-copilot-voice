@@ -69,7 +69,8 @@
     <div class="number-input-prompt" id="numberInputPrompt"></div>
     <div class="number-input-card">
       <input type="number" id="numberInputField" class="number-input-field"
-             inputmode="numeric" autocomplete="off" step="any">
+             inputmode="numeric" autocomplete="off" step="any"
+             aria-labelledby="numberInputPrompt" aria-describedby="numberInputHint">
     </div>
     <p class="number-input-hint" id="numberInputHint"></p>
   </div>
@@ -89,7 +90,8 @@
   <div class="date-input-panel" id="dateInputPanel">
     <div class="date-input-prompt" id="dateInputPrompt"></div>
     <div class="date-input-card">
-      <input type="date" id="dateInputField" class="date-input-field">
+      <input type="date" id="dateInputField" class="date-input-field"
+             aria-labelledby="dateInputPrompt" aria-describedby="dateInputHint">
     </div>
     <p class="date-input-hint" id="dateInputHint"></p>
   </div>

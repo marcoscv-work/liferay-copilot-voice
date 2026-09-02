@@ -56,7 +56,7 @@
     cmdList.inert = true;
   }
 
-  function showCommandList() {
+  function showCommandList({ persist = false } = {}) {
     /* Defensive: never show the command list when the app is idle. */
     if (appState === 'idle') return;
     cmdHint.classList.remove('visible');
@@ -65,6 +65,9 @@
     /* Read the available commands aloud — the visual list is useless to a
        SR user and "ayuda" is the most explicit moment they ask for it. */
     announce(ANNOUNCE_BUILDERS.helpCommandList());
+    /* Without speech recognition the clickable list is the only way to
+       start a flow — keep it open instead of auto-hiding. */
+    if (persist) return;
     flowTimeout(() => {
       cmdList.classList.remove('visible');
       cmdList.inert = true;

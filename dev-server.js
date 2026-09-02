@@ -763,6 +763,17 @@ function requestHandler(req, res) {
 		return handleDevAssistPost(req, res);
 	if (req.url === '/assist/review' && req.method === 'POST')
 		return handleAssistReview(req, res);
+	if (shouldProxy(req.url)) {
+		/* The proxy carries an authenticated Liferay session. Reads are needed
+		   cross-device when DEV_HOST exposes the server, but state-changing
+		   methods stay local unless explicitly allowed. */
+		const safeMethod = ['GET', 'HEAD', 'OPTIONS'].includes(req.method);
+		if (!safeMethod && !isLocalRequest(req) && !process.env.DEV_ALLOW_REMOTE) {
+			res.writeHead(403, {'Content-Type': 'application/json'});
+			res.end(JSON.stringify({ok: false, error: 'Mutating proxy requests are local-only (set DEV_ALLOW_REMOTE=1 to override)'}));
+			return;
+		}
+	}
 	if (shouldProxy(req.url)) return proxy(req, res);
 	return serveStatic(req, res);
 }
