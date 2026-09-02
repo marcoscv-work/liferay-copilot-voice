@@ -51,8 +51,9 @@ imply official certification — DECISION PENDING):
 >   you in.
 >
 > Requirements: a browser with the Web Speech API (Chrome, Edge or Safari),
-> a microphone, and Liferay 2026.Q1 or newer (the copilot uses the Liferay
-> CMS content space APIs).
+> a microphone, and Liferay 2026.Q3 or newer (the copilot uses the Liferay
+> CMS content space APIs, GA since 2026.Q3; on 2026.Q1/Q2 enable the
+> Liferay CMS feature flags).
 > Documentation: https://marcoscv-work.github.io/liferay-copilot-voice/
 
 **Category** (choose exactly one from: Batch, Checkout, Fragments, Object
@@ -69,8 +70,10 @@ Management**.
 
 - Type: **Client Extension** → upload `dist/liferay-copilot-voice-deployable.zip`.
 - Supported versions: declare only what we smoke-test, **starting at
-  2026.Q1** — earlier releases (7.4 GA / 2025.Qx) lack the `/o/cms` space
-  APIs the runtime depends on, even though the zip deploys there.
+  2026.Q3** (first GA of the new CMS — "zero configuration" holds there).
+  2026.Q1/Q2 only with feature flags (LPD-17564 + deps) enabled — declare
+  them only if we document that requirement in the listing. Earlier
+  releases (7.4 GA / 2025.Qx) lack the `/o/cms` space APIs entirely.
 
 ### Compatibility matrix (run `node scripts/smoke-liferay.js` per release)
 

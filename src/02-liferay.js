@@ -307,33 +307,39 @@
   /* L_CMS_BASIC_DOCUMENT → fields: file, title.
      Liferay Objects with a file field accept multipart/form-data with the
      binary in the `file` part and other Object fields as plain form parts. */
+  /* Base64 buffers the whole file in memory (~2.7× the file size counting
+     the data URL plus the JSON string), so cap the JSON path. Larger files
+     go straight to the legacy multipart upload, which streams. */
+  const MAX_BASE64_UPLOAD_BYTES = 25 * 1024 * 1024;
+
   async function postFile({ spaceId, file }) {
     if (!file) throw new Error('No file selected');
     /* The 2026 CMS shape is JSON with an embedded base64 FileEntry — the
        old multipart POST answers 415 there (caught by scripts/smoke-liferay.js
-       against master). Try JSON first; fall back to the legacy multipart
-       shape for earlier releases. Base64 buffers the whole file in memory —
-       fine for the picker's typical documents. */
-    const fileBase64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload  = () => resolve(String(reader.result).split(',')[1] || '');
-      reader.onerror = () => reject(reader.error || new Error('file read failed'));
-      reader.readAsDataURL(file);
-    });
-    try {
-      return await lrFetch(`/o/cms/basic-documents/scopes/${spaceId}`, {
-        method: 'POST',
-        body: JSON.stringify({
-          title: file.name || 'Untitled',
-          file: {
-            fileBase64,
-            name:     file.name || 'file',
-            mimeType: file.type || 'application/octet-stream',
-          },
-        }),
+       against master). Try JSON first for reasonably-sized files; fall back
+       to the legacy multipart shape for earlier releases or oversize files. */
+    if (file.size <= MAX_BASE64_UPLOAD_BYTES) {
+      const fileBase64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = () => resolve(String(reader.result).split(',')[1] || '');
+        reader.onerror = () => reject(reader.error || new Error('file read failed'));
+        reader.readAsDataURL(file);
       });
-    } catch (err) {
-      if (err.kind !== 'server' || (err.status !== 415 && err.status !== 400)) throw err;
+      try {
+        return await lrFetch(`/o/cms/basic-documents/scopes/${spaceId}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            title: file.name || 'Untitled',
+            file: {
+              fileBase64,
+              name:     file.name || 'file',
+              mimeType: file.type || 'application/octet-stream',
+            },
+          }),
+        });
+      } catch (err) {
+        if (err.kind !== 'server' || (err.status !== 415 && err.status !== 400)) throw err;
+      }
     }
     /* Legacy multipart (boundary set by the browser — no Content-Type). */
     const fd = new FormData();
@@ -352,7 +358,18 @@
     const r = await fetch(`${base}/o/cms/basic-documents/scopes/${spaceId}`, {
       method: 'POST', headers, body: fd,
     });
-    if (!r.ok) throw new Error(`Liferay ${r.status} ${r.statusText} file upload`);
+    if (!r.ok) {
+      /* Oversize file on an instance that no longer accepts multipart: give
+         the user the size limit instead of a raw 415. */
+      const err = new Error(
+        (r.status === 415 && file.size > MAX_BASE64_UPLOAD_BYTES)
+          ? (s('errorFileTooLarge', { size: String(MAX_BASE64_UPLOAD_BYTES / (1024 * 1024)) })
+             || `File exceeds the upload limit`)
+          : `Liferay ${r.status} ${r.statusText} file upload`);
+      err.kind   = 'server';
+      err.status = r.status;
+      throw err;
+    }
     return r.json();
   }
 

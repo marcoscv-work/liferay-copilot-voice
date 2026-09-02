@@ -17,3 +17,6 @@ liferay-workspace/client-extensions/
 liferay-workspace/.gradle/
 liferay-workspace/build/
 liferay-workspace/bundles/
+
+# Internal audit reports — never in the public repo
+AUDIT*.md
