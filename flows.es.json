@@ -1,0 +1,433 @@
+{
+  "version": "1.0.0",
+  "locale": "es-ES",
+
+  "modalCommands": {
+    "aiConfirm": [
+      { "id": "ai-yes", "phrases": ["sí", "si", "sí revisar", "si revisar", "revisar", "revisar con ia"], "label": "Sí, revisar", "action": "aiYes" },
+      { "id": "ai-no",  "phrases": ["no", "no revisar", "enviar", "enviar ya"],                            "label": "No, enviar",  "action": "aiNo" }
+    ],
+    "aiReview": [
+      { "id": "ai-accept", "phrases": ["aceptar", "aplicar", "ok", "confirmar"], "label": "Aceptar",  "action": "aiAccept" },
+      { "id": "ai-cancel", "phrases": ["cancelar", "volver", "atrás", "atras"],   "label": "Cancelar", "action": "aiCancel", "style": "danger" }
+    ],
+    "formatList": [
+      { "id": "format-back", "phrases": ["volver", "cerrar", "atrás", "atras", "salir", "cancelar"], "label": "Volver", "action": "closeFormatCommands", "style": "danger" }
+    ]
+  },
+
+  "formatCommands": {
+    "groups": [
+      {
+        "title": "Puntuación",
+        "items": [
+          { "say": "punto",                "result": "." },
+          { "say": "coma",                 "result": "," },
+          { "say": "dos puntos",           "result": ":" },
+          { "say": "punto y coma",         "result": ";" },
+          { "say": "interrogación",        "result": "?" },
+          { "say": "exclamación",          "result": "!" },
+          { "say": "abrir interrogación",  "result": "¿" },
+          { "say": "abrir exclamación",    "result": "¡" }
+        ]
+      },
+      {
+        "title": "Edición",
+        "items": [
+          { "say": "borrar palabra",       "result": "Quita la última palabra dictada" },
+          { "say": "revisar formato",      "result": "Aplica mayúsculas, comas y puntuación final" }
+        ]
+      }
+    ]
+  },
+
+  "globalCommands": [
+    {
+      "id": "create-web-content",
+      "phrases": ["crear contenido", "crear contenido web", "nuevo contenido web"],
+      "label": "Crear contenido",
+      "description": "Crear nuevo contenido web",
+      "triggersFlow": "createWebContent"
+    },
+    {
+      "id": "create-blog",
+      "phrases": ["crear blog", "nuevo blog", "nueva entrada de blog", "nueva entrada"],
+      "label": "Crear blog",
+      "description": "Crear nueva entrada de blog",
+      "triggersFlow": "createBlog"
+    },
+    {
+      "id": "create-file",
+      "phrases": ["subir archivo", "nuevo archivo", "subir fichero", "nuevo fichero"],
+      "label": "Subir archivo",
+      "description": "Subir un archivo del sistema",
+      "triggersFlow": "createFile"
+    },
+    {
+      "id": "create-space",
+      "phrases": ["crear espacio", "nuevo espacio"],
+      "aliases": ["crear un espacio", "crea un espacio"],
+      "label": "Crear espacio",
+      "description": "Crear un espacio de contenido",
+      "action": "createSpace"
+    },
+    {
+      "id": "exit",
+      "phrases": ["salir"],
+      "aliases": ["apagar", "detener", "parar", "cerrar"],
+      "label": "Salir",
+      "description": "Detener la captura de voz",
+      "action": "exitListening"
+    },
+    {
+      "id": "help",
+      "phrases": ["ayuda"],
+      "aliases": ["comandos"],
+      "label": "Ayuda",
+      "description": "Mostrar comandos disponibles",
+      "hidden": true
+    }
+  ],
+
+  "flows": {
+    "createWebContent": {
+      "id": "createWebContent",
+      "name": "Crear contenido web",
+      "submitApi": "submitWebContent",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Espacio",
+          "placeholder": "Selecciona un espacio",
+          "voicePrompt": "¿En qué espacio quieres crear el contenido?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Título",
+          "placeholder": "Título",
+          "voicePrompt": "Di el título del contenido"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Contenido",
+          "placeholder": "Contenido",
+          "voicePrompt": "Di el contenido"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Imagen de portada",
+          "placeholder": "Añadir imagen de portada",
+          "voicePrompt": "Di el número o el nombre de la imagen, o 'volver' para salir",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["volver", "cancelar", "salir", "atrás", "atras"],
+              "label": "Volver",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "Por número", "example": "\"2\", \"dos\" o \"imagen dos\"" },
+            { "label": "Por nombre", "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["ir a título", "volver a título", "ir al título", "volver al título"],
+          "label": "Ir a título",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["borrar título", "borrar el título"],
+          "label": "Borrar título",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["ir a contenido", "volver a contenido", "ir al contenido", "volver al contenido"],
+          "label": "Ir a contenido",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["borrar contenido", "borrar el contenido"],
+          "label": "Borrar contenido",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["añadir imagen de portada", "añadir imagen", "imagen de portada", "poner imagen"],
+          "label": "Añadir imagen",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["borrar imagen", "borrar imagen de portada", "quitar imagen", "quitar imagen de portada", "eliminar imagen"],
+          "label": "Borrar imagen",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["borrar última palabra", "borrar la última palabra", "borrar palabra", "quitar última palabra", "quitar palabra", "eliminar palabra"],
+          "label": "Borrar palabra",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["revisar formato", "revisión de formato", "revisar el formato", "revisar con ia", "revisar contenido"],
+          "label": "Revisar formato",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["ver comandos de formato", "comandos de formato", "ayuda de formato", "cómo dar formato"],
+          "label": "Ver comandos de formato",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["enviar", "guardar", "publicar"],
+          "label": "Enviar",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["cancelar", "cancelar creación", "salir"],
+          "label": "Cancelar creación",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createBlog": {
+      "id": "createBlog",
+      "name": "Nueva entrada de blog",
+      "submitApi": "submitBlog",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Espacio",
+          "placeholder": "Selecciona un espacio",
+          "voicePrompt": "¿En qué espacio quieres crear la entrada?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Título",
+          "placeholder": "Título de la entrada",
+          "voicePrompt": "Di el título de la entrada"
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "label": "Subtítulo",
+          "placeholder": "Subtítulo de la entrada",
+          "voicePrompt": "Di el subtítulo de la entrada"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Contenido",
+          "placeholder": "Cuerpo de la entrada",
+          "voicePrompt": "Di el cuerpo de la entrada"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Imagen de portada",
+          "placeholder": "Añadir imagen de portada",
+          "voicePrompt": "Di el número o el nombre de la imagen, o 'volver' para salir",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["volver", "cancelar", "salir", "atrás", "atras"],
+              "label": "Volver",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "Por número", "example": "\"2\", \"dos\" o \"imagen dos\"" },
+            { "label": "Por nombre", "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["ir a título", "volver a título", "ir al título", "volver al título"],
+          "label": "Ir a título",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["borrar título", "borrar el título"],
+          "label": "Borrar título",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-subtitle",
+          "phrases": ["ir a subtítulo", "volver a subtítulo", "ir al subtítulo", "volver al subtítulo"],
+          "label": "Ir a subtítulo",
+          "action": "goToStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "clear-subtitle",
+          "phrases": ["borrar subtítulo", "borrar el subtítulo"],
+          "label": "Borrar subtítulo",
+          "action": "clearStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["ir a contenido", "volver a contenido", "ir al contenido", "volver al contenido"],
+          "label": "Ir a contenido",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["borrar contenido", "borrar el contenido"],
+          "label": "Borrar contenido",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["añadir imagen de portada", "añadir imagen", "imagen de portada", "poner imagen"],
+          "label": "Añadir imagen",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["borrar imagen", "borrar imagen de portada", "quitar imagen", "quitar imagen de portada", "eliminar imagen"],
+          "label": "Borrar imagen",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["borrar última palabra", "borrar la última palabra", "borrar palabra", "quitar última palabra", "quitar palabra", "eliminar palabra"],
+          "label": "Borrar palabra",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["revisar formato", "revisión de formato", "revisar el formato", "revisar con ia", "revisar contenido"],
+          "label": "Revisar formato",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["ver comandos de formato", "comandos de formato", "ayuda de formato", "cómo dar formato"],
+          "label": "Ver comandos de formato",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["enviar", "guardar", "publicar"],
+          "label": "Publicar entrada",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["cancelar", "cancelar entrada", "salir"],
+          "label": "Cancelar entrada",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createFile": {
+      "id": "createFile",
+      "name": "Subir archivo",
+      "submitApi": "uploadFile",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Espacio",
+          "placeholder": "Selecciona un espacio",
+          "voicePrompt": "¿En qué espacio quieres subir el archivo?",
+          "source": "spaces"
+        },
+        {
+          "id": "file",
+          "type": "file",
+          "label": "Archivo",
+          "placeholder": "Selecciona un archivo del sistema",
+          "voicePrompt": "Pulsa el botón o di 'elegir archivo' para abrir el selector"
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "select-file",
+          "phrases": [
+            "elegir archivo", "elegir un archivo", "elegir el archivo",
+            "seleccionar archivo", "seleccionar un archivo", "selecciona archivo", "selecciona un archivo",
+            "abrir archivo", "abrir un archivo", "abrir el archivo",
+            "escoger archivo", "escoger un archivo",
+            "elegir fichero", "seleccionar fichero", "abrir fichero"
+          ],
+          "label": "Elegir archivo",
+          "action": "selectFile"
+        },
+        {
+          "id": "send",
+          "phrases": ["enviar", "subir", "publicar", "guardar"],
+          "label": "Subir archivo",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["cancelar", "cancelar subida", "salir"],
+          "label": "Cancelar subida",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    }
+  }
+}

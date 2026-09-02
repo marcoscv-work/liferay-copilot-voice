@@ -1,0 +1,26 @@
+{
+  "activationKey": {
+    "code": "Space",
+    "label": "SPACE"
+  },
+  "locales": {
+    "es": "es-ES",
+    "en": "en-US",
+    "it": "it-IT"
+  },
+  "speech": {
+    "provider": "web-speech"
+  },
+  "assist": {
+    "provider": "gemini",
+    "model": "gemini-flash-latest",
+    "endpoint": "/assist/review"
+  },
+  "submit": {
+    "askFormatReview": false
+  },
+  "liferay": {
+    "enabled":   true,
+    "baseUrl":   ""
+  }
+}

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liferay Copilot Voice — Dev Config</title>
+<style>
+  /* ─────────────────────────────────────────────────────────────────
+   * DEV-ONLY PAGE. This page is served exclusively by dev-server.js
+   * and will not exist in a production deployment (the server itself
+   * disappears when the prototype runs inside Liferay as a portlet).
+   * ───────────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    background: #f4f4f8;
+    color: #1c1c2e;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+    gap: 24px;
+  }
+
+  /* ── DEV-ONLY banner ── */
+  .dev-banner {
+    width: 100%;
+    max-width: 480px;
+    background: #fff3cd;
+    border: 1.5px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .dev-banner-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+  .dev-banner-body { line-height: 1.5; }
+  .dev-banner-body strong { display: block; margin-bottom: 2px; }
+  .dev-banner-body p { color: #5a4a00; font-size: 13px; }
+
+  /* ── Card ── */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+    padding: 28px 28px 24px;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1c1c2e;
+  }
+  .card-sub {
+    font-size: 13px;
+    color: #6b6b80;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* ── Form ── */
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+  .field:last-of-type { margin-bottom: 0; }
+
+  label { font-size: 13px; font-weight: 500; color: #3a3a50; }
+  label .hint { font-weight: 400; color: #9090a8; margin-left: 4px; }
+
+  input[type="url"],
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #d8d8e8;
+    border-radius: 7px;
+    font-size: 14px;
+    color: #1c1c2e;
+    background: #fafafc;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus { border-color: #5791ff; background: #fff; }
+
+  /* ── Actions ── */
+  .actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  button[type="submit"] {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 7px;
+    background: #5791ff;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  button[type="submit"]:hover { background: #3d7bff; }
+  button[type="submit"]:disabled { background: #b3c9ff; cursor: default; }
+
+  .btn-secondary {
+    padding: 9px 16px;
+    border: 1.5px solid #d8d8e8;
+    border-radius: 7px;
+    background: #fff;
+    color: #3a3a50;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: border-color .15s;
+  }
+  .btn-secondary:hover { border-color: #b0b0c8; }
+
+  /* ── Status feedback ── */
+  .status {
+    margin-top: 16px;
+    padding: 10px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+  }
+  .status.ok      { display: block; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .status.warn    { display: block; background: #fff8e1; color: #7a5400; border: 1px solid #ffe082; }
+  .status.error   { display: block; background: #fdecea; color: #b71c1c; border: 1px solid #f5c6cb; }
+
+  /* ── Current config readout ── */
+  .current {
+    margin-top: 20px;
+    padding: 12px 14px;
+    background: #f4f4f8;
+    border-radius: 7px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #5a5a70;
+  }
+  .current strong { color: #1c1c2e; }
+
+  /* ── Back link ── */
+  .back { font-size: 13px; color: #9090a8; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .back:hover { color: #5791ff; }
+</style>
+</head>
+<body>
+
+<div class="dev-banner">
+  <span class="dev-banner-icon">⚠️</span>
+  <div class="dev-banner-body">
+    <strong>Developer tool — not for production</strong>
+    <p>This page is served by <code>dev-server.js</code> and will not exist
+    when the prototype runs inside Liferay. Settings are saved to
+    <code>dev-config.local.json</code> (gitignored) and override
+    <code>config.json</code> at runtime.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h1>Liferay connection</h1>
+  <p class="card-sub">
+    Override the default Liferay target for this session. The server
+    re-authenticates immediately after saving. Changes survive server
+    restarts but are never committed to git.
+  </p>
+
+  <form id="configForm">
+    <div class="field">
+      <label for="url">Liferay URL <span class="hint">e.g. http://localhost:8080</span></label>
+      <input type="url" id="url" name="url" required placeholder="http://localhost:8080">
+    </div>
+    <div class="field">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required autocomplete="username" placeholder="test@liferay.com">
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password">
+    </div>
+
+    <div class="actions">
+      <button type="submit" id="saveBtn">Save and reconnect</button>
+    </div>
+  </form>
+
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <div class="current" id="current" hidden>
+    Active target: <strong id="currentUrl"></strong><br>
+    User: <strong id="currentUser"></strong>
+  </div>
+</div>
+
+<div class="card">
+  <h1>Gemini writing assist <span style="font-weight:400;color:#9090a8;font-size:13px;">(optional)</span></h1>
+  <p class="card-sub">
+    Powers the optional Gemini pass in the "review format" step. The key is
+    stored server-side in <code>dev-config.local.json</code> (gitignored) and
+    never reaches the browser. Leave it empty to use the built-in deterministic
+    formatter. Needs <code>assist.provider: "gemini"</code> in
+    <code>config.json</code> for the app to call it.
+  </p>
+
+  <form id="assistForm">
+    <div class="field">
+      <label for="geminiKey">Gemini API key <span class="hint">stored locally, never committed</span></label>
+      <input type="password" id="geminiKey" name="geminiKey" autocomplete="off" placeholder="AIza…">
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener"
+         style="font-size:12px;color:#5791ff;text-decoration:none;margin-top:2px;">
+        How to get a Gemini API key ↗
+      </a>
+    </div>
+    <div class="field">
+      <label for="geminiModel">Model <span class="hint">default gemini-flash-latest</span></label>
+      <input type="text" id="geminiModel" name="geminiModel" placeholder="gemini-flash-latest">
+    </div>
+
+    <div class="actions">
+      <button type="submit" id="assistSaveBtn">Save key</button>
+    </div>
+  </form>
+
+  <div class="status" id="assistStatus" role="status" aria-live="polite"></div>
+
+  <div class="current" id="assistCurrent" hidden>
+    Gemini key: <strong id="assistKeyState"></strong><br>
+    Model: <strong id="assistModelState"></strong>
+  </div>
+</div>
+
+<a href="/" class="back">← Back to Liferay Copilot Voice</a>
+
+<script>
+  /* ── Pre-fill from localStorage (last saved values) ── */
+  const stored = (() => {
+    try { return JSON.parse(localStorage.getItem('devConfig') || '{}'); } catch (_) { return {}; }
+  })();
+  const storedAssist = (() => {
+    try { return JSON.parse(localStorage.getItem('devAssist') || '{}'); } catch (_) { return {}; }
+  })();
+
+  /* The key field shows a mask when a key is already saved so it's obvious
+     one exists (the real key never reaches the browser). Focusing clears the
+     mask so the user can type a replacement; an untouched mask is never sent
+     back, so re-saving keeps the existing key. */
+  const KEY_MASK = '••••••••••••';
+  const geminiKeyInput = document.getElementById('geminiKey');
+  let keyMasked = false;
+  function showKeyMask(hasKey) {
+    keyMasked = !!hasKey;
+    geminiKeyInput.value = hasKey ? KEY_MASK : '';
+  }
+  geminiKeyInput.addEventListener('focus', () => {
+    if (keyMasked) { geminiKeyInput.value = ''; keyMasked = false; }
+  });
+
+  function paintAssistState(hasKey, model, usingEnvKey) {
+    document.getElementById('assistKeyState').textContent =
+      !hasKey ? 'not set' : (usingEnvKey ? 'set via environment' : 'configured');
+    document.getElementById('assistModelState').textContent = model || 'gemini-flash-latest (default)';
+    document.getElementById('assistCurrent').hidden = false;
+  }
+
+  /* ── Then fetch the server's current runtime config to fill in
+        anything not in localStorage (e.g. set via env var at boot) ── */
+  fetch('/api/dev-config')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('url').value      = stored.url      || data.url      || '';
+      document.getElementById('username').value = stored.username || data.username || '';
+      document.getElementById('currentUrl').textContent  = data.url;
+      document.getElementById('currentUser').textContent = data.username;
+      document.getElementById('current').hidden = false;
+      document.getElementById('geminiModel').value = storedAssist.geminiModel || data.geminiModel || '';
+      showKeyMask(data.hasGeminiKey);
+      paintAssistState(data.hasGeminiKey, data.geminiModel, false);
+    })
+    .catch(() => {
+      /* Server unreachable — pre-fill from localStorage only. */
+      if (stored.url)      document.getElementById('url').value      = stored.url;
+      if (stored.username) document.getElementById('username').value = stored.username;
+      if (storedAssist.geminiModel) document.getElementById('geminiModel').value = storedAssist.geminiModel;
+    });
+
+  /* ── Submit ── */
+  document.getElementById('configForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('saveBtn');
+    const statusEl = document.getElementById('status');
+    const url      = document.getElementById('url').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    statusEl.className = 'status';
+    statusEl.textContent = '';
+
+    try {
+      const res  = await fetch('/api/dev-config', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ url, username, password }),
+      });
+      const data = await res.json();
+
+      /* Persist to localStorage for next page load. */
+      try { localStorage.setItem('devConfig', JSON.stringify({ url, username })); } catch (_) {}
+
+      /* Update the readout. */
+      document.getElementById('currentUrl').textContent  = url;
+      document.getElementById('currentUser').textContent = username;
+      document.getElementById('current').hidden = false;
+
+      if (data.apiTest?.ok) {
+        const loginNote = data.loginError ? ' (session cookie unavailable, using Basic auth)' : ` login HTTP ${data.loginStatus},`;
+        statusEl.className   = 'status ok';
+        statusEl.textContent = `Connected.${loginNote} API responding (HTTP ${data.apiTest.status}). The app is now pointing at ${url}.`;
+      } else if (data.apiTest && !data.apiTest.ok) {
+        const loginNote = data.loginError ? `Login: ${data.loginError}. ` : '';
+        statusEl.className   = 'status warn';
+        statusEl.textContent = `${loginNote}API test failed (HTTP ${data.apiTest.status ?? 'no response'}): ${data.apiTest.snippet || data.apiTest.error || ''}`;
+      } else {
+        statusEl.className   = 'status error';
+        statusEl.textContent = data.error || 'Unknown error from server.';
+      }
+    } catch (err) {
+      statusEl.className   = 'status error';
+      statusEl.textContent = 'Could not reach dev-server: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save and reconnect';
+    }
+  });
+
+  /* ── Gemini writing-assist key ── */
+  document.getElementById('assistForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn      = document.getElementById('assistSaveBtn');
+    const statusEl = document.getElementById('assistStatus');
+    const model    = document.getElementById('geminiModel').value.trim();
+
+    /* Only send the key when the user actually typed a replacement. An
+       untouched mask or an empty field omits it, so the saved key is kept. */
+    const payload = { model };
+    if (!keyMasked && geminiKeyInput.value.trim()) payload.key = geminiKeyInput.value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    statusEl.className = 'status';
+    statusEl.textContent = '';
+
+    try {
+      const res  = await fetch('/api/dev-assist', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      /* Persist the model (not the key) for the next page load. */
+      try { localStorage.setItem('devAssist', JSON.stringify({ geminiModel: model })); } catch (_) {}
+      showKeyMask(data.hasGeminiKey);
+      paintAssistState(data.hasGeminiKey, data.model, data.usingEnvKey);
+
+      if (!data.hasGeminiKey) {
+        statusEl.className   = 'status warn';
+        statusEl.textContent = 'No key set — the app will use the built-in deterministic formatter.';
+      } else if (data.usingEnvKey) {
+        statusEl.className   = 'status warn';
+        statusEl.textContent = 'Saved, but GEMINI_API_KEY is set in the environment and takes precedence over this key.';
+      } else if (data.keyTest?.ok) {
+        statusEl.className   = 'status ok';
+        statusEl.textContent = 'Key saved and verified (Gemini responded). Refresh the app tab if it was already open.';
+      } else {
+        statusEl.className   = 'status warn';
+        statusEl.textContent = `Key saved but verification failed (HTTP ${data.keyTest?.status ?? 'no response'}): ${data.keyTest?.snippet || data.keyTest?.error || ''}`;
+      }
+    } catch (err) {
+      statusEl.className   = 'status error';
+      statusEl.textContent = 'Could not reach dev-server: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save key';
+    }
+  });
+</script>
+</body>
+</html>

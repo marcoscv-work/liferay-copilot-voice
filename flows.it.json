@@ -1,0 +1,430 @@
+{
+  "version": "1.0.0",
+  "locale": "it-IT",
+
+  "modalCommands": {
+    "aiConfirm": [
+      { "id": "ai-yes", "phrases": ["sì", "si", "sì rivedi", "si rivedi", "rivedi", "rivedi con ia"], "label": "Sì, rivedi", "action": "aiYes" },
+      { "id": "ai-no",  "phrases": ["no", "non rivedere", "invia", "invia ora"],                       "label": "No, invia",   "action": "aiNo" }
+    ],
+    "aiReview": [
+      { "id": "ai-accept", "phrases": ["accetta", "applica", "ok", "conferma"],          "label": "Accetta",  "action": "aiAccept" },
+      { "id": "ai-cancel", "phrases": ["annulla", "indietro", "torna indietro", "esci"], "label": "Annulla",  "action": "aiCancel", "style": "danger" }
+    ],
+    "formatList": [
+      { "id": "format-back", "phrases": ["indietro", "chiudi", "esci", "annulla"], "label": "Indietro", "action": "closeFormatCommands", "style": "danger" }
+    ]
+  },
+
+  "formatCommands": {
+    "groups": [
+      {
+        "title": "Punteggiatura",
+        "items": [
+          { "say": "punto",               "result": "." },
+          { "say": "virgola",             "result": "," },
+          { "say": "due punti",           "result": ":" },
+          { "say": "punto e virgola",     "result": ";" },
+          { "say": "punto interrogativo", "result": "?" },
+          { "say": "punto esclamativo",   "result": "!" }
+        ]
+      },
+      {
+        "title": "Modifica",
+        "items": [
+          { "say": "cancella parola",        "result": "Rimuove l'ultima parola dettata" },
+          { "say": "rivedi formattazione",   "result": "Applica maiuscole, virgole e punteggiatura finale" }
+        ]
+      }
+    ]
+  },
+
+  "globalCommands": [
+    {
+      "id": "create-web-content",
+      "phrases": ["crea contenuto", "crea contenuto web", "nuovo contenuto web", "nuovo contenuto"],
+      "label": "Crea contenuto",
+      "description": "Crea nuovo contenuto web",
+      "triggersFlow": "createWebContent"
+    },
+    {
+      "id": "create-blog",
+      "phrases": ["crea blog", "nuovo blog", "nuovo articolo", "nuovo post"],
+      "label": "Crea blog",
+      "description": "Crea un nuovo articolo di blog",
+      "triggersFlow": "createBlog"
+    },
+    {
+      "id": "create-file",
+      "phrases": ["carica file", "nuovo file", "carica un file"],
+      "label": "Carica file",
+      "description": "Carica un file dal disco",
+      "triggersFlow": "createFile"
+    },
+    {
+      "id": "create-space",
+      "phrases": ["crea spazio", "nuovo spazio"],
+      "aliases": ["crea uno spazio", "aggiungi spazio"],
+      "label": "Crea spazio",
+      "description": "Crea uno spazio di contenuto",
+      "action": "createSpace"
+    },
+    {
+      "id": "exit",
+      "phrases": ["esci"],
+      "aliases": ["ferma", "stop", "chiudi", "spegni"],
+      "label": "Esci",
+      "description": "Interrompi la cattura vocale",
+      "action": "exitListening"
+    },
+    {
+      "id": "help",
+      "phrases": ["aiuto"],
+      "aliases": ["comandi"],
+      "label": "Aiuto",
+      "description": "Mostra i comandi disponibili",
+      "hidden": true
+    }
+  ],
+
+  "flows": {
+    "createWebContent": {
+      "id": "createWebContent",
+      "name": "Crea contenuto web",
+      "submitApi": "submitWebContent",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Spazio",
+          "placeholder": "Seleziona uno spazio",
+          "voicePrompt": "In quale spazio vuoi creare il contenuto?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Titolo",
+          "placeholder": "Titolo",
+          "voicePrompt": "Di' il titolo del contenuto"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Contenuto",
+          "placeholder": "Contenuto",
+          "voicePrompt": "Di' il contenuto"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Immagine di copertina",
+          "placeholder": "Aggiungi immagine di copertina",
+          "voicePrompt": "Di' il numero o il nome dell'immagine, oppure 'indietro' per uscire",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["indietro", "annulla", "esci", "torna indietro"],
+              "label": "Indietro",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "Per numero", "example": "\"2\", \"due\" o \"immagine due\"" },
+            { "label": "Per nome",   "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["vai al titolo", "torna al titolo"],
+          "label": "Vai al titolo",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["cancella titolo", "cancella il titolo"],
+          "label": "Cancella titolo",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["vai al contenuto", "torna al contenuto"],
+          "label": "Vai al contenuto",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["cancella contenuto", "cancella il contenuto"],
+          "label": "Cancella contenuto",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["aggiungi immagine di copertina", "aggiungi immagine", "immagine di copertina", "metti immagine"],
+          "label": "Aggiungi immagine",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["rimuovi immagine", "rimuovi immagine di copertina", "cancella immagine", "togli immagine"],
+          "label": "Rimuovi immagine",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["cancella ultima parola", "cancella l'ultima parola", "cancella parola", "rimuovi ultima parola", "rimuovi parola"],
+          "label": "Cancella parola",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["rivedi formattazione", "revisione formattazione", "rivedi il formato", "rivedi con ia", "rivedi contenuto"],
+          "label": "Rivedi formattazione",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["mostra comandi di formattazione", "comandi di formattazione", "aiuto formattazione", "come formattare"],
+          "label": "Comandi di formattazione",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["invia", "salva", "pubblica"],
+          "label": "Invia",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["annulla", "annulla creazione", "esci"],
+          "label": "Annulla creazione",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createBlog": {
+      "id": "createBlog",
+      "name": "Nuovo articolo di blog",
+      "submitApi": "submitBlog",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Spazio",
+          "placeholder": "Seleziona uno spazio",
+          "voicePrompt": "In quale spazio vuoi creare l'articolo?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Titolo",
+          "placeholder": "Titolo dell'articolo",
+          "voicePrompt": "Di' il titolo dell'articolo"
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "label": "Sottotitolo",
+          "placeholder": "Sottotitolo dell'articolo",
+          "voicePrompt": "Di' il sottotitolo dell'articolo"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Contenuto",
+          "placeholder": "Corpo dell'articolo",
+          "voicePrompt": "Di' il corpo dell'articolo"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Immagine di copertina",
+          "placeholder": "Aggiungi immagine di copertina",
+          "voicePrompt": "Di' il numero o il nome dell'immagine, oppure 'indietro' per uscire",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["indietro", "annulla", "esci", "torna indietro"],
+              "label": "Indietro",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "Per numero", "example": "\"2\", \"due\" o \"immagine due\"" },
+            { "label": "Per nome",   "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["vai al titolo", "torna al titolo"],
+          "label": "Vai al titolo",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["cancella titolo", "cancella il titolo"],
+          "label": "Cancella titolo",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-subtitle",
+          "phrases": ["vai al sottotitolo", "torna al sottotitolo"],
+          "label": "Vai al sottotitolo",
+          "action": "goToStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "clear-subtitle",
+          "phrases": ["cancella sottotitolo", "cancella il sottotitolo"],
+          "label": "Cancella sottotitolo",
+          "action": "clearStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["vai al contenuto", "torna al contenuto"],
+          "label": "Vai al contenuto",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["cancella contenuto", "cancella il contenuto"],
+          "label": "Cancella contenuto",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["aggiungi immagine di copertina", "aggiungi immagine", "immagine di copertina", "metti immagine"],
+          "label": "Aggiungi immagine",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["rimuovi immagine", "rimuovi immagine di copertina", "cancella immagine", "togli immagine"],
+          "label": "Rimuovi immagine",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["cancella ultima parola", "cancella l'ultima parola", "cancella parola", "rimuovi ultima parola", "rimuovi parola"],
+          "label": "Cancella parola",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["rivedi formattazione", "revisione formattazione", "rivedi il formato", "rivedi con ia", "rivedi contenuto"],
+          "label": "Rivedi formattazione",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["mostra comandi di formattazione", "comandi di formattazione", "aiuto formattazione", "come formattare"],
+          "label": "Comandi di formattazione",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["invia", "salva", "pubblica"],
+          "label": "Pubblica articolo",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["annulla", "annulla articolo", "esci"],
+          "label": "Annulla articolo",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createFile": {
+      "id": "createFile",
+      "name": "Carica file",
+      "submitApi": "uploadFile",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Spazio",
+          "placeholder": "Seleziona uno spazio",
+          "voicePrompt": "In quale spazio vuoi caricare il file?",
+          "source": "spaces"
+        },
+        {
+          "id": "file",
+          "type": "file",
+          "label": "File",
+          "placeholder": "Seleziona un file dal tuo computer",
+          "voicePrompt": "Clicca il pulsante o di' 'scegli file' per aprire il selettore"
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "select-file",
+          "phrases": [
+            "scegli file", "scegli un file", "scegli il file",
+            "seleziona file", "seleziona un file", "seleziona il file",
+            "apri file", "apri un file", "apri il file",
+            "carica file", "carica un file"
+          ],
+          "label": "Scegli file",
+          "action": "selectFile"
+        },
+        {
+          "id": "send",
+          "phrases": ["invia", "carica", "pubblica", "salva"],
+          "label": "Carica file",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["annulla", "annulla caricamento", "esci"],
+          "label": "Annulla caricamento",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    }
+  }
+}

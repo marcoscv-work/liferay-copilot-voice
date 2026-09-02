@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liferay Copilot Voice — hands-free content creation for Liferay CMS</title>
+<meta name="description" content="A voice-driven copilot for Liferay CMS. Create web content, blogs, documents and custom Object entries by talking — deployed as a client extension, in Spanish, English and Italian.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='40' y='10' width='20' height='80' rx='10' fill='%235791ff'/><rect x='12' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/><rect x='74' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/></svg>">
+<link rel="stylesheet" href="./site.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="nav-logo" href="#top">
+      <span class="logo-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+      <span class="logo-text">Liferay Copilot Voice</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">Why</a>
+      <a href="#how">How it works</a>
+      <a href="#commands">Commands</a>
+      <a href="#dynamic">Dynamic flows</a>
+      <a href="#install">Install</a>
+      <a href="#configure">Configure</a>
+      <a href="#languages">Languages</a>
+    </div>
+    <button class="nav-burger" id="navBurger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path class="burger-lines" d="M4 7h16M4 12h16M4 17h16"/><path class="burger-x" d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <a class="nav-gh" href="https://github.com/marcoscv-work/liferay-copilot-voice">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      <span>GitHub</span>
+    </a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="hero-tag">Client extension · Voice · Accessibility-first</span>
+    <h1>Create Liferay content<br><span class="grad">with your voice</span></h1>
+    <p class="lede">A hands-free copilot for Liferay CMS. Press a key, say <em>"create content"</em>, dictate — and it's published. Runs inside your portal as a client extension, with your session, your permissions and your language.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#install">Deploy to Liferay</a>
+      <a class="btn btn-secondary" href="https://github.com/marcoscv-work/liferay-copilot-voice">View source</a>
+    </div>
+
+    <div class="voice-demo" id="voiceDemo" role="img" aria-label="Animated demo of the copilot voice bars reacting to speech and confirming a command">
+      <div class="vd-key">SPACE</div>
+      <div class="vd-stage idle" id="vdStage" aria-hidden="true">
+        <div class="vd-bar"></div><div class="vd-bar"></div><div class="vd-bar"></div><div class="vd-bar"></div><div class="vd-bar"></div>
+      </div>
+      <div class="vd-caption" id="vdCaption" aria-hidden="true">&nbsp;</div>
+      <p class="vd-hint">Live recreation of the app's animation — click or press <kbd>SPACE</kbd> to fire a voice command.</p>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-kicker reveal">Why Copilot Voice</div>
+    <h2 class="reveal">Content creation that doesn't need your hands — or your eyes</h2>
+    <p class="sec-lede reveal">Born as an accessibility exploration, grown into a full authoring flow: everything the copilot shows on screen is also spoken through screen-reader live regions, and everything it asks can be answered by voice.</p>
+    <div class="grid">
+      <div class="card reveal">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></div>
+        <h3>Voice-first flows</h3>
+        <p>Web content, blog entries, document uploads and custom Objects — driven end to end by natural phrases, with dictation, inline punctuation and voice navigation between fields.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L19.7 11l-5.8 1.9L12 18.7l-1.9-5.8L4.3 11l5.8-2.2z"/></svg></div>
+        <h3>Native to Liferay</h3>
+        <p>Ships as a custom element client extension. Same-origin calls with the user's session and CSRF token, portal language via ThemeDisplay, permissions enforced by Liferay itself.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></div>
+        <h3>Three languages, all layers</h3>
+        <p>Spanish, English and Italian — not just labels: voice command phrases, dictation locale and every screen-reader announcement are translated. Adding a language is two files.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+        <h3>Dynamic Object flows</h3>
+        <p>Point it at your CMS content structures and it builds a guided voice flow for every field type — picklists, booleans, numbers, dates — with no code changes.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+        <h3>Format review</h3>
+        <p>A deterministic pass fixes capitalisation, commas and question wrapping before publishing — or plug in an LLM endpoint for full writing assistance. Either way, you approve the result.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5.5 8v8M18.5 8v8M2 11v2M22 11v2"/></svg></div>
+        <h3>Accessible by design</h3>
+        <p>Every state change is mirrored to ARIA live regions with composed prompts (question → options → actions). A blind user hears exactly what a sighted user sees.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="how">
+  <div class="wrap">
+    <div class="sec-kicker reveal">How it works</div>
+    <h2 class="reveal">From silence to published in four steps</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <h3>Activate</h3>
+        <p>Press <code>SPACE</code> (configurable). The mic morphs into live voice bars — you're listening.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Say what you want</h3>
+        <p>"Crear contenido", "new blog", "subir archivo", "crea spazio"… the bars flash purple when a command lands.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Dictate</h3>
+        <p>Pick a space, dictate title and body — or type, both always work. Say "revisar formato" for a cleanup pass.</p>
+      </div>
+      <div class="step reveal">
+        <h3>Publish</h3>
+        <p>Say "enviar". The entry is created in Liferay through the same headless APIs the portal uses.</p>
+      </div>
+    </div>
+
+    <div class="duo">
+      <div class="reveal">
+        <h3>Everything is a command — or a click</h3>
+        <p>The side panel mirrors what you can say at every moment. Every pill is also clickable, dictation fields are real inputs you can type into, and pressing the activation key mid-flow asks before cancelling. Voice never locks you in.</p>
+        <div class="pill-row">
+          <span class="pill blue">Go to title</span>
+          <span class="pill blue">Clear content</span>
+          <span class="pill">✳ Review formatting</span>
+          <span class="pill red">Add image</span>
+          <span class="pill green">Publish post</span>
+        </div>
+      </div>
+      <div class="shot reveal" aria-hidden="true">
+        <div class="chip-row"><span class="chip">Space: Marketing</span><span class="chip">Status: Draft</span></div>
+        <div class="field">Summer campaign kickoff</div>
+        <div class="field active">
+          <span>The new collection arrives <span class="interim">next Thursday…</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="commands">
+  <div class="wrap">
+    <div class="sec-kicker reveal">Voice commands</div>
+    <h2 class="reveal">Speak it in your language</h2>
+    <p class="sec-lede reveal">Commands, prompts and announcements are fully localised. The copilot follows the portal user's language automatically.</p>
+    <div class="lang-tabs reveal" id="langTabs" role="tablist" aria-label="Command language">
+      <button class="active" data-lang="es" role="tab" aria-selected="true">ES</button>
+      <button data-lang="en" role="tab" aria-selected="false">EN</button>
+      <button data-lang="it" role="tab" aria-selected="false">IT</button>
+    </div>
+    <div class="cmd-groups" id="cmdGroups"></div>
+  </div>
+</section>
+
+<section class="alt" id="dynamic">
+  <div class="wrap">
+    <div class="sec-kicker reveal">Dynamic flows</div>
+    <h2 class="reveal">Your content structures become voice flows</h2>
+    <p class="sec-lede reveal">Define a content structure in Liferay CMS — a press note, a product sheet, an event — and the copilot discovers it at startup and builds the whole guided conversation for it.</p>
+
+    <div class="duo">
+      <div class="reveal">
+        <h3>Every field type, handled</h3>
+        <ul>
+          <li><strong>Text / RichText</strong> — dictation fields with append-on-pause and voice navigation.</li>
+          <li><strong>Picklist / Boolean</strong> — option cards you can say or click.</li>
+          <li><strong>Numbers</strong> — digits or number words, integer and decimal aware.</li>
+          <li><strong>Date / DateTime</strong> — say a full date ("May 15th 2025", "mañana") or build it part by part: day… month… year.</li>
+          <li><strong>Required fields</strong> — validated before submit; the flow jumps back to whatever is missing.</li>
+        </ul>
+      </div>
+      <div class="shot reveal" aria-hidden="true">
+        <div class="prompt">Which space do you want to create the content in?</div>
+        <div class="space-cards">
+          <span class="space-card sc-purple">Marketing</span>
+          <span class="space-card sc-teal">Newsroom</span>
+          <span class="space-card sc-orange">Events</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="duo">
+      <div class="shot reveal" aria-hidden="true">
+        <div class="prompt">Say the date for Publication date</div>
+        <div class="field active"><span>15/05/2026</span></div>
+        <div class="chip-row"><span class="chip">Day: 15</span><span class="chip">Month: may</span><span class="chip">Year: 2026</span></div>
+      </div>
+      <div class="reveal">
+        <h3>No admin setup beyond the CMS itself</h3>
+        <p>Structures live where they always did — the CMS content structures library. The copilot reads their definitions through the headless Object API, fetches picklist values, and uses your field labels as spoken prompts. Rename a field in Liferay and the voice prompt follows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <div class="sec-kicker reveal">Install</div>
+    <h2 class="reveal">One zip, zero configuration</h2>
+    <p class="sec-lede reveal">Copilot Voice is a <a href="https://learn.liferay.com/w/dxp/development/client-extensions">custom element client extension</a>: static files served by your own portal. No extra servers, no credentials, no CORS.</p>
+
+    <div class="code-cols">
+      <div class="code-col reveal">
+        <h3>1 · Build the deployable zip</h3>
+        <p>The repo ships the official Liferay Workspace tooling — one command produces the artifact:</p>
+        <pre><code>git clone https://github.com/marcoscv-work/liferay-copilot-voice
+cd liferay-copilot-voice
+npm install
+npm run build:cx
+# → dist/liferay-copilot-voice-deployable.zip</code></pre>
+      </div>
+      <div class="code-col reveal">
+        <h3>2 · Deploy it</h3>
+        <p>Self-hosted: drop it in the bundle's <code>deploy/</code> dir (or let the build do it). Liferay SaaS/PaaS: upload it from the cloud console.</p>
+        <pre><code>LIFERAY_HOME=/path/to/bundle npm run build:cx
+# hot-deploys straight into $LIFERAY_HOME/deploy</code></pre>
+      </div>
+    </div>
+    <div class="duo">
+      <div class="reveal">
+        <h3>3 · Place the widget</h3>
+        <p>Add the <strong>Liferay Copilot Voice</strong> widget (category <em>Client Extensions</em>) to a blank, full-width page. That's it — users open the page, grant the mic once, press <code>SPACE</code> and talk.</p>
+        <ul>
+          <li>Auth: the logged-in user's session — permissions enforced by Liferay.</li>
+          <li>Language: follows the user's portal language.</li>
+          <li>No content spaces yet? The copilot offers to create the first one.</li>
+        </ul>
+      </div>
+      <div class="reveal">
+        <h3>What you need</h3>
+        <ul>
+          <li><strong>Liferay</strong> with client extension support (DXP 7.4+ / quarterly releases / SaaS).</li>
+          <li><strong>A browser with speech recognition</strong> (the Web Speech API) — Chrome, Edge and Safari all work today; Firefox doesn't ship it yet.</li>
+          <li><strong>A microphone</strong> — the browser asks once per site.</li>
+          <li>Nothing else: no extra servers, no API keys, no per-user setup.</li>
+        </ul>
+        <p style="margin-top:14px;">Want to hack on the copilot itself? The <a href="https://github.com/marcoscv-work/liferay-copilot-voice#quick-start-standalone">README</a> covers the development setup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="configure">
+  <div class="wrap">
+    <div class="sec-kicker reveal">Configure</div>
+    <h2 class="reveal">Small config, sensible defaults</h2>
+    <p class="sec-lede reveal">Everything tunable lives in <code>config.json</code>. Commands and flow structure live in <code>flows.&lt;lang&gt;.json</code> — new phrases don't need code.</p>
+    <div class="code-cols">
+      <div class="code-col reveal">
+        <h3>config.json</h3>
+        <pre><code>{
+  "activationKey": { "code": "Space", "label": "SPACE" },
+  "locales":  { "es": "es-ES", "en": "en-US", "it": "it-IT" },
+  "speech":   { "provider": "web-speech" },
+  "assist":   { "provider": "none" },
+  "submit":   { "askFormatReview": false }
+}</code></pre>
+      </div>
+      <div class="code-col reveal">
+        <h3>What each knob does</h3>
+        <ul style="margin-left:18px; color:var(--cv-text-muted); font-size:15px;">
+          <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">activationKey</strong> — any <code>KeyboardEvent.code</code>: <code>Space</code>, <code>KeyF</code>, <code>AltLeft</code>…</li>
+          <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">locales</strong> — UI language → BCP-47 tag for speech recognition.</li>
+          <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">speech.provider</strong> — a clean seam: swap the browser recogniser for Deepgram, Whisper &amp; co. by registering one factory.</li>
+          <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">assist</strong> — optional LLM writing review; point <code>endpoint</code> at your own service. Falls back to the built-in deterministic format pass, so it can never block publishing.</li>
+          <li><strong style="color:var(--cv-text)">askFormatReview</strong> — ask "review formatting?" before every submit.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="languages">
+  <div class="wrap">
+    <div class="sec-kicker reveal">Languages</div>
+    <h2 class="reveal">Add a language in an afternoon</h2>
+    <p class="sec-lede reveal">Each locale is two data files — no engine code. Italian was added exactly this way and ships as the reference.</p>
+    <div class="lang-files reveal">
+      <table>
+        <thead><tr><th>File</th><th>What you translate</th></tr></thead>
+        <tbody>
+          <tr><td><code>language/Language_xx.properties</code></td><td>Every UI string — including the <code>announce*</code> block that screen readers speak aloud.</td></tr>
+          <tr><td><code>flows.xx.json</code></td><td>Voice command phrases, aliases, step labels and spoken prompts for every flow.</td></tr>
+          <tr><td><code>src/08-boot.js</code></td><td>Add the code to <code>SUPPORTED_LOCALES</code>; map it in <code>config.json</code> <code>locales</code>.</td></tr>
+          <tr><td><code>markup.js</code></td><td>One <code>&lt;button data-lang="xx"&gt;</code> in the dev language toggle.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sec-lede reveal" style="margin-top:26px;">Inside the portal the language is chosen for you: the copilot reads <code>Liferay.ThemeDisplay</code>, so an es-MX user dictates in es-MX and an unsupported portal language falls back gracefully.</p>
+  </div>
+</section>
+
+<section class="alt" id="examples">
+  <div class="wrap">
+    <div class="sec-kicker reveal">In practice</div>
+    <h2 class="reveal">What people do with it</h2>
+    <div class="grid">
+      <div class="card reveal">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V6a2 2 0 0 1 2-2h14v14H6.5a2.5 2.5 0 0 0 0 5H20"/></svg></div>
+        <h3>The dictated blog post</h3>
+        <p>"Crear blog" → dictate the title, the body with spoken punctuation, say "añadir imagen" and pick a cover by number — "imagen dos" — then "revisar formato" and "enviar". Never touched the keyboard.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg></div>
+        <h3>The structured press note</h3>
+        <p>A "Press note" content structure with status picklist, embargo date and priority number becomes a guided interview: the copilot asks for each field in order and validates the required ones.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a15 15 0 0 0 0 18M12 3a15 15 0 0 1 0 18M3 12h18M12 3v18" opacity="0"/><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"/></svg></div>
+        <h3>The screen-reader session</h3>
+        <p>With VoiceOver or NVDA running, every prompt, option list and confirmation is announced. The whole authoring flow — spaces, fields, review modal — works ears-and-voice only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Liferay Copilot Voice — a personal project by <a href="https://github.com/marcoscv-work">marcoscv-work</a>. Not an official Liferay product.</span>
+    <span><a href="https://github.com/marcoscv-work/liferay-copilot-voice">Source on GitHub</a></span>
+  </div>
+</footer>
+
+<script src="./site.js"></script>
+</body>
+</html>

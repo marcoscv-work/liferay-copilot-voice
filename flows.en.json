@@ -1,0 +1,430 @@
+{
+  "version": "1.0.0",
+  "locale": "en-US",
+
+  "modalCommands": {
+    "aiConfirm": [
+      { "id": "ai-yes", "phrases": ["yes", "yes review", "review", "review with ai"], "label": "Yes, review", "action": "aiYes" },
+      { "id": "ai-no",  "phrases": ["no", "no review", "send", "send now"],            "label": "No, send",  "action": "aiNo" }
+    ],
+    "aiReview": [
+      { "id": "ai-accept", "phrases": ["accept", "apply", "ok", "confirm"], "label": "Accept",  "action": "aiAccept" },
+      { "id": "ai-cancel", "phrases": ["cancel", "back", "go back"],         "label": "Cancel", "action": "aiCancel", "style": "danger" }
+    ],
+    "formatList": [
+      { "id": "format-back", "phrases": ["back", "close", "exit", "cancel"], "label": "Back", "action": "closeFormatCommands", "style": "danger" }
+    ]
+  },
+
+  "formatCommands": {
+    "groups": [
+      {
+        "title": "Punctuation",
+        "items": [
+          { "say": "period",            "result": "." },
+          { "say": "comma",             "result": "," },
+          { "say": "colon",             "result": ":" },
+          { "say": "semicolon",         "result": ";" },
+          { "say": "question mark",     "result": "?" },
+          { "say": "exclamation mark",  "result": "!" }
+        ]
+      },
+      {
+        "title": "Editing",
+        "items": [
+          { "say": "delete word",       "result": "Removes the last dictated word" },
+          { "say": "review formatting", "result": "Applies capitalisation, commas and punctuation" }
+        ]
+      }
+    ]
+  },
+
+  "globalCommands": [
+    {
+      "id": "create-web-content",
+      "phrases": ["create content", "create web content", "new web content", "new content"],
+      "label": "Create content",
+      "description": "Create new web content",
+      "triggersFlow": "createWebContent"
+    },
+    {
+      "id": "create-blog",
+      "phrases": ["create blog", "new blog", "new blog post", "new post"],
+      "label": "Create blog",
+      "description": "Create a new blog post",
+      "triggersFlow": "createBlog"
+    },
+    {
+      "id": "create-file",
+      "phrases": ["upload file", "new file", "upload a file"],
+      "label": "Upload file",
+      "description": "Upload a file from disk",
+      "triggersFlow": "createFile"
+    },
+    {
+      "id": "create-space",
+      "phrases": ["create space", "new space"],
+      "aliases": ["create a space", "add space"],
+      "label": "Create space",
+      "description": "Create a content space",
+      "action": "createSpace"
+    },
+    {
+      "id": "exit",
+      "phrases": ["exit"],
+      "aliases": ["stop", "quit", "close", "shut down", "turn off"],
+      "label": "Exit",
+      "description": "Stop voice capture",
+      "action": "exitListening"
+    },
+    {
+      "id": "help",
+      "phrases": ["help"],
+      "aliases": ["commands"],
+      "label": "Help",
+      "description": "Show available commands",
+      "hidden": true
+    }
+  ],
+
+  "flows": {
+    "createWebContent": {
+      "id": "createWebContent",
+      "name": "Create web content",
+      "submitApi": "submitWebContent",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Space",
+          "placeholder": "Select a space",
+          "voicePrompt": "Which space do you want to create the content in?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title",
+          "placeholder": "Title",
+          "voicePrompt": "Say the title of the content"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Content",
+          "placeholder": "Content",
+          "voicePrompt": "Say the content"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Cover image",
+          "placeholder": "Add a cover image",
+          "voicePrompt": "Say the number or the name of the image, or 'back' to exit",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["back", "cancel", "exit", "go back"],
+              "label": "Back",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "By number", "example": "\"2\", \"two\" or \"image two\"" },
+            { "label": "By name",   "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["go to title", "back to title"],
+          "label": "Go to title",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["clear title", "clear the title"],
+          "label": "Clear title",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["go to content", "back to content"],
+          "label": "Go to content",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["clear content", "clear the content"],
+          "label": "Clear content",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["add cover image", "add image", "cover image", "add a cover"],
+          "label": "Add image",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["clear image", "clear cover image", "remove image", "remove cover image"],
+          "label": "Clear image",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["delete last word", "delete word", "remove last word", "remove word"],
+          "label": "Delete word",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["review formatting", "review format", "format review", "review with ai", "review content"],
+          "label": "Review formatting",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["show format commands", "format commands", "format help", "how to format"],
+          "label": "Show format commands",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["send", "save", "publish"],
+          "label": "Send",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["cancel", "cancel creation", "exit"],
+          "label": "Cancel creation",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createBlog": {
+      "id": "createBlog",
+      "name": "New blog post",
+      "submitApi": "submitBlog",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Space",
+          "placeholder": "Select a space",
+          "voicePrompt": "Which space do you want to create the post in?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title",
+          "placeholder": "Post title",
+          "voicePrompt": "Say the title of the post"
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "label": "Subtitle",
+          "placeholder": "Post subtitle",
+          "voicePrompt": "Say the subtitle of the post"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Content",
+          "placeholder": "Post body",
+          "voicePrompt": "Say the body of the post"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Cover image",
+          "placeholder": "Add a cover image",
+          "voicePrompt": "Say the number or the name of the image, or 'back' to exit",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["back", "cancel", "exit", "go back"],
+              "label": "Back",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "By number", "example": "\"2\", \"two\" or \"image two\"" },
+            { "label": "By name",   "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["go to title", "back to title"],
+          "label": "Go to title",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["clear title", "clear the title"],
+          "label": "Clear title",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-subtitle",
+          "phrases": ["go to subtitle", "back to subtitle"],
+          "label": "Go to subtitle",
+          "action": "goToStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "clear-subtitle",
+          "phrases": ["clear subtitle", "clear the subtitle"],
+          "label": "Clear subtitle",
+          "action": "clearStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["go to content", "back to content", "go to body", "back to body"],
+          "label": "Go to content",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["clear content", "clear the content", "clear body"],
+          "label": "Clear content",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["add cover image", "add image", "cover image", "add a cover"],
+          "label": "Add image",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["clear image", "clear cover image", "remove image", "remove cover image"],
+          "label": "Clear image",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["delete last word", "delete word", "remove last word", "remove word"],
+          "label": "Delete word",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["review formatting", "review format", "format review", "review with ai", "review content"],
+          "label": "Review formatting",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["show format commands", "format commands", "format help", "how to format"],
+          "label": "Show format commands",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["send", "save", "publish"],
+          "label": "Publish post",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["cancel", "cancel post", "exit"],
+          "label": "Cancel post",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createFile": {
+      "id": "createFile",
+      "name": "Upload file",
+      "submitApi": "uploadFile",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Space",
+          "placeholder": "Select a space",
+          "voicePrompt": "Which space do you want to upload the file to?",
+          "source": "spaces"
+        },
+        {
+          "id": "file",
+          "type": "file",
+          "label": "File",
+          "placeholder": "Select a file from your computer",
+          "voicePrompt": "Click the button or say 'choose file' to open the picker"
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "select-file",
+          "phrases": [
+            "choose file", "choose a file", "choose the file",
+            "select file", "select a file", "select the file",
+            "open file", "open a file", "open the file",
+            "pick file", "pick a file"
+          ],
+          "label": "Choose file",
+          "action": "selectFile"
+        },
+        {
+          "id": "send",
+          "phrases": ["send", "upload", "publish", "save"],
+          "label": "Upload file",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["cancel", "cancel upload", "exit"],
+          "label": "Cancel upload",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    }
+  }
+}
