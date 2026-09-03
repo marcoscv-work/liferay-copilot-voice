@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Liferay Copilot Voice — hands-free content creation for Liferay CMS</title>
-<meta name="description" content="A voice-driven copilot for Liferay CMS. Create web content, blogs, documents and custom Object entries by talking — deployed as a client extension, in Spanish, English and Italian.">
+<meta name="description" content="A voice-driven copilot for Liferay CMS. Create web content, blogs, documents and custom Object entries by talking — deployed as a client extension, in Spanish, English, Italian, Portuguese, German and French.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='40' y='10' width='20' height='80' rx='10' fill='%235791ff'/><rect x='12' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/><rect x='74' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/></svg>">
 <link rel="stylesheet" href="./site.css">
 </head>
@@ -75,8 +75,8 @@
       </div>
       <div class="card reveal">
         <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></div>
-        <h3>Three languages, all layers</h3>
-        <p>Spanish, English and Italian — not just labels: voice command phrases, dictation locale and every screen-reader announcement are translated. Adding a language is two files.</p>
+        <h3>Six languages, all layers</h3>
+        <p>Spanish, English, Italian, Portuguese, German and French — not just labels: voice command phrases, dictation locale and every screen-reader announcement are translated. Adding a language is two files.</p>
       </div>
       <div class="card reveal">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
@@ -153,6 +153,9 @@
       <button class="active" id="langTabEs" data-lang="es" role="tab" aria-selected="true" aria-controls="cmdGroups">ES</button>
       <button id="langTabEn" data-lang="en" role="tab" aria-selected="false" aria-controls="cmdGroups" tabindex="-1">EN</button>
       <button id="langTabIt" data-lang="it" role="tab" aria-selected="false" aria-controls="cmdGroups" tabindex="-1">IT</button>
+      <button id="langTabPt" data-lang="pt" role="tab" aria-selected="false" aria-controls="cmdGroups" tabindex="-1">PT</button>
+      <button id="langTabDe" data-lang="de" role="tab" aria-selected="false" aria-controls="cmdGroups" tabindex="-1">DE</button>
+      <button id="langTabFr" data-lang="fr" role="tab" aria-selected="false" aria-controls="cmdGroups" tabindex="-1">FR</button>
     </div>
     <div class="cmd-groups" id="cmdGroups" role="tabpanel" aria-labelledby="langTabEs"></div>
   </div>
@@ -280,7 +283,7 @@ npm run build:cx
   <div class="wrap">
     <div class="sec-kicker reveal">Languages</div>
     <h2 class="reveal">Add a language in an afternoon</h2>
-    <p class="sec-lede reveal">Each locale is two data files — no engine code. Italian was added exactly this way and ships as the reference.</p>
+    <p class="sec-lede reveal">Each locale is two data files — no engine code. Italian, Portuguese, German and French were each added exactly this way.</p>
     <div class="lang-files reveal">
       <table>
         <thead><tr><th>File</th><th>What you translate</th></tr></thead>

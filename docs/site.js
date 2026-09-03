@@ -127,7 +127,7 @@
     }
   }
 
-  /* ── Command reference (ES / EN / IT) ─────────────────────────────── */
+  /* ── Command reference (ES / EN / IT / PT / DE / FR) ──────────────── */
   const COMMANDS = {
     es: {
       'Global — start something': ['crear contenido', 'crear blog', 'subir archivo', 'crear espacio', 'ayuda', 'salir'],
@@ -149,6 +149,27 @@
       'Content extras': ['aggiungi immagine', 'immagine due', 'rimuovi immagine', 'rivedi formato'],
       'Finish or leave': ['invia', 'salva', 'pubblica', 'annulla', 'torna'],
       'Spoken punctuation': ['punto', 'virgola', 'due punti', 'punto e virgola', 'punto interrogativo', 'punto esclamativo'],
+    },
+    pt: {
+      'Global — start something': ['criar conteúdo', 'criar blog', 'enviar arquivo', 'criar espaço', 'ajuda', 'sair'],
+      'While dictating': ['ir para o título', 'apagar título', 'ir para o conteúdo', 'apagar conteúdo', 'apagar última palavra', 'ver comandos de formatação'],
+      'Content extras': ['adicionar imagem de capa', 'imagem dois', 'apagar imagem', 'revisar formatação'],
+      'Finish or leave': ['enviar', 'salvar', 'publicar', 'cancelar', 'voltar'],
+      'Spoken punctuation': ['ponto', 'vírgula', 'dois pontos', 'ponto e vírgula', 'ponto de interrogação', 'ponto de exclamação'],
+    },
+    de: {
+      'Global — start something': ['inhalt erstellen', 'blog erstellen', 'datei hochladen', 'space erstellen', 'hilfe', 'beenden'],
+      'While dictating': ['zum titel', 'titel löschen', 'zum inhalt', 'inhalt löschen', 'letztes wort löschen', 'formatierungsbefehle anzeigen'],
+      'Content extras': ['titelbild hinzufügen', 'bild zwei', 'bild löschen', 'formatierung überprüfen'],
+      'Finish or leave': ['senden', 'speichern', 'veröffentlichen', 'abbrechen', 'zurück'],
+      'Spoken punctuation': ['Punkt', 'Komma', 'Doppelpunkt', 'Semikolon', 'Fragezeichen', 'Ausrufezeichen'],
+    },
+    fr: {
+      'Global — start something': ['créer du contenu', 'créer un blog', 'envoyer un fichier', 'créer un espace', 'aide', 'quitter'],
+      'While dictating': ['aller au titre', 'effacer le titre', 'aller au contenu', 'effacer le contenu', 'supprimer le dernier mot', 'voir les commandes de mise en forme'],
+      'Content extras': ['ajouter une image de couverture', 'image deux', "effacer l'image", 'vérifier la mise en forme'],
+      'Finish or leave': ['envoyer', 'enregistrer', 'publier', 'annuler', 'retour'],
+      'Spoken punctuation': ['point', 'virgule', 'deux points', 'point-virgule', "point d'interrogation", "point d'exclamation"],
     },
   };
   const PILL_STYLES = { 'Global — start something': 'blue', 'Finish or leave': 'green', 'Spoken punctuation': '' };

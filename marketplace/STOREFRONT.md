@@ -40,7 +40,7 @@ imply official certification — DECISION PENDING):
 >   numbers and dates are all dictatable.
 > - Runs inside your portal as a custom element client extension: no extra
 >   servers, no credentials, no configuration. It uses the signed-in user's
->   session, permissions and language (Spanish, English and Italian).
+>   session, permissions and language (Spanish, English, Italian, Portuguese, German and French).
 > - Accessibility-first: every prompt, option list and confirmation is
 >   mirrored to screen-reader live regions. The whole flow works
 >   ears-and-voice only.
@@ -105,7 +105,7 @@ base64 FileEntry and keeps multipart as legacy fallback.
 - Release notes draft:
   > First public release. Voice-driven creation of web content, blogs,
   > documents and custom Object entries; space creation by voice; Spanish,
-  > English and Italian; full screen-reader support.
+  > English, Italian, Portuguese, German and French; full screen-reader support.
 
 ## Steps 6–7 — Pricing / Licensing
 

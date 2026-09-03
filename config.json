@@ -6,7 +6,10 @@
   "locales": {
     "es": "es-ES",
     "en": "en-US",
-    "it": "it-IT"
+    "it": "it-IT",
+    "pt": "pt-BR",
+    "de": "de-DE",
+    "fr": "fr-FR"
   },
   "speech": {
     "provider": "web-speech"
@@ -20,7 +23,7 @@
     "askFormatReview": false
   },
   "liferay": {
-    "enabled":   true,
-    "baseUrl":   ""
+    "enabled": true,
+    "baseUrl": ""
   }
 }

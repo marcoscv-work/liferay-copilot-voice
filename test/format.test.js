@@ -34,11 +34,44 @@ test('inline punctuation — Italian (audit P1-6)', () => {
   assert.equal(A.applyInlinePunctuation('attento punto esclamativo'), 'attento!');
 });
 
-test('question detection covers the three languages', () => {
-  for (const q of ['qué hora es', 'where is it', 'dove si trova', 'perché no', 'cuánto cuesta']) {
+test('question detection covers all six languages', () => {
+  for (const q of ['qué hora es', 'where is it', 'dove si trova', 'perché no', 'cuánto cuesta',
+                   'onde fica a sede', 'o que aconteceu', 'warum nicht', 'wie geht das',
+                   'pourquoi pas', "qu'est-ce que c'est", 'où se trouve', 'combien ça coûte']) {
     assert.ok(A.QUESTION_STARTERS.test(q), q);
   }
-  assert.ok(!A.QUESTION_STARTERS.test('la reunión es mañana'));
+  for (const notQ of ['la reunión es mañana', 'der Bericht ist fertig', 'le rapport est prêt']) {
+    assert.ok(!A.QUESTION_STARTERS.test(notQ), notQ);
+  }
+});
+
+test('inline punctuation — Portuguese / German / French', () => {
+  assert.equal(
+    A.applyInlinePunctuation('olá vírgula mundo ponto e vírgula bem dois pontos sim ponto'),
+    'olá, mundo; bem: sim.'
+  );
+  assert.equal(
+    A.applyInlinePunctuation('hallo Komma Welt Semikolon gut Doppelpunkt ja Punkt wirklich Fragezeichen'),
+    'hallo, Welt; gut: ja. wirklich?'
+  );
+  A.__setLocale('fr-FR');
+  assert.equal(
+    A.applyInlinePunctuation("bonjour virgule monde point-virgule bien deux points oui point vraiment point d'interrogation"),
+    'bonjour, monde; bien: oui. vraiment?'
+  );
+  /* "point" must NOT convert outside French — it is common English prose. */
+  A.__setLocale('en-US');
+  assert.equal(
+    A.applyInlinePunctuation('the main point is clear'),
+    'the main point is clear'
+  );
+});
+
+test('dates — Portuguese / German / French', () => {
+  assert.equal(A.parseDateFromVoice('quinze de dezembro de 2026'), '2026-12-15');
+  assert.equal(A.parseDateFromVoice('einundzwanzig märz 2027'), '2027-03-21');
+  assert.equal(A.parseDateFromVoice('dix-sept juillet 2026'), '2026-07-17');
+  assert.equal(A.parseDateFromVoice('quinze août 2026'), '2026-08-15');
 });
 
 test('question wrapping respects locale', () => {

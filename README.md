@@ -2,7 +2,7 @@
 
 **Product site: <https://marcoscv-work.github.io/liferay-copilot-voice/>** (served from [`docs/`](docs/))
 
-Voice-driven content creation copilot for Liferay CMS. Press a configurable key to activate voice input, then create web content, blog entries, upload files or fill custom Object entries via natural-language commands — in Spanish, English or Italian.
+Voice-driven content creation copilot for Liferay CMS. Press a configurable key to activate voice input, then create web content, blog entries, upload files or fill custom Object entries via natural-language commands — in Spanish, English, Italian, Portuguese, German or French.
 
 Runs in two modes from the same codebase:
 

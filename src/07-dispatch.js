@@ -115,6 +115,56 @@
     venti: 20, ventuno: 21, ventidue: 22, ventitre: 23, ventiquattro: 24,
     venticinque: 25, ventisei: 26, ventisette: 27, ventotto: 28, ventinove: 29,
     trenta: 30, trentuno: 31,
+    /* Portuguese 1–31 (21–29 are multi-word "vinte e um" — STT usually emits
+       digits for those, so only single tokens are listed) */
+    um: 1, uma: 1, primeiro: 1, primeira: 1,
+    dois: 2, duas: 2,
+    terceiro: 3, terceira: 3,
+    quatro: 4,
+    sete: 7, setimo: 7, setima: 7,
+    oito: 8, oitavo: 8, oitava: 8,
+    dez: 10, /* décimo → 'decimo' (already mapped by the Italian entry) */
+    onze: 11, doze: 12, treze: 13, catorze: 14, quatorze: 14, quinze: 15,
+    dezesseis: 16, dezasseis: 16, dezessete: 17, dezassete: 17,
+    dezoito: 18, dezenove: 19, dezanove: 19,
+    vinte: 20, trinta: 30,
+    /* German 1–31 (compounds are single tokens) */
+    eins: 1, erste: 1, erster: 1, erstes: 1,
+    zwei: 2, zweite: 2, zweiter: 2,
+    drei: 3, dritte: 3, dritter: 3,
+    vier: 4, vierte: 4,
+    funf: 5, ['fünf']: 5, funfte: 5, ['fünfte']: 5,
+    sechs: 6, sechste: 6,
+    sieben: 7, siebte: 7,
+    acht: 8, achte: 8,
+    neun: 9, neunte: 9,
+    zehn: 10, zehnte: 10,
+    elf: 11, zwolf: 12, ['zwölf']: 12,
+    dreizehn: 13, vierzehn: 14, funfzehn: 15, ['fünfzehn']: 15,
+    sechzehn: 16, siebzehn: 17, achtzehn: 18, neunzehn: 19,
+    zwanzig: 20, einundzwanzig: 21, zweiundzwanzig: 22, dreiundzwanzig: 23,
+    vierundzwanzig: 24, funfundzwanzig: 25, ['fünfundzwanzig']: 25,
+    sechsundzwanzig: 26, siebenundzwanzig: 27, achtundzwanzig: 28,
+    neunundzwanzig: 29, dreissig: 30, ['dreißig']: 30,
+    einunddreissig: 31, ['einunddreißig']: 31,
+    /* French 1–31 (hyphenated forms are single tokens; "vingt et un" is
+       multi-word — digits cover it) */
+    un: 1, une: 1, premier: 1, premiere: 1,
+    deux: 2, deuxieme: 2,
+    trois: 3, troisieme: 3,
+    quatre: 4, quatrieme: 4,
+    cinq: 5, cinquieme: 5,
+    sixieme: 6,
+    sept: 7, septieme: 7,
+    huit: 8, huitieme: 8,
+    neuf: 9, neuvieme: 9,
+    dix: 10, dixieme: 10,
+    douze: 12, treize: 13, seize: 16, /* quatorze/quinze shared with pt */
+    ['dix-sept']: 17, ['dix-huit']: 18, ['dix-neuf']: 19,
+    vingt: 20, ['vingt-et-un']: 21, ['vingt-deux']: 22, ['vingt-trois']: 23,
+    ['vingt-quatre']: 24, ['vingt-cinq']: 25, ['vingt-six']: 26,
+    ['vingt-sept']: 27, ['vingt-huit']: 28, ['vingt-neuf']: 29,
+    trente: 30, ['trente-et-un']: 31,
   };
 
   function matchImageFromVoice(text) {
@@ -255,28 +305,45 @@
      has to land before "interrogación" alone, otherwise "interrogación"
      becomes "?" and "abrir interrogación" never matches → output reads
      "abrir ?" instead of "¿". */
+  /* Spoken-punctuation table. Unrestricted entries are words that are safe
+     in EVERY language (unique spellings); `langs` restricts entries whose
+     trigger is a common word elsewhere (e.g. "point" is normal English
+     prose, so it only converts while the UI language is French). */
   const INLINE_PUNCT = [
     { re: /\babrir interrogaci[oó]n\b/gi,                                                ch: '¿' },
     { re: /\babrir exclamaci[oó]n\b/gi,                                                  ch: '¡' },
     { re: /\bpunto y coma\b/gi,                                                          ch: ';' },
     { re: /\bpunto e virgola\b/gi,                                                       ch: ';' },
-    { re: /\bsemicolon\b/gi,                                                             ch: ';' },
+    { re: /\bponto e v[ií]rgula\b/gi,                                                    ch: ';' },
+    { re: /\bpoint[- ]virgule\b/gi,                                                      ch: ';' },
+    { re: /\b(?:semicolon|semikolon)\b/gi,                                               ch: ';' },
     { re: /\bdos puntos\b/gi,                                                            ch: ':' },
     { re: /\bdue punti\b/gi,                                                             ch: ':' },
-    { re: /\bcolon\b/gi,                                                                 ch: ':' },
-    { re: /\b(?:signo de interrogaci[oó]n|interrogaci[oó]n|question mark|punto (?:interrogativo|di domanda))\b/gi, ch: '?' },
-    { re: /\b(?:signo de exclamaci[oó]n|exclamaci[oó]n|exclamation (?:mark|point)|punto esclamativo)\b/gi, ch: '!' },
-    { re: /\b(?:coma|comma|virgola)\b/gi,                                                ch: ',' },
-    { re: /\b(?:punto final|punto|period|full stop)\b/gi,                                ch: '.' },
+    { re: /\bdois pontos\b/gi,                                                           ch: ':' },
+    { re: /\bdeux[- ]points\b/gi,                                                        ch: ':' },
+    { re: /\b(?:colon|doppelpunkt)\b/gi,                                                 ch: ':' },
+    { re: /\b(?:signo de interrogaci[oó]n|interrogaci[oó]n|question mark|punto (?:interrogativo|di domanda)|ponto de interroga[cç][aã]o|point d['’]interrogation|fragezeichen)\b/gi, ch: '?' },
+    { re: /\b(?:signo de exclamaci[oó]n|exclamaci[oó]n|exclamation (?:mark|point)|punto esclamativo|ponto de exclama[cç][aã]o|point d['’]exclamation|ausrufezeichen)\b/gi, ch: '!' },
+    { re: /\b(?:coma|comma|virgola|v[ií]rgula|virgule|komma)\b/gi,                       ch: ',' },
+    { re: /\b(?:punto final|punto|period|full stop|ponto final|ponto|punkt)\b/gi,        ch: '.' },
+    { re: /\bpoint\b/gi,                                                                 ch: '.', langs: ['fr'] },
   ];
+
+  function currentLang() {
+    return String(appConfig.locale || 'en').toLowerCase().split(/[-_]/)[0];
+  }
 
   /* Question starters in Spanish + English. Catches both question words and
      English auxiliary-fronted yes/no questions. */
-  const QUESTION_STARTERS = /^[\s¿¡"'`]*(qué|que|cómo|como|dónde|donde|cuándo|cuando|por\s+qu[eé]|cuál(?:es)?|cual(?:es)?|quién(?:es)?|quien(?:es)?|cuánt[oa]s?|cuant[oa]s?|acaso|what|how|where|when|why|which|who(?:m|se)?|do|does|did|can|could|would|should|will|won['’]?t|is|are|am|was|were|has|have|had|may|might|must|cosa|che(?:\s+cosa)?|dove|perch[eé]|quale|quali|chi|quant[oaie])(?=[\s.,;:!?]|$)/i;
+  const QUESTION_STARTERS = /^[\s¿¡"'`]*(qué|que|cómo|como|dónde|donde|cuándo|cuando|por\s+qu[eé]|cuál(?:es)?|cual(?:es)?|quién(?:es)?|quien(?:es)?|cuánt[oa]s?|cuant[oa]s?|acaso|what|how|where|when|why|which|who(?:m|se)?|do|does|did|can|could|would|should|will|won['’]?t|is|are|am|was|were|has|have|had|may|might|must|cosa|che(?:\s+cosa)?|dove|perch[eé]|quale|quali|chi|quant[oaie]|o\s+que|onde|por\s+qu[eê]|porqu[eê]|qual|quais|quem|quanto[as]?|was|wie|wo|wann|warum|wieso|weshalb|welche[rsn]?|wer|ist|sind|kann|k[oö]nnen|hat|haben|wird|werden|darf|soll(?:en)?|muss|m[uü]ssen|qu['’]est[- ]ce|est[- ]ce|comment|où|quand|pourquoi|quel(?:le)?s?|combien)(?=[\s.,;:!?'’]|$)/i;
 
   function applyInlinePunctuation(text) {
     let t = String(text);
-    for (const { re, ch } of INLINE_PUNCT) t = t.replace(re, ch);
+    const lang = currentLang();
+    for (const { re, ch, langs } of INLINE_PUNCT) {
+      if (langs && !langs.includes(lang)) continue;
+      t = t.replace(re, ch);
+    }
     /* Closing punctuation: drop whitespace before, ensure one space after. */
     t = t.replace(/\s+([.,!?;:])/g, '$1');
     t = t.replace(/([.,!?;:])(?=\S)/g, '$1 ');
@@ -332,7 +399,7 @@
     t = t.replace(/([.!?]\s+)([a-záéíóúñü])/g, (_, p, c) => p + c.toUpperCase());
     /* Comma before common transitional connectors (ES + EN) when missing. */
     t = t.replace(
-      /(\S) (pero|aunque|sin embargo|por (?:lo )?tanto|porque|but|although|however|therefore|because|per[oò]|tuttavia|quindi|perch[eé])\b/gi,
+      /(\S) (pero|aunque|sin embargo|por (?:lo )?tanto|porque|but|although|however|therefore|because|per[oò]|tuttavia|quindi|perch[eé]|por[eé]m|contudo|entretanto|portanto|aber|sondern|jedoch|deshalb|daher|weil|mais|cependant|pourtant|donc|parce que)\b/gi,
       (_, prev, conn) => prev + ', ' + conn
     );
     /* Question wrap if starts with a question word, else final period. */
@@ -732,7 +799,7 @@
     }
     const backCmd = stepId => ({
       id: 'go-back', label: 'Volver', action: 'goBack', params: { stepId },
-      phrases: ['volver', 'back', 'torna', 'anterior', 'go back'],
+      phrases: ['volver', 'back', 'torna', 'anterior', 'go back', 'voltar', 'zurück', 'zurueck', 'retour', 'précédent', 'precedent'],
     });
     if (voicePhase === 'options') {
       const cmds = flow.flowCommands.filter(c => c.action === 'cancel');

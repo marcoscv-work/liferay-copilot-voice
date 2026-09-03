@@ -26,6 +26,9 @@ const RUNTIME_FILES = [
   'flows.es.json',
   'flows.en.json',
   'flows.it.json',
+  'flows.pt.json',
+  'flows.de.json',
+  'flows.fr.json',
 ];
 const RUNTIME_DIRS = ['language', 'src'];
 

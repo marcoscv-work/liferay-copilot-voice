@@ -675,8 +675,8 @@
     const now = new Date();
     let t = normalize(text).replace(/^(el|la|the)\s+/g, '');
 
-    if (/\b(hoy|today|oggi)\b/.test(t))             return toISO(now);
-    if (/\b(ma[nñ]ana|tomorrow|domani)\b/.test(t)) {
+    if (/\b(hoy|today|oggi|hoje|heute|aujourd'hui)\b/.test(t)) return toISO(now);
+    if (/\b(ma[nñ]ana|tomorrow|domani|amanha|morgen|demain)\b/.test(t)) {
       const d = new Date(now); d.setDate(d.getDate() + 1); return toISO(d);
     }
 
@@ -695,15 +695,8 @@
       return toISO(d);
     }
 
-    const MONTH_NAMES = {
-      enero:1, febrero:2, marzo:3, abril:4, mayo:5, junio:6,
-      julio:7, agosto:8, septiembre:9, octubre:10, noviembre:11, diciembre:12,
-      january:1, february:2, march:3, april:4, may:5, june:6,
-      july:7, august:8, september:9, october:10, november:11, december:12,
-      gennaio:1, febbraio:2, aprile:4, maggio:5, giugno:6,
-      luglio:7, settembre:9, ottobre:10, novembre:11, dicembre:12,
-    };
-    const spoken = t.match(/(\d+|[a-z]+)\s+(?:del?\s+|of\s+)?(\d+|[a-z]+)(?:\s+(?:del?\s+|of\s+|,\s*)?(\d{4}))?/);
+    const MONTH_NAMES = SPOKEN_MONTHS;
+    const spoken = t.match(/(\d+|[a-z]+(?:-[a-z]+)*)\s+(?:del?\s+|of\s+)?(\d+|[a-z]+)(?:\s+(?:del?\s+|of\s+|,\s*)?(\d{4}))?/);
     if (spoken) {
       const [, dayRaw, monthRaw, yearRaw] = spoken;
       let day = parseInt(dayRaw, 10);
@@ -727,16 +720,28 @@
      utterance. Returns { d } | { m } | { y } | null.
      Ambiguous numbers (1–12) are assigned to whichever slot isn't filled yet:
      day first, then month. */
+  /* Spoken month names, one shared table for full-date parsing AND
+     part-by-part extraction (they diverged once and one missed dicembre —
+     audit finding). Keys are normalize()d: accents stripped (março→marco,
+     märz→marz, août→aout). */
+  const SPOKEN_MONTHS = {
+    /* es */ enero:1, febrero:2, marzo:3, abril:4, mayo:5, junio:6,
+    julio:7, agosto:8, septiembre:9, setiembre:9, octubre:10, noviembre:11, diciembre:12,
+    /* en */ january:1, february:2, march:3, april:4, may:5, june:6,
+    july:7, august:8, september:9, october:10, november:11, december:12,
+    /* it */ gennaio:1, febbraio:2, aprile:4, maggio:5, giugno:6,
+    luglio:7, settembre:9, ottobre:10, novembre:11, dicembre:12,
+    /* pt */ janeiro:1, fevereiro:2, marco:3, maio:5, junho:6,
+    julho:7, setembro:9, outubro:10, novembro:11, dezembro:12,
+    /* de */ januar:1, februar:2, marz:3, maerz:3, juni:6, juli:7,
+    oktober:10, dezember:12,
+    /* fr */ janvier:1, fevrier:2, mars:3, avril:4, mai:5, juin:6,
+    juillet:7, aout:8, septembre:9, octobre:10, decembre:12, /* novembre = it entry */
+  };
+
   function extractDatePart(text) {
     const t = normalize(text).trim();
-    const MNAMES = {
-      enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,
-      julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12,
-      january:1,february:2,march:3,april:4,may:5,june:6,
-      july:7,august:8,september:9,october:10,november:11,december:12,
-      gennaio:1,febbraio:2,aprile:4,maggio:5,giugno:6,
-      luglio:7,settembre:9,ottobre:10,novembre:11,
-    };
+    const MNAMES = SPOKEN_MONTHS;
     // Year: 4-digit number 1900-2100
     const yM = t.match(/\b((?:19|20)\d{2})\b/);
     if (yM) return { y: parseInt(yM[1]) };
@@ -745,9 +750,9 @@
       if (new RegExp(`\\b${name}\\b`).test(t)) return { m: num };
     }
     // Explicit "día N" / "day N" / "mes N" / "month N"
-    const diaM = t.match(/\b(?:dia|day)\s+(\d{1,2})\b/);
+    const diaM = t.match(/\b(?:dia|day|giorno|tag|jour)\s+(\d{1,2})\b/);
     if (diaM) { const n = parseInt(diaM[1]); if (n >= 1 && n <= 31) return { d: n }; }
-    const mesM = t.match(/\b(?:mes|month)\s+(\d{1,2})\b/);
+    const mesM = t.match(/\b(?:mes|month|mese|monat|mois)\s+(\d{1,2})\b/);
     if (mesM) { const n = parseInt(mesM[1]); if (n >= 1 && n <= 12) return { m: n }; }
     // Number word (1–31)
     for (const [word, num] of Object.entries(NUM_WORDS)) {
@@ -773,11 +778,18 @@
     hint.classList.remove('input-hint-error');
     const { d, m, y } = dateInputParts;
     if (!d && !m && !y) { hint.textContent = dynamicTpl().dateInputHint || ''; return; }
-    const MS = ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const tpl = dynamicTpl();
+    let monthAbbr = '—';
+    if (m != null) {
+      try {
+        monthAbbr = new Intl.DateTimeFormat(appConfig.locale || 'en',
+          { month: 'short' }).format(new Date(2000, m - 1, 1));
+      } catch (_) { monthAbbr = String(m); }
+    }
     const parts = [
-      d != null ? `Día: ${d}` : 'Día: —',
-      m != null ? `Mes: ${MS[m]}` : 'Mes: —',
-      y != null ? `Año: ${y}` : 'Año: —',
+      `${tpl.dateDayLabel || 'Day'}: ${d != null ? d : '—'}`,
+      `${tpl.dateMonthLabel || 'Month'}: ${m != null ? monthAbbr : '—'}`,
+      `${tpl.dateYearLabel || 'Year'}: ${y != null ? y : '—'}`,
     ];
     hint.textContent = parts.join('  ·  ');
   }

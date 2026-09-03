@@ -1,0 +1,429 @@
+{
+  "version": "1.0.0",
+  "locale": "de-DE",
+
+  "modalCommands": {
+    "aiConfirm": [
+      { "id": "ai-yes", "phrases": ["ja", "ja überprüfen", "ja ueberpruefen", "überprüfen", "prüfen"], "label": "Ja, überprüfen", "action": "aiYes" },
+      { "id": "ai-no",  "phrases": ["nein", "nicht überprüfen", "senden", "jetzt senden"], "label": "Nein, senden", "action": "aiNo" }
+    ],
+    "aiReview": [
+      { "id": "ai-accept", "phrases": ["übernehmen", "uebernehmen", "akzeptieren", "ok", "bestätigen", "bestaetigen"], "label": "Übernehmen", "action": "aiAccept" },
+      { "id": "ai-cancel", "phrases": ["abbrechen", "zurück", "zurueck"], "label": "Abbrechen", "action": "aiCancel", "style": "danger" }
+    ],
+    "formatList": [
+      { "id": "format-back", "phrases": ["zurück", "zurueck", "schließen", "schliessen", "beenden", "abbrechen"], "label": "Zurück", "action": "closeFormatCommands", "style": "danger" }
+    ]
+  },
+
+  "formatCommands": {
+    "groups": [
+      {
+        "title": "Satzzeichen",
+        "items": [
+          { "say": "Punkt",           "result": "." },
+          { "say": "Komma",           "result": "," },
+          { "say": "Doppelpunkt",     "result": ":" },
+          { "say": "Semikolon",       "result": ";" },
+          { "say": "Fragezeichen",    "result": "?" },
+          { "say": "Ausrufezeichen",  "result": "!" }
+        ]
+      },
+      {
+        "title": "Bearbeitung",
+        "items": [
+          { "say": "Wort löschen",           "result": "Entfernt das zuletzt diktierte Wort" },
+          { "say": "Formatierung überprüfen", "result": "Wendet Großschreibung, Kommas und Satzzeichen an" }
+        ]
+      }
+    ]
+  },
+
+  "globalCommands": [
+    {
+      "id": "create-web-content",
+      "phrases": ["inhalt erstellen", "webinhalt erstellen", "neuer webinhalt", "neuen inhalt erstellen"],
+      "label": "Inhalt erstellen",
+      "description": "Neuen Webinhalt erstellen",
+      "triggersFlow": "createWebContent"
+    },
+    {
+      "id": "create-blog",
+      "phrases": ["blog erstellen", "neuer blog", "neuer blogeintrag", "blogeintrag erstellen"],
+      "label": "Blog erstellen",
+      "description": "Neuen Blogeintrag erstellen",
+      "triggersFlow": "createBlog"
+    },
+    {
+      "id": "create-file",
+      "phrases": ["datei hochladen", "neue datei", "datei senden"],
+      "label": "Datei hochladen",
+      "description": "Eine Datei vom System hochladen",
+      "triggersFlow": "createFile"
+    },
+    {
+      "id": "create-space",
+      "phrases": ["space erstellen", "neuer space", "bereich erstellen"],
+      "aliases": ["einen space erstellen", "erstelle einen space"],
+      "label": "Space erstellen",
+      "description": "Einen Content-Space erstellen",
+      "action": "createSpace"
+    },
+    {
+      "id": "exit",
+      "phrases": ["beenden"],
+      "aliases": ["ausschalten", "stopp", "stoppen", "schließen", "schliessen"],
+      "label": "Beenden",
+      "description": "Spracherfassung stoppen",
+      "action": "exitListening"
+    },
+    {
+      "id": "help",
+      "phrases": ["hilfe"],
+      "aliases": ["befehle"],
+      "label": "Hilfe",
+      "description": "Verfügbare Befehle anzeigen",
+      "hidden": true
+    }
+  ],
+
+  "flows": {
+    "createWebContent": {
+      "id": "createWebContent",
+      "name": "Webinhalt erstellen",
+      "submitApi": "submitWebContent",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Space",
+          "placeholder": "Wähle einen Space",
+          "voicePrompt": "In welchem Space möchtest du den Inhalt erstellen?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Titel",
+          "placeholder": "Titel",
+          "voicePrompt": "Sage den Titel des Inhalts"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Inhalt",
+          "placeholder": "Inhalt",
+          "voicePrompt": "Sage den Inhalt"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Titelbild",
+          "placeholder": "Titelbild hinzufügen",
+          "voicePrompt": "Sage die Nummer oder den Namen des Bildes, oder 'zurück' zum Verlassen",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["zurück", "zurueck", "abbrechen", "beenden"],
+              "label": "Zurück",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "Nach Nummer", "example": "\"2\", \"zwei\" oder \"Bild zwei\"" },
+            { "label": "Nach Name", "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["zum titel", "gehe zum titel", "zurück zum titel", "zurueck zum titel"],
+          "label": "Zum Titel",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["titel löschen", "titel loeschen", "den titel löschen"],
+          "label": "Titel löschen",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["zum inhalt", "gehe zum inhalt", "zurück zum inhalt", "zurueck zum inhalt"],
+          "label": "Zum Inhalt",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["inhalt löschen", "inhalt loeschen", "den inhalt löschen"],
+          "label": "Inhalt löschen",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["titelbild hinzufügen", "titelbild hinzufuegen", "bild hinzufügen", "bild hinzufuegen", "titelbild"],
+          "label": "Bild hinzufügen",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["bild löschen", "bild loeschen", "titelbild löschen", "titelbild entfernen", "bild entfernen"],
+          "label": "Bild löschen",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["letztes wort löschen", "letztes wort loeschen", "wort löschen", "wort loeschen", "wort entfernen"],
+          "label": "Wort löschen",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["formatierung überprüfen", "formatierung ueberpruefen", "format überprüfen", "mit ki überprüfen", "inhalt überprüfen"],
+          "label": "Formatierung überprüfen",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["formatierungsbefehle anzeigen", "formatierungsbefehle", "formatierungshilfe", "wie formatiere ich"],
+          "label": "Formatierungsbefehle anzeigen",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["senden", "speichern", "veröffentlichen", "veroeffentlichen"],
+          "label": "Senden",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["abbrechen", "erstellung abbrechen", "beenden"],
+          "label": "Erstellung abbrechen",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createBlog": {
+      "id": "createBlog",
+      "name": "Neuer Blogeintrag",
+      "submitApi": "submitBlog",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Space",
+          "placeholder": "Wähle einen Space",
+          "voicePrompt": "In welchem Space möchtest du den Eintrag erstellen?",
+          "source": "spaces"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Titel",
+          "placeholder": "Titel des Eintrags",
+          "voicePrompt": "Sage den Titel des Eintrags"
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "label": "Untertitel",
+          "placeholder": "Untertitel des Eintrags",
+          "voicePrompt": "Sage den Untertitel des Eintrags"
+        },
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Inhalt",
+          "placeholder": "Text des Eintrags",
+          "voicePrompt": "Sage den Text des Eintrags"
+        },
+        {
+          "id": "coverImage",
+          "type": "image",
+          "label": "Titelbild",
+          "placeholder": "Titelbild hinzufügen",
+          "voicePrompt": "Sage die Nummer oder den Namen des Bildes, oder 'zurück' zum Verlassen",
+          "optional": true,
+          "source": "coverImages",
+          "flowCommands": [
+            {
+              "id": "image-back",
+              "phrases": ["zurück", "zurueck", "abbrechen", "beenden"],
+              "label": "Zurück",
+              "action": "exitStep",
+              "style": "danger"
+            }
+          ],
+          "voiceHelp": [
+            { "label": "Nach Nummer", "example": "\"2\", \"zwei\" oder \"Bild zwei\"" },
+            { "label": "Nach Name", "example": "\"Liferay Brand 01\"" }
+          ]
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "go-to-title",
+          "phrases": ["zum titel", "gehe zum titel", "zurück zum titel", "zurueck zum titel"],
+          "label": "Zum Titel",
+          "action": "goToStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "clear-title",
+          "phrases": ["titel löschen", "titel loeschen", "den titel löschen"],
+          "label": "Titel löschen",
+          "action": "clearStep",
+          "params": { "step": "title" }
+        },
+        {
+          "id": "go-to-subtitle",
+          "phrases": ["zum untertitel", "gehe zum untertitel", "zurück zum untertitel"],
+          "label": "Zum Untertitel",
+          "action": "goToStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "clear-subtitle",
+          "phrases": ["untertitel löschen", "untertitel loeschen", "den untertitel löschen"],
+          "label": "Untertitel löschen",
+          "action": "clearStep",
+          "params": { "step": "subtitle" }
+        },
+        {
+          "id": "go-to-content",
+          "phrases": ["zum inhalt", "gehe zum inhalt", "zurück zum inhalt", "zurueck zum inhalt"],
+          "label": "Zum Inhalt",
+          "action": "goToStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "clear-content",
+          "phrases": ["inhalt löschen", "inhalt loeschen", "den inhalt löschen"],
+          "label": "Inhalt löschen",
+          "action": "clearStep",
+          "params": { "step": "content" }
+        },
+        {
+          "id": "add-cover-image",
+          "phrases": ["titelbild hinzufügen", "titelbild hinzufuegen", "bild hinzufügen", "bild hinzufuegen", "titelbild"],
+          "label": "Bild hinzufügen",
+          "action": "goToStep",
+          "params": { "step": "coverImage" },
+          "style": "image"
+        },
+        {
+          "id": "clear-cover-image",
+          "phrases": ["bild löschen", "bild loeschen", "titelbild löschen", "titelbild entfernen", "bild entfernen"],
+          "label": "Bild löschen",
+          "action": "clearStep",
+          "params": { "step": "coverImage" }
+        },
+        {
+          "id": "delete-last-word",
+          "phrases": ["letztes wort löschen", "letztes wort loeschen", "wort löschen", "wort loeschen", "wort entfernen"],
+          "label": "Wort löschen",
+          "action": "deleteLastWord"
+        },
+        {
+          "id": "ai-review",
+          "phrases": ["formatierung überprüfen", "formatierung ueberpruefen", "format überprüfen", "mit ki überprüfen", "inhalt überprüfen"],
+          "label": "Formatierung überprüfen",
+          "action": "aiReview",
+          "style": "format"
+        },
+        {
+          "id": "show-format-commands",
+          "phrases": ["formatierungsbefehle anzeigen", "formatierungsbefehle", "formatierungshilfe", "wie formatiere ich"],
+          "label": "Formatierungsbefehle anzeigen",
+          "action": "showFormatCommands",
+          "style": "info"
+        },
+        {
+          "id": "send",
+          "phrases": ["senden", "speichern", "veröffentlichen", "veroeffentlichen"],
+          "label": "Eintrag veröffentlichen",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["abbrechen", "eintrag abbrechen", "beenden"],
+          "label": "Eintrag abbrechen",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    },
+
+    "createFile": {
+      "id": "createFile",
+      "name": "Datei hochladen",
+      "submitApi": "uploadFile",
+
+      "steps": [
+        {
+          "id": "space",
+          "type": "picker",
+          "label": "Space",
+          "placeholder": "Wähle einen Space",
+          "voicePrompt": "In welchen Space möchtest du die Datei hochladen?",
+          "source": "spaces"
+        },
+        {
+          "id": "file",
+          "type": "file",
+          "label": "Datei",
+          "placeholder": "Wähle eine Datei vom System",
+          "voicePrompt": "Drücke den Button oder sage 'Datei auswählen', um den Dialog zu öffnen"
+        }
+      ],
+
+      "flowCommands": [
+        {
+          "id": "select-file",
+          "phrases": [
+            "datei auswählen", "datei auswaehlen", "eine datei auswählen",
+            "datei wählen", "datei waehlen",
+            "datei öffnen", "datei oeffnen"
+          ],
+          "label": "Datei auswählen",
+          "action": "selectFile"
+        },
+        {
+          "id": "send",
+          "phrases": ["senden", "hochladen", "veröffentlichen", "speichern"],
+          "label": "Datei hochladen",
+          "action": "submit",
+          "style": "success"
+        },
+        {
+          "id": "cancel",
+          "phrases": ["abbrechen", "upload abbrechen", "beenden"],
+          "label": "Upload abbrechen",
+          "action": "cancel",
+          "style": "danger"
+        }
+      ]
+    }
+  }
+}

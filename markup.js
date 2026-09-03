@@ -17,6 +17,9 @@
     <button type="button" data-lang="es">ES</button>
     <button type="button" data-lang="en">EN</button>
     <button type="button" data-lang="it">IT</button>
+    <button type="button" data-lang="pt">PT</button>
+    <button type="button" data-lang="de">DE</button>
+    <button type="button" data-lang="fr">FR</button>
   </div>
 
   <!-- Developer toggles. Hidden by default (hover the bottom-right corner

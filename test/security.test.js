@@ -57,12 +57,13 @@ test('every stylesheet selector stays anchored to the custom element', () => {
 
 test('language bundles stay in key parity', () => {
   const keys = {};
-  for (const lang of ['es', 'en', 'it']) {
+  for (const lang of ['es', 'en', 'it', 'pt', 'de', 'fr']) {
     const txt = fs.readFileSync(path.join(ROOT, 'language', `Language_${lang}.properties`), 'utf8');
     keys[lang] = new Set(txt.split('\n').filter(l => l.includes('=')).map(l => l.split('=')[0].trim()));
   }
-  assert.deepEqual([...keys.en].sort(), [...keys.es].sort());
-  assert.deepEqual([...keys.it].sort(), [...keys.es].sort());
+  for (const lang of ['en', 'it', 'pt', 'de', 'fr']) {
+    assert.deepEqual([...keys[lang]].sort(), [...keys.es].sort(), `parity ${lang} vs es`);
+  }
 });
 
 test('modal modes declare a focus target and modal surfaces exist', () => {

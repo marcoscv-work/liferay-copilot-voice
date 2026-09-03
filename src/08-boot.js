@@ -185,7 +185,7 @@
 
   /* Supported UI locales. The first one is the fallback default when
      auto-detection turns up something we don't have a translation for. */
-  const SUPPORTED_LOCALES = ['en', 'es', 'it'];
+  const SUPPORTED_LOCALES = ['en', 'es', 'it', 'pt', 'de', 'fr'];
 
   /* Resolve the active locale by priority:
        1. ?lang=xx in the URL (explicit override, useful for sharing)

@@ -544,8 +544,8 @@
      "confirmar" (or press Enter) to create, "cancelar" (or Escape) to back
      out. */
   let spaceCreateValue = '';
-  const SPACE_CREATE_CONFIRM = ['confirmar', 'confirm', 'conferma', 'aceptar', 'accept', 'accetta'];
-  const SPACE_CREATE_CANCEL  = ['cancelar', 'cancel', 'annulla', 'volver', 'back', 'torna'];
+  const SPACE_CREATE_CONFIRM = ['confirmar', 'confirm', 'conferma', 'aceptar', 'accept', 'accetta', 'aceitar', 'bestatigen', 'bestätigen', 'ubernehmen', 'übernehmen', 'confirmer', 'accepter'];
+  const SPACE_CREATE_CANCEL  = ['cancelar', 'cancel', 'annulla', 'volver', 'back', 'torna', 'voltar', 'abbrechen', 'zuruck', 'zurück', 'annuler', 'retour'];
 
   /* Long names overflow the centered input clipping both edges — switch to
      left alignment and keep the tail (what's being dictated) in view. */
