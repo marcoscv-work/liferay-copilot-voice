@@ -19,14 +19,24 @@
 
   const CHECK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  /* One scripted "conversation" that loops while the demo runs. */
+  /* One scripted "conversation" that loops while the demo runs — each loop
+     speaks the commands in the next of the six supported languages. */
+  const DEMO_LANGS = [
+    { name: 'English',   cmds: ['Create content', 'Go to content', 'Send'] },
+    { name: 'Spanish',   cmds: ['Crear contenido', 'Ir a contenido', 'Enviar'] },
+    { name: 'Italian',   cmds: ['Crea contenuto', 'Vai al contenuto', 'Invia'] },
+    { name: 'Portuguese',cmds: ['Criar conteúdo', 'Ir para o conteúdo', 'Enviar'] },
+    { name: 'German',    cmds: ['Inhalt erstellen', 'Zum Inhalt', 'Senden'] },
+    { name: 'French',    cmds: ['Créer du contenu', 'Aller au contenu', 'Envoyer'] },
+  ];
+  let demoLangIdx = 0;
   const SCRIPT = [
-    { at: 0.0,  caption: '<strong>Listening…</strong> say a command' },
-    { at: 2.6,  flash: 'Create content' },
+    { at: 0.0,  captionFn: () => `<strong>Listening…</strong> say it in ${DEMO_LANGS[demoLangIdx].name}` },
+    { at: 2.6,  flash: 0 },
     { at: 3.6,  caption: 'Dictating the title…' },
-    { at: 6.4,  flash: 'Go to content' },
+    { at: 6.4,  flash: 1 },
     { at: 7.4,  caption: 'Dictating the body…' },
-    { at: 10.4, flash: 'Send' },
+    { at: 10.4, flash: 2 },
     { at: 11.4, caption: '<strong>Published.</strong> Hands never left the coffee.' },
     { at: 14.0, restart: true },
   ];
@@ -58,9 +68,14 @@
     scriptT += dt;
     while (scriptIdx < SCRIPT.length && scriptT >= SCRIPT[scriptIdx].at) {
       const ev = SCRIPT[scriptIdx++];
-      if (ev.flash)   flash(ev.flash);
-      if (ev.caption) caption.innerHTML = ev.caption;
-      if (ev.restart) { scriptT = 0; scriptIdx = 0; }
+      if (ev.flash != null) flash(DEMO_LANGS[demoLangIdx].cmds[ev.flash]);
+      if (ev.caption)   caption.innerHTML = ev.caption;
+      if (ev.captionFn) caption.innerHTML = ev.captionFn();
+      if (ev.restart) {
+        scriptT = 0;
+        scriptIdx = 0;
+        demoLangIdx = (demoLangIdx + 1) % DEMO_LANGS.length;
+      }
     }
 
     const boosted = now < flashUntil;
@@ -104,7 +119,7 @@
   /* Interacting never kills the demo — while it runs, a press fires an
      instant command flash (the fun part of the real app); from idle it
      starts listening. Pausing is reserved for scrolling out of view. */
-  const USER_FLASHES = ['Create content', 'New blog', 'Create space', 'Send'];
+  const USER_FLASHES = ['Create content', 'Crear blog', 'Criar espaço', 'Inhalt erstellen', 'Créer un blog', 'Invia'];
   let userFlashIdx = 0;
   function interact() {
     if (!running) { start(); return; }
