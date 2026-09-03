@@ -23,14 +23,8 @@ const RUNTIME_FILES = [
   'markup.js',
   'styles.css',
   'config.json',
-  'flows.es.json',
-  'flows.en.json',
-  'flows.it.json',
-  'flows.pt.json',
-  'flows.de.json',
-  'flows.fr.json',
 ];
-const RUNTIME_DIRS = ['language', 'src'];
+const RUNTIME_DIRS = ['flows', 'language', 'src'];
 
 fs.rmSync(ASSETS, { recursive: true, force: true });
 fs.mkdirSync(ASSETS, { recursive: true });

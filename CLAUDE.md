@@ -38,9 +38,7 @@ src/08-boot.js      Config + language loading, locale resolution, dev toggles, e
                     concern matches; execution-time references must respect load order (call-time refs
                     are free). Keep the list in element.js MODULES in sync when adding a module.
 styles.css          All CSS — scoped under the liferay-copilot-voice element; --cv-* design tokens at top; body.copilot-standalone opt-in
-flows.es.json       Voice commands, flows, steps, dispatch contract, modal commands (Spanish)
-flows.en.json       Same shape, English
-flows.it.json       Same shape, Italian
+flows/              flows.{lang}.json per locale (es en it pt de fr) — voice commands, flows, steps, dispatch contract, modal commands
 config.json         Activation key, locales map, speech/assist providers, liferay.enabled/baseUrl (NO credentials — those live in dev-config.local.json)
 language/           Language_{es,en,it}.properties — all UI + announce* strings (Liferay-style bundles; HTML uses data-language attrs)
 config.html         Dev-only /config page (Liferay target + Gemini key, persisted to dev-config.local.json)
@@ -768,7 +766,7 @@ announceSpeechError, announceMicDenied, announceMicError,
 errorLiferayConnection, errorRetryLabel, errorRetryingLabel, errorDismissLabel
 ```
 
-For another locale: copy `language/Language_es.properties` → `Language_<lang>.properties` and `flows.es.json` → `flows.<lang>.json`, translate every value (including the `announce*` block — these are spoken aloud). Add the language code to `SUPPORTED_LOCALES` in `src/08-boot.js`, an entry in `config.json` `locales`, and a `<button data-lang="xx">` in the `.language-toggle` in `markup.js`. Italian (`it`) is already implemented as a reference.
+For another locale: copy `language/Language_es.properties` → `Language_<lang>.properties` and `flows/flows.es.json` → `flows/flows.<lang>.json`, translate every value (including the `announce*` block — these are spoken aloud). Add the language code to `SUPPORTED_LOCALES` in `src/08-boot.js`, an entry in `config.json` `locales`, and a `<button data-lang="xx">` in the `.language-toggle` in `markup.js`. Italian (`it`) is already implemented as a reference.
 
 ### Locale resolution
 

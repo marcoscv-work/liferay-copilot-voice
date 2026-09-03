@@ -266,7 +266,7 @@
     const [cfg, strings, flows] = await Promise.all([
       loadJSON(`${ASSET_BASE}config.json${v}`,                               DEFAULT_CONFIG),
       loadProperties(`${ASSET_BASE}language/Language_${lang}.properties${v}`),
-      loadJSON(`${ASSET_BASE}flows.${lang}.json${v}`,                        null),
+      loadJSON(`${ASSET_BASE}flows/flows.${lang}.json${v}`,                        null),
     ]);
     let sttLocale = cfg.locales?.[lang] ?? 'es-ES';
     if (inLiferayPortal()) {

@@ -194,7 +194,7 @@ Edit [`config.json`](config.json):
 - `assist.provider` — `"none"` (or absent) for the deterministic format pass, `"gemini"` for the LLM path.
 - `liferay.baseUrl` — empty for same-origin (dev proxy / portal). Credentials never live here: standalone auth is handled by the dev server (`dev-config.local.json`, gitignored), portal auth by the user's session.
 
-UI text lives in `language/Language_{es,en,it}.properties` (Liferay-style properties bundles, including all `announce*` screen-reader strings). Voice commands, flows and step structure live in `flows.{es,en,it}.json` — no JS edits needed for new phrases.
+UI text lives in `language/Language_{lang}.properties` (Liferay-style properties bundles, including all `announce*` screen-reader strings). Voice commands, flows and step structure live in `flows/flows.{lang}.json` — no JS edits needed for new phrases.
 
 ## File structure
 
@@ -206,7 +206,7 @@ src/                Runtime JS in 8 ordered modules sharing one global scope:
                     01-core (engine) · 02-liferay (API) · 03-flows · 04-speech
                     05-ui · 06-panels · 07-dispatch · 08-boot
 styles.css          All CSS, scoped under the custom element; --cv-* design tokens
-flows.{es,en,it}.json        Voice commands, flows, steps, dispatch contract
+flows/                       flows.{lang}.json — voice commands, flows, steps, dispatch contract
 language/Language_*.properties  UI + screen-reader strings per locale
 config.json         Activation key, locales, speech/assist providers
 config.html         Dev-only /config page (Liferay target + Gemini key)
