@@ -601,9 +601,15 @@ section.alt .cmd-group { background: var(--cv-bg); }
 
 .lang-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	grid-template-columns: repeat(3, 1fr);
 	gap: 14px;
 	margin: 30px 0 8px;
+}
+@media (max-width: 700px) {
+	.lang-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px) {
+	.lang-grid { grid-template-columns: 1fr; }
 }
 .lang-card {
 	background: var(--cv-card);
@@ -625,7 +631,7 @@ section.alt .cmd-group { background: var(--cv-bg); }
 	border-radius: 999px;
 }
 .lang-card .lang-name { font-weight: 650; font-size: 17px; }
-.lang-card .pill { margin-top: 4px; }
+.lang-card .pill { margin-top: 4px; max-width: 100%; white-space: normal; text-align: left; }
 .lang-sub { margin-top: 46px; font-size: 22px; }
 
 .lang-files {
