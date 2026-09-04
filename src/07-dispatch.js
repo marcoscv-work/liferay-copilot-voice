@@ -219,10 +219,17 @@
      banner is `aria-live=polite` so it updates without yelling at the SR;
      `announce(msg, 'alert')` separately fires the assertive read so the
      user knows immediately something blocked. */
+  /* Informative notices auto-dismiss — unlike errors, they don't describe a
+     state the user still has to fix. Long enough to read twice. */
+  const NOTICE_AUTO_DISMISS_MS = 12000;
+  let noticeDismissTimer = null;
+
   function showLiferayError(message, { showCreateSpace = false, capabilityNotice = false, notice = false } = {}) {
     const el   = document.getElementById('liferayError');
     const text = document.getElementById('liferayErrorText');
     if (!el || !text) return;
+    clearTimeout(noticeDismissTimer);
+    if (notice) noticeDismissTimer = setTimeout(hideLiferayError, NOTICE_AUTO_DISMISS_MS);
     /* Never render a mute banner — a stale cached language file can leave a
        freshly-added key missing (s() → ''). Fall back to the connection
        string, and to a hardcoded last resort if even that one is absent. */
@@ -243,6 +250,7 @@
     announce(message, notice ? 'status' : 'alert');
   }
   function hideLiferayError() {
+    clearTimeout(noticeDismissTimer);
     const el = document.getElementById('liferayError');
     if (el) el.hidden = true;
   }
