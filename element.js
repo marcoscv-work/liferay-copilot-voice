@@ -82,6 +82,10 @@
       }
       window.__copilotVoiceBooted = true;
       window.__copilotVoiceBaseURL = BASE_URL;
+      /* Deployment-level action filter — comma/space-separated global command
+         ids the host page doesn't want offered (e.g. "create-space,
+         create-structured"). Merged with config.json commands.disabled. */
+      window.__copilotVoiceDisabledCommands = this.getAttribute('disabled-commands') || '';
       try { sessionStorage.removeItem('cvForcedReload'); } catch (_) {}
 
       this.classList.add('copilot-voice-root');

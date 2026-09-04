@@ -235,7 +235,7 @@
        string, and to a hardcoded last resort if even that one is absent. */
     if (!message) message = s('errorLiferayConnection') || 'Could not reach Liferay.';
     const createBtn = document.getElementById('liferayErrorCreateSpace');
-    if (createBtn) createBtn.hidden = !showCreateSpace;
+    if (createBtn) createBtn.hidden = !showCreateSpace || isCommandDisabled('create-space');
     /* A browser-capability notice (e.g. no SpeechRecognition) must not offer
        connection actions — Retry and the dev config link only make sense for
        connectivity states. Informative notices (post-create advice) neither. */
@@ -921,6 +921,7 @@
          utterance. */
       if (performance.now() < commandBoostUntil) return;
       for (const cmd of flowsConfig.globalCommands) {
+        if (isCommandDisabled(cmd.id)) continue;
         const phrases = [...(cmd.phrases || []), ...(cmd.aliases || [])];
         if (matchPhrase(norm, phrases)) {
           if (cmd.id === 'help')                  { ackCommand(); showCommandList(); return; }

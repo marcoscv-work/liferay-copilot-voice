@@ -25,5 +25,8 @@
   "liferay": {
     "enabled": true,
     "baseUrl": ""
+  },
+  "commands": {
+    "disabled": []
   }
 }

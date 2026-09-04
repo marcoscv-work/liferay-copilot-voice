@@ -267,10 +267,12 @@ npm run build:cx
         <h3>config.json</h3>
         <pre><code>{
   "activationKey": { "code": "Space", "label": "SPACE" },
-  "locales":  { "es": "es-ES", "en": "en-US", "it": "it-IT" },
+  "locales":  { "es": "es-ES", "en": "en-US", "it": "it-IT",
+                "pt": "pt-BR", "de": "de-DE", "fr": "fr-FR" },
   "speech":   { "provider": "web-speech" },
   "assist":   { "provider": "none" },
-  "submit":   { "askFormatReview": false }
+  "submit":   { "askFormatReview": false },
+  "commands": { "disabled": [] }
 }</code></pre>
       </div>
       <div class="code-col reveal">
@@ -280,7 +282,30 @@ npm run build:cx
           <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">locales</strong> — UI language → BCP-47 tag for speech recognition.</li>
           <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">speech.provider</strong> — a clean seam: swap the browser recogniser for Deepgram, Whisper &amp; co. by registering one factory.</li>
           <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">assist</strong> — optional LLM writing review; point <code>endpoint</code> at your own service. Falls back to the built-in deterministic format pass, so it can never block publishing.</li>
-          <li><strong style="color:var(--cv-text)">askFormatReview</strong> — ask "review formatting?" before every submit.</li>
+          <li style="margin-bottom:8px;"><strong style="color:var(--cv-text)">askFormatReview</strong> — ask "review formatting?" before every submit.</li>
+          <li><strong style="color:var(--cv-text)">commands.disabled</strong> — global actions this deployment doesn't offer (see below).</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="lang-sub reveal">Choose which actions each page offers</h3>
+    <p class="sec-lede reveal">Not every page needs every action. The <code>disabled-commands</code> attribute on the element removes global commands from the voice matcher, the help list and the banners — per placement, no repackaging. The same ids work in <code>config.json</code> under <code>commands.disabled</code> as a deployment-wide default.</p>
+    <div class="code-cols">
+      <div class="code-col reveal">
+        <h3>Example — only simple web content</h3>
+        <pre><code>&lt;liferay-copilot-voice
+  disabled-commands="create-blog, create-file,
+                     create-space, create-structured"&gt;
+&lt;/liferay-copilot-voice&gt;</code></pre>
+        <p style="color:var(--cv-text-muted); font-size:14px; margin-top:10px;">The copilot now offers exactly two commands: <em>create content</em> and <em>exit</em>. Everything else disappears from voice, help and banners.</p>
+      </div>
+      <div class="code-col reveal">
+        <h3>Disable-able ids</h3>
+        <ul style="margin-left:18px; color:var(--cv-text-muted); font-size:15px;">
+          <li style="margin-bottom:8px;"><code>create-web-content</code> · <code>create-blog</code> · <code>create-file</code> · <code>create-space</code> — the built-in flows.</li>
+          <li style="margin-bottom:8px;"><code>create-structured</code> — turns off discovery of Object-driven flows entirely: content structures are never fetched.</li>
+          <li style="margin-bottom:8px;"><code>dynamic:&#123;ObjectName&#125;</code> — hide one specific structure while keeping the rest (e.g. <code>dynamic:PressNote</code>).</li>
+          <li><code>exit</code> can't be disabled — switching the mic off must always work. And this is UX configuration, not security: Liferay permissions still gate every API call.</li>
         </ul>
       </div>
     </div>

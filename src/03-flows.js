@@ -5,6 +5,26 @@
  * app.js without reordering, so cross-module references resolve at call
  * time exactly as before.
  */
+  /* Deployment-level action filter. Sources: the element's disabled-commands
+     attribute (set by whoever places the widget) merged with config.json
+     commands.disabled. Accepts global command ids ("create-space"), the
+     reserved "create-structured" token (turns off Object-driven flow
+     discovery entirely) and per-structure "dynamic:{ObjectName}" ids.
+     This is UX configuration, NOT security — Liferay permissions still gate
+     every API call. "exit" is never filtered: voice-off must always work. */
+  function disabledCommandIds() {
+    const attr = String(window.__copilotVoiceDisabledCommands || '');
+    const cfg  = appConfig?.commands?.disabled || [];
+    return new Set(
+      [...attr.split(/[\s,]+/), ...cfg].map(x => String(x).trim()).filter(Boolean)
+    );
+  }
+
+  function isCommandDisabled(id) {
+    if (id === 'exit') return false;
+    return disabledCommandIds().has(id);
+  }
+
   function getFlow() {
     if (!flowsConfig) return null;
     return flowsConfig.flows?.[currentFlowId]
@@ -342,6 +362,10 @@
      use the hardcoded ones. */
   async function discoverDynamicFlows() {
     if (!liferayEnabled() || !flowsConfig) return;
+    if (isCommandDisabled('create-structured')) {
+      console.log('[dynamic-flow] discovery disabled (create-structured)');
+      return;
+    }
     let defs;
     try {
       defs = await fetchObjectDefinitions();
@@ -354,6 +378,7 @@
       && !d.system
       && d.objectFolderExternalReferenceCode === 'L_CMS_CONTENT_STRUCTURES'
       && !NATIVE_CMS_OBJECTS.has(d.name)
+      && !isCommandDisabled('dynamic:' + d.name)
     );
     objectDefsCache = eligible;
     if (eligible.length === 0) {

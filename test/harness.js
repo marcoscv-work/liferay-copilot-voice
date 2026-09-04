@@ -128,6 +128,11 @@ function app() {
     QUESTION_STARTERS,
     __setLocale: (loc) => { appConfig.locale = loc; },
     __setStrings: (obj) => { appConfig.strings = obj; },
+    isCommandDisabled,
+    __setDisabled: (attr, cfg) => {
+      window.__copilotVoiceDisabledCommands = attr;
+      appConfig.commands = { disabled: cfg || [] };
+    },
   })`, context);
   cachedApp.__files = files;
   return cachedApp;

@@ -291,7 +291,7 @@
     helpCommandList() {
       const title = s('cmdListTitle');
       const labels = (flowsConfig?.globalCommands || [])
-        .filter(c => !c.hidden)
+        .filter(c => !c.hidden && !isCommandDisabled(c.id))
         .map(c => c.label)
         .filter(Boolean)
         .join(', ');

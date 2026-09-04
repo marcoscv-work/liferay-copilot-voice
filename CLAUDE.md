@@ -733,6 +733,7 @@ Source of truth for commands, labels, and step structure. Edit here — no code 
 - `speech.provider` = registered speech provider id.
 - `assist.provider` = `'none'`/absent (deterministic format pass) or `'gemini'`.
 - `liferay` = `enabled` + `baseUrl` only. **No credentials here** — dev creds live in the gitignored `dev-config.local.json`, read by dev-server.js at startup; the portal uses the session.
+- `commands.disabled` = global command ids this deployment hides (merged with the element's `disabled-commands` attribute, read into `window.__copilotVoiceDisabledCommands` by element.js). Helper `isCommandDisabled(id)` in src/03-flows.js; filter points: global matcher (07), cmd-list (08), helpCommandList announce (05), banner create-space button (07), `discoverDynamicFlows` early-return on `create-structured` + per-structure `dynamic:{Name}` (03). `exit` is never filterable. UX config, not security.
 
 ### Strings (i18n)
 

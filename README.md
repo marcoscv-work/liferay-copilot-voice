@@ -184,6 +184,7 @@ Edit [`config.json`](config.json):
   "speech":        { "provider": "web-speech" },
   "assist":        { "provider": "gemini", "model": "gemini-flash-latest", "endpoint": "/assist/review" },
   "submit":        { "askFormatReview": false },
+  "commands":      { "disabled": [] },
   "liferay":       { "enabled": true, "baseUrl": "" }
 }
 ```
@@ -193,6 +194,16 @@ Edit [`config.json`](config.json):
 - `speech.provider` — registered speech provider id. Currently `"web-speech"` (browser-native). See [Speech provider seam](#speech-provider-seam).
 - `assist.provider` — `"none"` (or absent) for the deterministic format pass, `"gemini"` for the LLM path.
 - `liferay.baseUrl` — empty for same-origin (dev proxy / portal). Credentials never live here: standalone auth is handled by the dev server (`dev-config.local.json`, gitignored), portal auth by the user's session.
+- `commands.disabled` — global command ids this deployment doesn't offer. The same ids can be set per placement via the `disabled-commands` attribute on the element (both sources merge):
+
+  ```html
+  <!-- only simple web content: everything else disappears from voice, help and banners -->
+  <liferay-copilot-voice
+    disabled-commands="create-blog, create-file, create-space, create-structured">
+  </liferay-copilot-voice>
+  ```
+
+  Disable-able ids: `create-web-content`, `create-blog`, `create-file`, `create-space`, the reserved token `create-structured` (turns off Object-driven flow discovery entirely — content structures are never fetched) and `dynamic:{ObjectName}` for one specific structure. `exit` can never be disabled. This is UX configuration, not security — Liferay permissions still gate every API call.
 
 UI text lives in `language/Language_{lang}.properties` (Liferay-style properties bundles, including all `announce*` screen-reader strings). Voice commands, flows and step structure live in `flows/flows.{lang}.json` — no JS edits needed for new phrases.
 

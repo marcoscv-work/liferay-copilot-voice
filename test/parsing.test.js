@@ -45,3 +45,18 @@ test('liferayErrorMessage extracts friendly text', () => {
     'The value is invalid'
   );
 });
+
+test('disabled-commands merges element attribute and config.json', () => {
+  A.__setDisabled('create-space, create-structured', ['create-blog']);
+  assert.ok(A.isCommandDisabled('create-space'));
+  assert.ok(A.isCommandDisabled('create-structured'));
+  assert.ok(A.isCommandDisabled('create-blog'));
+  assert.ok(!A.isCommandDisabled('create-web-content'));
+  assert.ok(A.isCommandDisabled('dynamic:PressNote') === false);
+  A.__setDisabled('dynamic:PressNote', []);
+  assert.ok(A.isCommandDisabled('dynamic:PressNote'));
+  /* exit is never filterable — voice-off must always work */
+  A.__setDisabled('exit', ['exit']);
+  assert.ok(!A.isCommandDisabled('exit'));
+  A.__setDisabled('', []);
+});

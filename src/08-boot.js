@@ -62,7 +62,7 @@
     /* Dynamic flows register commands whose phrases/ids derive from Liferay
        Object names — escape everything. */
     ul.innerHTML = flowsConfig.globalCommands
-      .filter(c => !c.hidden)
+      .filter(c => !c.hidden && !isCommandDisabled(c.id))
       .map(c => `<li><button type="button" class="cmd-pill" data-cmd-id="${escapeHTML(c.id)}">${escapeHTML(capitalize(c.phrases[0]))}</button></li>`)
       .join('');
 
