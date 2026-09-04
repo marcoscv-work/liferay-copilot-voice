@@ -525,7 +525,7 @@
   /* Creates a real CMS Space (asset library with type "Space"). The API path
      skips the UI wizard entirely — collaborators can be added later from the
      CMS admin. */
-  function createSpaceRequest(name) {
+  function createSpaceRequest(name, color) {
     return lrFetch('/o/headless-asset-library/v1.0/asset-libraries', {
       method: 'POST',
       /* Liferay validates the request locale against the instance's
@@ -533,7 +533,11 @@
          en-GB gets rejected ("No locales match the accepted languages").
          Send the app's resolved BCP-47 locale explicitly instead. */
       headers: { 'Accept-Language': (appConfig.locale || 'en-US').replace('_', '-') },
-      body: JSON.stringify({ name, type: 'Space' }),
+      body: JSON.stringify({
+        name,
+        type: 'Space',
+        ...(color ? { settings: { logoColor: color } } : {}),
+      }),
     });
   }
 
@@ -546,6 +550,10 @@
   let spaceCreateValue = '';
   const SPACE_CREATE_CONFIRM = ['confirmar', 'confirm', 'conferma', 'aceptar', 'accept', 'accetta', 'aceitar', 'bestatigen', 'bestätigen', 'ubernehmen', 'übernehmen', 'confirmer', 'accepter'];
   const SPACE_CREATE_CANCEL  = ['cancelar', 'cancel', 'annulla', 'volver', 'back', 'torna', 'voltar', 'abbrechen', 'zuruck', 'zurück', 'annuler', 'retour'];
+  /* Color step only: "back" words return to the name step (name kept);
+     "cancel" words abandon the whole creation. */
+  const SPACE_COLOR_BACK   = ['volver', 'back', 'anterior', 'torna', 'indietro', 'voltar', 'zuruck', 'zurück', 'retour', 'precedent', 'précédent'];
+  const SPACE_COLOR_CANCEL = ['cancelar', 'cancel', 'annulla', 'abbrechen', 'annuler'];
 
   /* Long names overflow the centered input clipping both edges — switch to
      left alignment and keep the tail (what's being dictated) in view. */
@@ -555,12 +563,12 @@
     field.scrollLeft = field.scrollWidth;
   }
 
-  function enterSpaceCreate() {
+  function enterSpaceCreate(keepName) {
     hideLiferayError();
-    spaceCreateValue = '';
+    if (!keepName) spaceCreateValue = '';
     const field = document.getElementById('spaceCreateField');
     if (field) {
-      field.value = '';
+      field.value = spaceCreateValue;
       field.disabled = false;
       field.classList.remove('field-interim', 'overflowing');
     }
@@ -585,32 +593,75 @@
     document.getElementById('spaceCreatePanel')?.classList.remove('dictating');
     document.querySelector('.stage')?.classList.remove('hide-keycap');
     spaceCreateValue = '';
+    resetSpaceColorStep();
     if (appState === 'idle') toIdle();
     else setUiMode('listening:command');
   }
 
-  async function confirmSpaceCreate() {
-    const field = document.getElementById('spaceCreateField');
+  function confirmSpaceCreate() {
     /* spaceCreateValue is the committed name — the field itself may still be
        showing an interim preview that includes the spoken "confirm". Typed
        input stays in sync via the input listener. */
-    const name = spaceCreateValue.trim();
-    if (!name) {
+    if (!spaceCreateValue.trim()) {
       announce(s('spaceCreatePrompt'), 'alert');
       return;
     }
-    if (field) field.disabled = true;
+    enterSpaceColorStep();
+  }
+
+  /* ─── Color step ───
+     The CMS sticker palette (outline-0..9) as numbered swatches; the API
+     stores the pick as settings.logoColor. Say a number (or click) to
+     create, "volver" to edit the name, "cancelar" to abandon. */
+  let spaceColorBusy = false;
+
+  function spaceColorSwatches() {
+    return [...document.querySelectorAll('#spaceColorPanel .space-color-swatch')];
+  }
+
+  function resetSpaceColorStep() {
+    spaceColorBusy = false;
+    spaceColorSwatches().forEach(b => { b.classList.remove('selected'); b.disabled = false; });
+  }
+
+  function enterSpaceColorStep() {
+    resetSpaceColorStep();
+    setUiMode('space-create-color');
+    /* Same residual-utterance drain as the name step: the spoken "confirmar"
+       that got us here must not be parsed as a color number. */
+    if (utteranceInFlight) {
+      skipNextFinal        = true;
+      dropResidualInterims = true;
+    }
+    const first = spaceColorSwatches()[0];
+    if (first) requestAnimationFrame(() => first.focus());
+  }
+
+  function backToSpaceName() {
+    resetSpaceColorStep();
+    enterSpaceCreate(true);
+  }
+
+  async function selectSpaceColor(colorClass, btnEl) {
+    if (spaceColorBusy) return;
+    const name = spaceCreateValue.trim();
+    if (!name) { exitSpaceCreate(); return; }
+    spaceColorBusy = true;
+    spaceColorSwatches().forEach(b => { b.classList.toggle('selected', b === btnEl); b.disabled = true; });
     try {
-      await createSpaceRequest(name);
+      await createSpaceRequest(name, colorClass);
       await preloadLiferaySpaces();
       flashCommandDetected(s('spaceFlash', { name }));
       announce(s('announceSpaceCreated', { name }));
       exitSpaceCreate();
+      /* The wizard's "Add People to Collaborate" step has no API-side
+         equivalent — the new space is visible only to its creator until
+         collaborators are added in the Space settings. Essential to say so. */
+      showLiferayError(s('spaceCreatedCollabNotice', { name }), { notice: true });
     } catch (err) {
       console.warn('[liferay] create space failed:', err.message);
+      resetSpaceColorStep();
       showLiferayError(liferayErrorMessage(err) || s('errorLiferayConnection'));
-    } finally {
-      if (field) field.disabled = false;
     }
   }
 

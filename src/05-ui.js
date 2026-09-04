@@ -163,7 +163,7 @@
      instant (corner toggle + overlay add/remove). */
   const TRACKED_OVERLAYS = [
     'sidePanel', 'spacePicker', 'filePicker', 'imgCarousel',
-    'optionsPicker', 'numberInputPanel', 'dateInputPanel', 'spaceCreatePanel',
+    'optionsPicker', 'numberInputPanel', 'dateInputPanel', 'spaceCreatePanel', 'spaceColorPanel',
     'aiConfirm', 'aiModal', 'formatList',
     'cmdList', 'cmdHint',
     'contentPanel', 'titleField', 'subtitleField', 'bodyField', 'dynamicTextFields',
@@ -189,6 +189,7 @@
     'flow:number-input': { voicePhase: 'numberInput',   corner: true,  hint: false, visible: ['sidePanel', 'numberInputPanel'],                                                                                announce: { fn: 'flowNumberInputPrompt' } },
     'flow:date-input':   { voicePhase: 'dateInput',     corner: true,  hint: false, visible: ['sidePanel', 'dateInputPanel'],                                                                                   announce: { fn: 'flowDateInputPrompt' } },
     'space-create':      { voicePhase: 'spaceCreate',   corner: true,  hint: false, visible: ['spaceCreatePanel'],                                                                            announce: { fn: 'spaceCreatePrompt' } },
+    'space-create-color':{ voicePhase: 'spaceCreateColor', corner: true, hint: false, visible: ['spaceColorPanel'],                                                                          announce: { fn: 'spaceColorPrompt' } },
     'flow:image':        { voicePhase: 'image',         corner: true,  hint: false, visible: ['sidePanel', 'imgCarousel'],   keepFields: true,                                              announce: { fn: 'flowImagePrompt' } },
     'flow:options':      { voicePhase: 'options',       corner: true,  hint: false, visible: ['sidePanel', 'optionsPicker'],                                                                 announce: { fn: 'flowOptionsPrompt' } },
     'flow:ai-confirm':   { voicePhase: 'submitConfirm', corner: true,  hint: false, visible: ['sidePanel', 'aiConfirm'],     keepFields: true, modal: true, focusTarget: 'aiConfirmYes',   announce: { stringKey: 'announceAiConfirm' } },
@@ -257,6 +258,9 @@
     },
     spaceCreatePrompt() {
       return joinAnnounce(s('spaceCreatePrompt'), s('spaceCreateHint'), s('announceCancelHint'));
+    },
+    spaceColorPrompt() {
+      return joinAnnounce(s('spaceColorPrompt'), s('spaceColorHint'), s('announceBackHint'));
     },
     flowImagePrompt() {
       const prompt = getStep('coverImage')?.voicePrompt || '';

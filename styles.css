@@ -370,6 +370,14 @@ liferay-copilot-voice .liferay-error {
 liferay-copilot-voice .liferay-error[hidden] {
 	display: none;
 }
+/* Informative variant — same surface, brand-blue palette. Used for the
+   post-create "add collaborators in the Space settings" advice. */
+liferay-copilot-voice .liferay-error.notice {
+	background: #e5f1ff;
+	border-color: var(--cv-brand-soft, #80acff);
+	color: var(--cv-brand-strong, #005fcc);
+	box-shadow: 0 6px 20px rgba(87, 145, 255, 0.18);
+}
 liferay-copilot-voice .liferay-error-icon {
 	width: 16px;
 	height: 16px;
@@ -946,60 +954,101 @@ liferay-copilot-voice .space-card.selected {
 		0 4px 16px rgba(87, 145, 255, 0.2);
 }
 /* Liferay CMS sticker palette (exact hex from `.sticker-outline-N` classes). */
-liferay-copilot-voice .space-card.sticker-outline {
+liferay-copilot-voice .space-card.sticker-outline,
+liferay-copilot-voice .space-color-swatch.sticker-outline {
 	background: #e5f1ff;
 	border-color: var(--cv-brand-strong, #005fcc);
 	color: var(--cv-brand-strong, #005fcc);
 }
-liferay-copilot-voice .space-card.sticker-outline-0 {
+liferay-copilot-voice .space-card.sticker-outline-0,
+liferay-copilot-voice .space-color-swatch.sticker-outline-0 {
 	background: #f1f2f5;
 	border-color: #272833;
 	color: #272833;
 }
-liferay-copilot-voice .space-card.sticker-outline-1 {
+liferay-copilot-voice .space-card.sticker-outline-1,
+liferay-copilot-voice .space-color-swatch.sticker-outline-1 {
 	background: #f2e5ff;
 	border-color: #aa33ff;
 	color: #aa33ff;
 }
-liferay-copilot-voice .space-card.sticker-outline-2 {
+liferay-copilot-voice .space-card.sticker-outline-2,
+liferay-copilot-voice .space-color-swatch.sticker-outline-2 {
 	background: #fff8e5;
 	border-color: #b38900;
 	color: #b38900;
 }
-liferay-copilot-voice .space-card.sticker-outline-3 {
+liferay-copilot-voice .space-card.sticker-outline-3,
+liferay-copilot-voice .space-color-swatch.sticker-outline-3 {
 	background: #f1fce9;
 	border-color: #458613;
 	color: #458613;
 }
-liferay-copilot-voice .space-card.sticker-outline-4 {
+liferay-copilot-voice .space-card.sticker-outline-4,
+liferay-copilot-voice .space-color-swatch.sticker-outline-4 {
 	background: #ffe5e5;
 	border-color: #e60000;
 	color: #e60000;
 }
-liferay-copilot-voice .space-card.sticker-outline-5 {
+liferay-copilot-voice .space-card.sticker-outline-5,
+liferay-copilot-voice .space-color-swatch.sticker-outline-5 {
 	background: #fff0e5;
 	border-color: #cc4e00;
 	color: #cc4e00;
 }
-liferay-copilot-voice .space-card.sticker-outline-6 {
+liferay-copilot-voice .space-card.sticker-outline-6,
+liferay-copilot-voice .space-color-swatch.sticker-outline-6 {
 	background: #eafbf8;
 	border-color: #1b7e6e;
 	color: #1b7e6e;
 }
-liferay-copilot-voice .space-card.sticker-outline-7 {
+liferay-copilot-voice .space-card.sticker-outline-7,
+liferay-copilot-voice .space-color-swatch.sticker-outline-7 {
 	background: #e5f6ff;
 	border-color: #0077b3;
 	color: #0077b3;
 }
-liferay-copilot-voice .space-card.sticker-outline-8 {
+liferay-copilot-voice .space-card.sticker-outline-8,
+liferay-copilot-voice .space-color-swatch.sticker-outline-8 {
 	background: #ffe5f4;
 	border-color: #e50082;
 	color: #800048;
 }
-liferay-copilot-voice .space-card.sticker-outline-9 {
+liferay-copilot-voice .space-card.sticker-outline-9,
+liferay-copilot-voice .space-color-swatch.sticker-outline-9 {
 	background: #fff;
 	border-color: #393a4a;
 	color: #393a4a;
+}
+
+/* ── Space color step — sticker-palette swatches picked by number ── */
+liferay-copilot-voice .space-color-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	margin: 18px 0 6px;
+	max-width: 320px;
+	margin-left: auto;
+	margin-right: auto;
+}
+liferay-copilot-voice .space-color-swatch {
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	border: 2px solid;
+	font-family: inherit;
+	font-size: 15px;
+	font-weight: 650;
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+liferay-copilot-voice .space-color-swatch:hover {
+	transform: scale(1.12);
+}
+liferay-copilot-voice .space-color-swatch.selected {
+	transform: scale(1.12);
+	box-shadow: 0 0 0 3px #fff, 0 0 0 5px currentColor;
 }
 
 /* ── Options picker (Picklist fields in dynamic Object-driven flows) ──

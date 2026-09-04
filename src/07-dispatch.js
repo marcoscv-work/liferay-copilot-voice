@@ -219,7 +219,7 @@
      banner is `aria-live=polite` so it updates without yelling at the SR;
      `announce(msg, 'alert')` separately fires the assertive read so the
      user knows immediately something blocked. */
-  function showLiferayError(message, { showCreateSpace = false, capabilityNotice = false } = {}) {
+  function showLiferayError(message, { showCreateSpace = false, capabilityNotice = false, notice = false } = {}) {
     const el   = document.getElementById('liferayError');
     const text = document.getElementById('liferayErrorText');
     if (!el || !text) return;
@@ -231,15 +231,16 @@
     if (createBtn) createBtn.hidden = !showCreateSpace;
     /* A browser-capability notice (e.g. no SpeechRecognition) must not offer
        connection actions — Retry and the dev config link only make sense for
-       connectivity states. */
+       connectivity states. Informative notices (post-create advice) neither. */
     const retryBtn  = document.getElementById('liferayErrorRetry');
     const configLnk = document.querySelector('.liferay-error-config');
-    if (retryBtn)  retryBtn.hidden = capabilityNotice;
-    if (configLnk) configLnk.hidden = capabilityNotice;
+    if (retryBtn)  retryBtn.hidden = capabilityNotice || notice;
+    if (configLnk) configLnk.hidden = capabilityNotice || notice;
+    el.classList.toggle('notice', notice);
     if (text.textContent === message && !el.hidden) return; /* dedupe noise */
     text.textContent = message;
     el.hidden = false;
-    announce(message, 'alert');
+    announce(message, notice ? 'status' : 'alert');
   }
   function hideLiferayError() {
     const el = document.getElementById('liferayError');
@@ -867,6 +868,7 @@
     document.getElementById('spaceCreatePanel')?.classList.remove('dictating');
     document.querySelector('.stage')?.classList.remove('hide-keycap');
     spaceCreateValue = '';
+    resetSpaceColorStep();
     /* Reset placeholders to the locale defaults — a dynamic flow may have
        mutated them to its own field labels via applyFlowFieldLabels. */
     resetFlowFieldLabels();
@@ -988,6 +990,18 @@
         field.value = (spaceCreateValue + ' ' + interim).trim();
         field.classList.add('field-interim');
         syncSpaceCreateOverflow(field);
+      }
+
+    } else if (voicePhase === 'spaceCreateColor') {
+      if (!final || spaceColorBusy) return;
+      const n = normalize(final);
+      if (matchPhrase(n, SPACE_COLOR_CANCEL)) { playSound('fieldChange'); exitSpaceCreate(); return; }
+      if (matchPhrase(n, SPACE_COLOR_BACK))   { playSound('fieldChange'); backToSpaceName(); return; }
+      const num = parseNumberFromVoice(n);
+      const swatches = spaceColorSwatches();
+      if (num != null && num >= 1 && num <= swatches.length) {
+        const btn = swatches[num - 1];
+        selectSpaceColor(btn.dataset.color, btn);
       }
 
     } else if (voicePhase === 'file') {

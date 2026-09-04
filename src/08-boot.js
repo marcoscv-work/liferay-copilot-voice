@@ -464,6 +464,16 @@
       if (e.key === 'Escape') { e.preventDefault(); exitSpaceCreate(); }
     });
   }
+  const spaceColorPanel = document.getElementById('spaceColorPanel');
+  if (spaceColorPanel) {
+    spaceColorPanel.addEventListener('click', e => {
+      const btn = e.target.closest('.space-color-swatch');
+      if (btn) selectSpaceColor(btn.dataset.color, btn);
+    });
+    spaceColorPanel.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); backToSpaceName(); }
+    });
+  }
   const dateInputField = document.getElementById('dateInputField');
   if (dateInputField) {
     dateInputField.addEventListener('input', () => {

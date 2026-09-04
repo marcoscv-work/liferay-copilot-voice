@@ -90,6 +90,24 @@
     <p class="number-input-hint" data-language="spaceCreateHint"></p>
   </div>
 
+  <!-- Space color step — the CMS sticker palette, picked by number or click. -->
+  <div class="number-input-panel space-color-panel" id="spaceColorPanel">
+    <div class="number-input-prompt" data-language="spaceColorPrompt"></div>
+    <div class="space-color-grid" role="group" data-language-aria-label="spaceColorPrompt">
+      <button type="button" class="space-color-swatch sticker-outline-0" data-color="outline-0">1</button>
+      <button type="button" class="space-color-swatch sticker-outline-1" data-color="outline-1">2</button>
+      <button type="button" class="space-color-swatch sticker-outline-2" data-color="outline-2">3</button>
+      <button type="button" class="space-color-swatch sticker-outline-3" data-color="outline-3">4</button>
+      <button type="button" class="space-color-swatch sticker-outline-4" data-color="outline-4">5</button>
+      <button type="button" class="space-color-swatch sticker-outline-5" data-color="outline-5">6</button>
+      <button type="button" class="space-color-swatch sticker-outline-6" data-color="outline-6">7</button>
+      <button type="button" class="space-color-swatch sticker-outline-7" data-color="outline-7">8</button>
+      <button type="button" class="space-color-swatch sticker-outline-8" data-color="outline-8">9</button>
+      <button type="button" class="space-color-swatch sticker-outline-9" data-color="outline-9">10</button>
+    </div>
+    <p class="number-input-hint" data-language="spaceColorHint"></p>
+  </div>
+
   <div class="date-input-panel" id="dateInputPanel">
     <div class="date-input-prompt" id="dateInputPrompt"></div>
     <div class="date-input-card">
