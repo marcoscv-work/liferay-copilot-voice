@@ -203,6 +203,13 @@ Edit [`config.json`](config.json):
   </liferay-copilot-voice>
   ```
 
+  In the portal the same thing can be declared in `client-extension.yaml` — custom element `properties` render as attributes on the element:
+
+  ```yaml
+  properties:
+      disabled-commands: create-blog, create-file, create-space, create-structured
+  ```
+
   Disable-able ids: `create-web-content`, `create-blog`, `create-file`, `create-space`, the reserved token `create-structured` (turns off Object-driven flow discovery entirely — content structures are never fetched) and `dynamic:{ObjectName}` for one specific structure. `exit` can never be disabled. This is UX configuration, not security — Liferay permissions still gate every API call.
 
 UI text lives in `language/Language_{lang}.properties` (Liferay-style properties bundles, including all `announce*` screen-reader strings). Voice commands, flows and step structure live in `flows/flows.{lang}.json` — no JS edits needed for new phrases.

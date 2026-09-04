@@ -289,7 +289,7 @@ npm run build:cx
     </div>
 
     <h3 class="lang-sub reveal">Choose which actions each page offers</h3>
-    <p class="sec-lede reveal">Not every page needs every action. The <code>disabled-commands</code> attribute on the element removes global commands from the voice matcher, the help list and the banners — per placement, no repackaging. The same ids work in <code>config.json</code> under <code>commands.disabled</code> as a deployment-wide default.</p>
+    <p class="sec-lede reveal">Not every page needs every action. The <code>disabled-commands</code> attribute on the element removes global commands from the voice matcher, the help list and the banners — per placement, no repackaging. In the portal, declare it as a custom element <code>property</code> in <code>client-extension.yaml</code> (properties render as attributes); the same ids also work in <code>config.json</code> under <code>commands.disabled</code> as a deployment-wide default.</p>
     <div class="code-cols">
       <div class="code-col reveal">
         <h3>Example — only simple web content</h3>

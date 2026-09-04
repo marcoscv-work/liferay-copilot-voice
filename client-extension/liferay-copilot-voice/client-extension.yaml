@@ -31,3 +31,8 @@ liferay-copilot-voice:
         - element.js
     cssURLs:
         - styles.css
+    # `properties` render as attributes on the custom element — the supported
+    # way to configure the deployment. Example: offer only simple web content:
+    #
+    # properties:
+    #     disabled-commands: create-blog, create-file, create-space, create-structured
