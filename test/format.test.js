@@ -74,6 +74,25 @@ test('dates — Portuguese / German / French', () => {
   assert.equal(A.parseDateFromVoice('quinze août 2026'), '2026-08-15');
 });
 
+test('capitalization is Unicode-aware — accented first letters (pt/de/fr)', () => {
+  A.__setLocale('de-DE');
+  assert.equal(A.formatAsBody('über alles'), 'Über alles.');
+  A.__setLocale('fr-FR');
+  assert.equal(A.formatAsBody('école ouverte'), 'École ouverte.');
+  A.__setLocale('pt-BR');
+  assert.equal(A.formatAsBody('ótimo trabalho'), 'Ótimo trabalho.');
+  assert.equal(A.formatAsTitle('über alles'), 'Über alles');
+  /* leading punctuation is still skipped, not capitalized over */
+  A.__setLocale('es-ES');
+  assert.equal(A.formatAsTitle('¿ñoño'), '¿Ñoño');
+  /* sentence boundaries capitalize accented letters in every language */
+  A.__setLocale('en-US');
+  assert.equal(
+    A.formatAsBody('fine. über alles. école ouverte. ótimo trabalho'),
+    'Fine. Über alles. École ouverte. Ótimo trabalho.'
+  );
+});
+
 test('question wrapping respects locale', () => {
   A.__setLocale('es-ES');
   assert.equal(A.wrapAsQuestion('qué hora es'), '¿qué hora es?');

@@ -373,8 +373,8 @@
   function formatLive(text) {
     if (!text) return '';
     let t = applyInlinePunctuation(text);
-    t = t.replace(/^(\W*)(\w)/, (_, p, c) => p + c.toUpperCase());
-    t = t.replace(/([.!?]\s+)([a-záéíóúñü])/g, (_, p, c) => p + c.toUpperCase());
+    t = t.replace(/^([^\p{L}\p{N}]*)(\p{L})/u, (_, p, c) => p + c.toUpperCase());
+    t = t.replace(/([.!?]\s+)(\p{Ll})/gu, (_, p, c) => p + c.toUpperCase());
     return t;
   }
 
@@ -393,7 +393,7 @@
     if (!text) return '';
     let t = applyInlinePunctuation(text).trim().replace(/\s+/g, ' ');
     if (!t) return '';
-    t = t.replace(/^(\W*)(\w)/, (_, p, c) => p + c.toUpperCase());
+    t = t.replace(/^([^\p{L}\p{N}]*)(\p{L})/u, (_, p, c) => p + c.toUpperCase());
     if (QUESTION_STARTERS.test(t)) t = wrapAsQuestion(t);
     return t;
   }
@@ -403,9 +403,9 @@
     let t = applyInlinePunctuation(text).trim().replace(/\s+/g, ' ');
     if (!t) return '';
     /* Capitalize first letter (skip leading punctuation like ¿ ¡). */
-    t = t.replace(/^(\W*)(\w)/, (_, p, c) => p + c.toUpperCase());
+    t = t.replace(/^([^\p{L}\p{N}]*)(\p{L})/u, (_, p, c) => p + c.toUpperCase());
     /* Capitalize after sentence-ending punctuation. */
-    t = t.replace(/([.!?]\s+)([a-záéíóúñü])/g, (_, p, c) => p + c.toUpperCase());
+    t = t.replace(/([.!?]\s+)(\p{Ll})/gu, (_, p, c) => p + c.toUpperCase());
     /* Comma before common transitional connectors (ES + EN) when missing. */
     t = t.replace(
       /(\S) (pero|aunque|sin embargo|por (?:lo )?tanto|porque|but|although|however|therefore|because|per[oò]|tuttavia|quindi|perch[eé]|por[eé]m|contudo|entretanto|portanto|aber|sondern|jedoch|deshalb|daher|weil|mais|cependant|pourtant|donc|parce que)\b/gi,
