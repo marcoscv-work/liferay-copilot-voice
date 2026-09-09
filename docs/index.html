@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Liferay Copilot Voice — hands-free content creation for Liferay CMS</title>
-<meta name="description" content="A voice-driven copilot for Liferay CMS. Create web content, blogs, documents and custom Object entries by talking — deployed as a client extension, in Spanish, English, Italian, Portuguese, German and French.">
+<meta name="description" content="A voice-driven copilot for Liferay CMS. Create web content, blogs, documents and custom Object entries by talking — deployed as a client extension, in six languages, with full dark mode support.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='40' y='10' width='20' height='80' rx='10' fill='%235791ff'/><rect x='12' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/><rect x='74' y='34' width='14' height='32' rx='7' fill='%23b3cdff'/></svg>">
 <link rel="stylesheet" href="./site.css">
 </head>
@@ -79,7 +79,7 @@
       <div class="card reveal">
         <div class="card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L19.7 11l-5.8 1.9L12 18.7l-1.9-5.8L4.3 11l5.8-2.2z"/></svg></div>
         <h3>Native to Liferay</h3>
-        <p>Ships as a custom element client extension. Same-origin calls with the user's session and CSRF token, portal language via ThemeDisplay, permissions enforced by Liferay itself.</p>
+        <p>Ships as a custom element client extension. Same-origin calls with the user's session and CSRF token, portal language via ThemeDisplay, permissions enforced by Liferay itself. And it follows the theme's color tokens, with full dark mode support.</p>
       </div>
       <div class="card reveal">
         <div class="card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></div>
@@ -287,6 +287,9 @@ npm run build:cx
         </ul>
       </div>
     </div>
+
+    <h3 class="lang-sub reveal">Theme-aware, with full dark mode support</h3>
+    <p class="sec-lede reveal">Every color runs through design tokens with three-level resolution, no JavaScript and no theme sniffing: the page's Liferay CSS variables when they exist (Prism theme tokens and Style Book frontend tokens share the same names, so the widget adopts the site's palette, its dark mode and even <code>dark-high-contrast</code>), and otherwise a built-in <code>light-dark()</code> pair that follows the page's color scheme. On Classic-theme sites the widget correctly stays light; standalone it follows the OS preference.</p>
 
     <h3 class="lang-sub reveal">Choose which actions each page offers</h3>
     <p class="sec-lede reveal">Not every page needs every action. The <code>disabled-commands</code> attribute on the element removes global commands from the voice matcher, the help list and the banners — per placement, no repackaging. In the portal, declare it as a custom element <code>property</code> in <code>client-extension.yaml</code> (properties render as attributes); the same ids also work in <code>config.json</code> under <code>commands.disabled</code> as a deployment-wide default.</p>

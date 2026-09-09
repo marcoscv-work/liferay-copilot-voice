@@ -212,6 +212,15 @@ Edit [`config.json`](config.json):
 
   Disable-able ids: `create-web-content`, `create-blog`, `create-file`, `create-space`, the reserved token `create-structured` (turns off Object-driven flow discovery entirely — content structures are never fetched) and `dynamic:{ObjectName}` for one specific structure. `exit` can never be disabled. This is UX configuration, not security — Liferay permissions still gate every API call.
 
+### Theming and dark mode
+
+Every color runs through `--cv-*` design tokens with three-level resolution, no JavaScript and no theme sniffing:
+
+1. A Liferay CSS variable when the page defines it (`--gray-100`, `--white`, `--danger`...). Prism theme tokens and Style Book frontend tokens share these names, so the widget adopts the site's palette, including Prism's dark and dark-high-contrast schemes.
+2. Otherwise a built-in `light-dark()` pair that resolves against the page's inherited `color-scheme`: Classic pins `light`, so the widget correctly stays light there; standalone opts into `light dark` and follows the OS preference.
+
+The brand family stays copilot-blue as product identity; remap it with e.g. `liferay-copilot-voice { --cv-brand: var(--primary); }`.
+
 UI text lives in `language/Language_{lang}.properties` (Liferay-style properties bundles, including all `announce*` screen-reader strings). Voice commands, flows and step structure live in `flows/flows.{lang}.json` — no JS edits needed for new phrases.
 
 ## File structure

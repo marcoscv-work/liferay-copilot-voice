@@ -105,7 +105,7 @@ base64 FileEntry and keeps multipart as legacy fallback.
 - Release notes draft:
   > First public release. Voice-driven creation of web content, blogs,
   > documents and custom Object entries; space creation by voice; Spanish,
-  > English, Italian, Portuguese, German and French; full screen-reader support.
+  > English, Italian, Portuguese, German and French; full screen-reader support; theme-aware colors with full dark mode support.
 
 ## Steps 6–7 — Pricing / Licensing
 
