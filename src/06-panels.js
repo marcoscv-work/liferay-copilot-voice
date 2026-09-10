@@ -153,7 +153,7 @@
       imgEl.className = 'carousel-card-img';
       /* Solid fill while the image bytes are in flight. `gradient` only ever
          comes from packaged config (legacy mock shape), never from Liferay. */
-      imgEl.style.background = gradient || '#E7E7ED';
+      imgEl.style.background = gradient || 'var(--cv-neutral, #E7E7ED)';
       /* Carousel cards get the cheaper thumbnail variant — CSS scales them
          to 192×120 anyway. The full-size URL is reserved for the cover-thumb
          above the title and for inline embed in web-content bodies. */
@@ -326,7 +326,7 @@
     const el = document.getElementById('coverThumb');
     /* img.url comes from Liferay — validate before it reaches a CSS url(). */
     const src = safeImageURL(img.url);
-    el.style.background = img.gradient || '#E7E7ED';
+    el.style.background = img.gradient || 'var(--cv-neutral, #E7E7ED)';
     if (src) {
       el.style.backgroundImage    = `url("${src}")`;
       el.style.backgroundSize     = 'cover';

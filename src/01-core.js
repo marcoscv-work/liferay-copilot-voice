@@ -204,7 +204,7 @@
 
   function setBarMode(mode) { barMode = mode; }
 
-  const GRAY_COLS   = ['#E7E7ED','#E7E7ED','#E7E7ED','#E7E7ED','#E7E7ED'];
+  const GRAY_COLS   = Array(5).fill('var(--cv-neutral, #E7E7ED)');
   const BLUE_COLS   = ['#D7E4FF','#B3CDFF','#80ACFF','#B3CDFF','#D7E4FF'];
   const PURPLE_COLS = ['#DDD6FE','#C4B5FD','#7B6FEE','#C4B5FD','#DDD6FE'];
 
@@ -230,7 +230,7 @@
 
   function applyKeycap({
     tx = 'translate(-50%,-50%)', w = 656, h = 222, r = 24,
-    bc = '#CDCED9', sh = '0 20px 60px 0 rgba(39,40,51,0.15)', op = '1'
+    bc = 'var(--cv-border, #CDCED9)', sh = '0 20px 60px 0 rgba(39,40,51,0.15)', op = '1'
   } = {}) {
     keycap.style.transform    = tx;
     keycap.style.width        = w + 'px';
@@ -256,7 +256,7 @@
       b.style.borderRadius = i === 2 ? '24px' : '10px';
       b.style.width        = i === 2 ? '48px' : '0px';
       b.style.height       = i === 2 ? '80px' : '4px';
-      b.style.background   = i === 2 ? '#5791FF' : '#E7E7ED';
+      b.style.background   = i === 2 ? 'var(--cv-brand, #5791FF)' : 'var(--cv-neutral, #E7E7ED)';
       b.style.opacity      = i === 2 ? '1'     : '0';
     });
   }
@@ -303,7 +303,7 @@
           b.style.width        = '48px';
           b.style.height       = '80px';
           b.style.borderRadius = '24px';
-          b.style.background   = '#5791FF';
+          b.style.background   = 'var(--cv-brand, #5791FF)';
         } else {
           b.style.transition = 'width 0.25s ease, opacity 0.2s ease';
           b.style.width      = '0px';
@@ -318,8 +318,8 @@
       keycap.style.height       = '222px';
       keycap.style.borderRadius = '24px';
       keycap.style.transform    = 'translate(-50%,-50%)';
-      keycap.style.borderColor  = '#CDCED9';
-      keycap.style.background   = '#F7F8F9';
+      keycap.style.borderColor  = 'var(--cv-border, #CDCED9)';
+      keycap.style.background   = 'var(--cv-keycap, #F7F8F9)';
       keycap.style.opacity      = '0';
       shadow.style.width        = '656px';
       shadow.style.height       = '222px';
@@ -348,7 +348,7 @@
         opacity:         [0.3, 'ease'],
       });
       applyKeycap({ op: '1' });
-      keycap.style.background = '#F7F8F9';
+      keycap.style.background = 'var(--cv-keycap, #F7F8F9)';
     }
 
     /* All overlay/visibility/cleanup state is owned by setUiMode now. */
@@ -408,7 +408,7 @@
 
       /* Append background to bar3 without removing active spring transitions */
       barEls[2].style.transition += ', background 0.4s ease';
-      barEls[2].style.background  = '#E7E7ED';
+      barEls[2].style.background  = 'var(--cv-neutral, #E7E7ED)';
 
       liveH[0] = 4; liveH[1] = 4; liveH[3] = 4; liveH[4] = 4; liveH[2] = 38;
       [0,1,3,4].forEach(i => {
@@ -416,7 +416,7 @@
         barEls[i].style.width      = '20px';
         barEls[i].style.height     = '4px';
         barEls[i].style.opacity    = '1';
-        barEls[i].style.background = '#E7E7ED';
+        barEls[i].style.background = 'var(--cv-neutral, #E7E7ED)';
       });
 
       /* Spring finishes ~130ms from now; start RAF after it settles */

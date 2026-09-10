@@ -23,6 +23,7 @@ liferay-copilot-voice {
 	--cv-border:       var(--gray-400, light-dark(#cdced9, #6b6c7e));
 	--cv-neutral:      var(--gray-300, light-dark(#e7e7ed, #495057));
 	--cv-neutral-soft: var(--gray-200, light-dark(#f1f2f5, #393a4a));
+	--cv-keycap:       light-dark(#f7f8f9, #313240);
 	--cv-bg:           var(--gray-100, light-dark(#f7f8f9, #272833));
 	--cv-card:         var(--white, light-dark(#ffffff, #1b1b23));
 	--cv-card-translucent: light-dark(rgba(255, 255, 255, 0.94), rgba(27, 27, 35, 0.94));
@@ -1786,7 +1787,7 @@ liferay-copilot-voice .keycap {
 	transform: translate(-50%, -50%);
 	width: 656px;
 	height: 222px;
-	background: var(--cv-bg, #f7f8f9);
+	background: var(--cv-keycap, #f7f8f9);
 	border: 1px solid var(--cv-border, #cdced9);
 	border-radius: 24px;
 	display: flex;
