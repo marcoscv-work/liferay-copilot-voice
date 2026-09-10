@@ -372,7 +372,7 @@ pre .copy-btn:hover { background: rgba(255, 255, 255, 0.18); }
 
 /* ── Sections ── */
 section { padding: 74px 0; }
-section.alt { background: #fff; border-top: 1px solid var(--cv-neutral); border-bottom: 1px solid var(--cv-neutral); }
+section.alt { background: light-dark(#fff, #2c2d39); border-top: 1px solid var(--cv-neutral); border-bottom: 1px solid var(--cv-neutral); }
 .sec-kicker {
 	color: var(--cv-brand-strong);
 	font-size: 13px;
