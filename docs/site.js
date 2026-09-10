@@ -142,6 +142,27 @@
     }
   }
 
+  /* ── Color scheme toggle ──────────────────────────────────────────── */
+  const themeBtn = document.getElementById('navTheme');
+  const rootEl   = document.documentElement;
+  const darkMQ   = window.matchMedia('(prefers-color-scheme: dark)');
+  function themeIsDark() {
+    return rootEl.dataset.theme ? rootEl.dataset.theme === 'dark' : darkMQ.matches;
+  }
+  function paintThemeBtn() {
+    if (themeBtn) themeBtn.classList.toggle('is-dark', themeIsDark());
+  }
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const next = themeIsDark() ? 'light' : 'dark';
+      rootEl.dataset.theme = next;
+      try { localStorage.setItem('cvTheme', next); } catch (e) {}
+      paintThemeBtn();
+    });
+    darkMQ.addEventListener('change', paintThemeBtn);
+    paintThemeBtn();
+  }
+
   /* ── Command reference (ES / EN / IT / PT / DE / FR) ──────────────── */
   const COMMANDS = {
     es: {
