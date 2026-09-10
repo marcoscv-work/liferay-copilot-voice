@@ -333,7 +333,7 @@ liferay-copilot-voice .dev-toggle-link:hover {
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 	z-index: 60;
 	pointer-events: none;
-	box-shadow: 0 6px 20px rgba(39, 40, 51, 0.14);
+	box-shadow: 0 6px 20px light-dark(rgba(39, 40, 51, 0.14), rgba(0, 0, 0, 0.5));
 }
 .debug-live-regions liferay-copilot-voice #liveStatus {
 	left: 16px;
@@ -722,7 +722,7 @@ liferay-copilot-voice .carousel-card {
 	border-radius: 12px;
 	overflow: hidden;
 	background: var(--cv-card, #fff);
-	box-shadow: 0 2px 12px rgba(39, 40, 51, 0.1);
+	box-shadow: 0 2px 12px light-dark(rgba(39, 40, 51, 0.1), rgba(0, 0, 0, 0.45));
 	cursor: pointer;
 	transition: box-shadow 0.2s ease;
 	/* Force its own compositor layer so off-screen cards are painted at
@@ -766,7 +766,7 @@ liferay-copilot-voice .carousel-card-number {
 	justify-content: center;
 	font-size: 13px;
 	font-weight: 700;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.5));
 }
 liferay-copilot-voice .carousel-card-name {
 	padding: 8px 12px;
@@ -1653,7 +1653,7 @@ liferay-copilot-voice .format-list {
 	border: 1px solid var(--cv-neutral, #e7e7ed);
 	border-radius: 18px;
 	padding: 28px 32px;
-	box-shadow: 0 24px 60px rgba(39, 40, 51, 0.18);
+	box-shadow: 0 24px 60px light-dark(rgba(39, 40, 51, 0.18), rgba(0, 0, 0, 0.6));
 	opacity: 0;
 	pointer-events: none;
 	transition:
@@ -1764,7 +1764,7 @@ liferay-copilot-voice .keycap-shadow {
 	width: 656px;
 	height: 222px;
 	border-radius: 24px;
-	box-shadow: 0 20px 60px 0 rgba(39, 40, 51, 0.15);
+	box-shadow: 0 20px 60px 0 light-dark(rgba(39, 40, 51, 0.15), rgba(0, 0, 0, 0.55));
 	pointer-events: none;
 }
 
@@ -1872,7 +1872,7 @@ liferay-copilot-voice .ai-card {
 	width: 100%;
 	max-width: 98%;
 	max-height: 100%;
-	box-shadow: 0 24px 60px rgba(39, 40, 51, 0.25);
+	box-shadow: 0 24px 60px light-dark(rgba(39, 40, 51, 0.25), rgba(0, 0, 0, 0.7));
 	text-align: center;
 	transform: translateY(8px) scale(0.98);
 	transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);

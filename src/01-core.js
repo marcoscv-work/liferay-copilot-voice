@@ -230,7 +230,7 @@
 
   function applyKeycap({
     tx = 'translate(-50%,-50%)', w = 656, h = 222, r = 24,
-    bc = 'var(--cv-border, #CDCED9)', sh = '0 20px 60px 0 rgba(39,40,51,0.15)', op = '1'
+    bc = 'var(--cv-border, #CDCED9)', sh = '0 20px 60px 0 light-dark(rgba(39,40,51,0.15), rgba(0,0,0,0.55))', op = '1'
   } = {}) {
     keycap.style.transform    = tx;
     keycap.style.width        = w + 'px';
@@ -325,7 +325,7 @@
       shadow.style.height       = '222px';
       shadow.style.borderRadius = '24px';
       shadow.style.transform    = 'translate(-50%,-50%)';
-      shadow.style.boxShadow    = '0 20px 60px 0 rgba(39,40,51,0.15)';
+      shadow.style.boxShadow    = '0 20px 60px 0 light-dark(rgba(39,40,51,0.15), rgba(0,0,0,0.55))';
       shadow.style.opacity      = '0';
       micWrap.style.opacity     = '1';
       micWrap.style.transform   = '';
@@ -363,7 +363,7 @@
     keycapT({ transform: [0.10, EASE_OUT], 'box-shadow': [0.10, 'ease'] });
     applyKeycap({
       tx: 'translate(-50%, calc(-50% + 4px))',
-      sh: '0 4px 40px 0 rgba(39,40,51,0.08)',
+      sh: '0 4px 40px 0 light-dark(rgba(39,40,51,0.08), rgba(0,0,0,0.4))',
     });
     micWrap.style.transform = 'translateY(4px) scale(0.97)';
     morphTimer = setTimeout(toMorph, 100);
