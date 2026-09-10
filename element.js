@@ -76,8 +76,17 @@
       }
       if (!window.CopilotVoiceMarkup) {
         /* markup.js should have executed before us (client-extension.yaml
-           order); a swapped-in fragment can miss it. */
-        forceFullLoad('markup.js not executed');
+           order), but the portal doesn't guarantee script order on every
+           navigation — sometimes we connect while markup.js is still in
+           flight. Waiting beats reloading: forceFullLoad is one-shot per
+           path (sessionStorage guard), so losing the race twice used to
+           leave the widget blank until a manual refresh. */
+        if (!this.__markupWaitStart) this.__markupWaitStart = Date.now();
+        if (Date.now() - this.__markupWaitStart < 3000) {
+          setTimeout(() => { if (this.isConnected) this.connectedCallback(); }, 50);
+        } else {
+          forceFullLoad('markup.js not executed after 3s');
+        }
         return;
       }
       window.__copilotVoiceBooted = true;
