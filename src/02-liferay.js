@@ -40,7 +40,23 @@
     const base = inLiferayPortal()
       ? ''
       : appConfig.liferay.baseUrl.replace(/\/+$/, '');
-    const headers = { 'Accept': 'application/json', ...(opts.headers || {}) };
+    /* Every request declares the app locale so content is created (and
+       labels are read) in the language the user is working in — without it
+       Liferay falls back to the instance default and a Spanish session
+       produces English-default content. Liferay validates the tag against
+       the instance's available languages, so an unsupported one gets a 400
+       ("No locales match the accepted languages"): retry once without the
+       header rather than blocking the operation. */
+    const headers = {
+      'Accept': 'application/json',
+      /* The retry can't just DROP the header — fetch then substitutes the
+         browser's own Accept-Language, which the instance may reject too
+         (e.g. en-GB). '*' is accepted and resolves to the instance default. */
+      'Accept-Language': opts.__noLocaleRetry
+        ? '*'
+        : (appConfig.locale || 'en-US').replace('_', '-'),
+      ...(opts.headers || {}),
+    };
     if (inLiferayPortal()) {
       headers['x-csrf-token'] = window.Liferay.authToken;
     } else {
@@ -60,6 +76,9 @@
     }
     if (!r.ok) {
       const body = await r.text().catch(() => '');
+      if ((r.status === 400 || r.status === 406) && body.includes('No locales match') && !opts.__noLocaleRetry) {
+        return lrFetch(path, { ...opts, __noLocaleRetry: true });
+      }
       const err  = new Error(`Liferay ${r.status} ${r.statusText} ${path}: ${body.slice(0, 200)}`);
       err.kind   = 'server';
       err.status = r.status;
@@ -195,6 +214,42 @@
       });
   }
 
+  /* Content is created in the language the user dictated it in. The CMS
+     object APIs ignore Accept-Language for the ENTRY language — what sets it
+     is defaultLanguageId + the *_i18n field maps (verified empirically on
+     master: header-only posts land as the instance default, en_US). If the
+     instance doesn't support the app locale the create fails (it_IT → 500 on
+     a default instance), so callers retry once unlocalized — publishing never
+     blocks, the entry just lands in the instance default language. */
+  function contentLanguageId() {
+    return (appConfig.locale || 'en-US').replace('-', '_');
+  }
+
+  function localizeFields(fields) {
+    const lid = contentLanguageId();
+    const out = { defaultLanguageId: lid };
+    for (const [k, v] of Object.entries(fields)) {
+      out[k + '_i18n'] = { [lid]: v };
+    }
+    return out;
+  }
+
+  async function postLocalized(path, localizableFields, plainFields) {
+    try {
+      return await lrFetch(path, {
+        method: 'POST',
+        body: JSON.stringify({ ...localizeFields(localizableFields), ...plainFields }),
+      });
+    } catch (err) {
+      if (err.kind !== 'server') throw err;
+      console.warn('[liferay] localized create failed (' + contentLanguageId() + '), retrying unlocalized:', err.message);
+      return lrFetch(path, {
+        method: 'POST',
+        body: JSON.stringify({ ...localizableFields, ...plainFields }),
+      });
+    }
+  }
+
   /* Minimal HTML escaper for content we're about to inject into a string
      destined for Liferay's rich-text field. We don't need a full sanitiser
      — the source is the user's own dictation + their own image picks —
@@ -220,13 +275,10 @@
     const imgHtml = coverImage?.url
       ? `<p><img src="${escapeHtml(coverImage.url)}" alt="${escapeHtml(coverImage.name || '')}"></p>`
       : '';
-    return lrFetch(`/o/cms/basic-web-contents/scopes/${spaceId}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        title,
-        content: imgHtml + bodyHtml,
-      }),
-    });
+    return postLocalized(`/o/cms/basic-web-contents/scopes/${spaceId}`, {
+      title,
+      content: imgHtml + bodyHtml,
+    }, {});
   }
 
   /* L_CMS_BLOG → fields: title, subtitle, content, coverImage.
@@ -239,18 +291,15 @@
      setting on the field is enforced server-side from the Object
      definition, not something we send in the payload. */
   async function postBlog({ spaceId, title, subtitle, content, coverImage }) {
-    const body = {
+    const plain = {};
+    if (coverImage?.fileEntryId) {
+      plain.coverImage = Number(coverImage.fileEntryId);
+    }
+    return postLocalized(`/o/cms/blogs/scopes/${spaceId}`, {
       title,
       subtitle: subtitle || '',
       content:  content  || '',
-    };
-    if (coverImage?.fileEntryId) {
-      body.coverImage = Number(coverImage.fileEntryId);
-    }
-    return lrFetch(`/o/cms/blogs/scopes/${spaceId}`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
+    }, plain);
   }
 
   /* ── Generic Object endpoint (dynamic CMS structures) ──
@@ -528,11 +577,6 @@
   function createSpaceRequest(name, color) {
     return lrFetch('/o/headless-asset-library/v1.0/asset-libraries', {
       method: 'POST',
-      /* Liferay validates the request locale against the instance's
-         available languages when creating a space — a browser tag like
-         en-GB gets rejected ("No locales match the accepted languages").
-         Send the app's resolved BCP-47 locale explicitly instead. */
-      headers: { 'Accept-Language': (appConfig.locale || 'en-US').replace('_', '-') },
       body: JSON.stringify({
         name,
         type: 'Space',
